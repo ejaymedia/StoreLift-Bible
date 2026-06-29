@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Objection Handling · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .obj-hero {
+      background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(245,158,11,0.06));
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .obj-hero::after {
+      content: '🛡️';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Category tabs */
+    .cat-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .cat-tab {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .cat-tab:hover { background: var(--bg-card-hover); color: var(--text-secondary); }
+    .cat-tab.active {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+      color: #a5b4fc;
+    }
+
+    /* Search */
+    .obj-search-wrap {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .obj-search-wrap input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px 12px 42px;
+      font-size: 14px;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .obj-search-wrap input:focus { border-color: rgba(99,102,241,0.5); }
+    .obj-search-wrap input::placeholder { color: var(--text-muted); }
+    .obj-search-icon {
+      position: absolute;
+      left: 14px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    /* Objection cards */
+    .obj-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .obj-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+    .obj-card:hover { border-color: var(--border-strong); }
+    .obj-card.open { border-color: rgba(99,102,241,0.3); }
+
+    .obj-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .obj-card-header:hover { background: var(--bg-card-hover); }
+
+    .obj-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      width: 24px;
+      flex-shrink: 0;
+    }
+    .obj-trigger-text {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      font-style: italic;
+    }
+    .obj-cat-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+      flex-shrink: 0;
+    }
+    .obj-toggle {
+      font-size: 14px;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+    .obj-card.open .obj-toggle { transform: rotate(180deg); color: #a5b4fc; }
+
+    .obj-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .obj-card.open .obj-body { max-height: 800px; }
+    .obj-body-inner {
+      padding: 4px 18px 18px;
+      border-top: 1px solid var(--border);
+    }
+
+    .obj-section {
+      margin-top: 14px;
+    }
+    .obj-section-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .label-wrong   { color: #fca5a5; }
+    .label-correct { color: #86efac; }
+    .label-why     { color: #c4b5fd; }
+
+    .response-wrong {
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.55;
+    }
+    .response-correct {
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.15);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.55;
+      position: relative;
+    }
+    .response-why {
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.15);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Copy button on correct response */
+    .correct-wrap { position: relative; }
+    .correct-copy {
+      position: absolute;
+      top: 8px; right: 8px;
+    }
+
+    /* Stats bar */
+    .obj-stats {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .obj-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .obj-stat-num {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: var(--brand-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .obj-stat-label { font-size: 12px; color: var(--text-muted); }
+
+    /* No results */
+    .no-results {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+      display: none;
+    }
+
+    /* Category colours */
+    .cat-disinterest { background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .cat-delay       { background: rgba(245,158,11,0.12); color: #fcd34d; }
+    .cat-money       { background: rgba(34,197,94,0.12); color: #86efac; }
+    .cat-existing    { background: rgba(59,130,246,0.12); color: #93c5fd; }
+    .cat-trust       { background: rgba(139,92,246,0.12); color: #c4b5fd; }
+    .cat-gatekeeper  { background: rgba(20,184,166,0.12); color: #5eead4; }
+
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 6 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Objection Handling</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="obj-hero animate-in">
+        <div class="page-eyebrow">🛡️ Module 6</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Objection Handling</h1>
+        <p class="page-subtitle" style="max-width:560px;">Every objection is a question in disguise. This module gives you the wrong response, the correct response, and the psychological reason it works — for over 100 real objections from Nigerian dealership owners.</p>
+      </div>
+
+      <!-- Stats -->
+      <div class="obj-stats animate-in-delay-1">
+        <div class="obj-stat">
+          <div class="obj-stat-num" id="total-count">100</div>
+          <div class="obj-stat-label">Total objections</div>
+        </div>
+        <div class="obj-stat">
+          <div class="obj-stat-num" id="visible-count">100</div>
+          <div class="obj-stat-label">Showing</div>
+        </div>
+        <div class="obj-stat">
+          <div class="obj-stat-num" id="opened-count">0</div>
+          <div class="obj-stat-label">Reviewed</div>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:16px 20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 6 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">0 of 100 objections reviewed</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="obj-search-wrap animate-in-delay-1">
+        <span class="obj-search-icon">🔍</span>
+        <input type="text" id="obj-search" placeholder="Search objections... e.g. 'WhatsApp', 'price', 'busy'" />
+      </div>
+
+      <!-- Category tabs -->
+      <div class="cat-tabs animate-in-delay-1">
+        <button class="cat-tab active" onclick="filterCat('all')">All (100)</button>
+        <button class="cat-tab" onclick="filterCat('disinterest')">😐 Disinterest (20)</button>
+        <button class="cat-tab" onclick="filterCat('delay')">⏰ Delay & Stalling (18)</button>
+        <button class="cat-tab" onclick="filterCat('money')">💰 Money & Pricing (16)</button>
+        <button class="cat-tab" onclick="filterCat('existing')">📱 Already Have X (18)</button>
+        <button class="cat-tab" onclick="filterCat('trust')">🤔 Trust & Doubt (15)</button>
+        <button class="cat-tab" onclick="filterCat('gatekeeper')">🚪 Gatekeeper (13)</button>
+      </div>
+
+      <!-- Objections grid -->
+      <div class="obj-grid animate-in" id="obj-grid"></div>
+      <div class="no-results" id="no-results">No objections match your search. Try different keywords.</div>
+
+      <div class="divider" style="margin-top:32px;"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Demo Presentation →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="conversation.html" class="btn btn-ghost">← Conversation Flow</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+
+/* ── OBJECTION DATA ── */
+const OBJECTIONS = [
+
+  /* ══ DISINTEREST (20) ══ */
+  { id:1, cat:'disinterest', trigger:'\"We\'re not interested.\"',
+    wrong:'\"Okay, sorry to disturb you.\" [hangs up]',
+    correct:'\"I completely understand — most dealership owners say that before they see what I\'ve built. Can I ask just one quick question: how many WhatsApp messages does your team get daily asking what cars are available?\"',
+    why:'The first objection is almost always automatic — a reflex, not a real decision. A calm question re-engages them without pressure and pivots from the pitch to their pain.' },
+
+  { id:2, cat:'disinterest', trigger:'\"I don\'t need a website.\"',
+    wrong:'\"But sir, everyone needs a website in today\'s world!\"',
+    correct:'\"That\'s fair — and I\'m not here to convince you otherwise. I\'m just curious: when a customer searches Google at night for a car dealer in [City], do they find your dealership?\"',
+    why:'Arguing creates resistance. A genuine curiosity question makes them think without feeling pressured. The Google visibility angle is something they genuinely haven\'t considered.' },
+
+  { id:3, cat:'disinterest', trigger:'\"We already have everything we need.\"',
+    wrong:'\"Are you sure? Websites are very important these days.\"',
+    correct:'\"That\'s great to hear. Just out of curiosity — are you currently getting leads from outside your usual Instagram and WhatsApp audience? Like from Google searches or referrals that find you online?\"',
+    why:'\"Are you sure\" is condescending. A genuine question about Google leads opens a gap without challenging their statement directly.' },
+
+  { id:4, cat:'disinterest', trigger:'\"I\'m not the right person to talk to.\"',
+    wrong:'\"Oh okay, sorry.\" [hangs up]',
+    correct:'\"No problem at all — who would be the right person for decisions about the dealership\'s online presence? Is that the owner directly?\"',
+    why:'Never hang up without getting routed. Always ask for the decision-maker\'s name or contact. This objection is an opportunity, not a dead end.' },
+
+  { id:5, cat:'disinterest', trigger:'\"We don\'t do business over the phone.\"',
+    wrong:'\"Okay, I understand.\" [gives up]',
+    correct:'\"Absolutely, I respect that. I\'m not trying to close anything over the phone — I just want 15 minutes on a video call to show you something I built for your dealership. Would WhatsApp video work for you?\"',
+    why:'Reframe the call as a preview, not a sale. Offering WhatsApp video is familiar and low-friction for Nigerian business owners.' },
+
+  { id:6, cat:'disinterest', trigger:'\"We\'re managing fine without one.\"',
+    wrong:'\"But what about all the customers you\'re losing?\"',
+    correct:'\"That\'s good to hear. Quick question — does your team spend a lot of time answering the same WhatsApp questions daily? Like what cars you have, pricing, availability?\"',
+    why:'\"Managing fine\" doesn\'t mean they\'re happy. Pointing to their daily pain (repetitive WhatsApp messages) surfaces a real problem without making them defensive.' },
+
+  { id:7, cat:'disinterest', trigger:'\"This doesn\'t interest me.\"',
+    wrong:'\"But please just hear me out...\"',
+    correct:'\"Fair enough. Before I let you go — I built something specifically for your dealership. If I sent it to you on WhatsApp right now, would you be open to taking a look in your own time?\"',
+    why:'When they\'ve disengaged, pivot to low-commitment: just look at it. No call, no pressure. Seeing the demo often converts what words couldn\'t.' },
+
+  { id:8, cat:'disinterest', trigger:'\"We get a lot of calls like this.\"',
+    wrong:'\"I understand, but we\'re different!\"',
+    correct:'\"I bet you do — and I\'ll be quick. The difference is I actually built a website for your dealership already before calling. I\'m not pitching an idea — it exists. Can I show you in 15 minutes?\"',
+    why:'\"We\'re different\" is a cliché. Saying \"it already exists\" is concrete proof and immediately separates you from every other caller they\'ve dismissed.' },
+
+  { id:9, cat:'disinterest', trigger:'\"I\'m not interested in any services right now.\"',
+    wrong:'\"Okay no problem, goodbye.\"',
+    correct:'\"Understood completely. Would it be alright if I check back in a couple of months? Business needs change and I want to make sure the option is there when the timing is better.\"',
+    why:'Asking to check back in keeps the door open, ends the call gracefully, and often surprises them enough that they soften and reconsider.' },
+
+  { id:10, cat:'disinterest', trigger:'\"We prefer to focus on Instagram for now.\"',
+    wrong:'\"Instagram is not enough though.\"',
+    correct:'\"Instagram is great for awareness — you\'re right. The question is what happens when someone sees your post at 11pm and wants to browse all your inventory. Right now there\'s nowhere to send them. A website is what makes Instagram actually convert.\"',
+    why:'Don\'t fight their channel preference. Position the website as what makes their existing Instagram effort more effective — not a replacement.' },
+
+  { id:11, cat:'disinterest', trigger:'\"We use TikTok and it works well for us.\"',
+    wrong:'\"TikTok is not enough for a business.\"',
+    correct:'\"TikTok traffic is powerful — I\'ve seen Nigerian dealerships get thousands of views. The problem is all those viewers have nowhere to go after they watch. A website turns that TikTok traffic into actual enquiries you can follow up.\"',
+    why:'Same principle — amplify what they already do rather than criticise it. Ride the momentum of their existing strategy.' },
+
+  { id:12, cat:'disinterest', trigger:'\"My customers prefer WhatsApp.\"',
+    wrong:'\"No they don\'t, many people use websites.\"',
+    correct:'\"WhatsApp is perfect for closing deals — I agree. The website just handles the first step: letting customers browse and self-qualify before they message you. So the messages you get on WhatsApp are already warm and serious, not random enquiries.\"',
+    why:'Reframe the website as a WhatsApp upgrade, not a replacement. Now WhatsApp gets better leads, not fewer conversations.' },
+
+  { id:13, cat:'disinterest', trigger:'\"I don\'t believe websites work for car dealerships in Nigeria.\"',
+    wrong:'\"They do work, trust me!\"',
+    correct:'\"That\'s a fair concern. I built one for a dealership in [City] and within the first month they were getting structured enquiries from people who found them on Google. That\'s outside their usual Instagram audience entirely. I\'d love to show you what\'s possible.\"',
+    why:'Claim without evidence loses. Social proof — even from a different dealership — shifts belief. Concrete outcomes beat abstract arguments.' },
+
+  { id:14, cat:'disinterest', trigger:'\"Our business is referral-based, we don\'t need online presence.\"',
+    wrong:'\"Referrals dry up eventually.\"',
+    correct:'\"Referrals are the best leads — totally agree. But what happens when someone gets referred to you and Googles your name to check you out? Right now they may not find anything credible. A website makes every referral convert better.\"',
+    why:'Don\'t attack their model. Show how a website strengthens it. Referral businesses still need Google credibility.' },
+
+  { id:15, cat:'disinterest', trigger:'\"We\'re doing well enough.\"',
+    wrong:'\"But you could be doing much better!\"',
+    correct:'\"That\'s great to hear. When business is going well is actually the perfect time to build an online presence — so when you want to scale, the foundation is already there. I\'d love to show you what I put together.\"',
+    why:'\"You could do better\" feels like criticism. Framing the website as preparation for future growth is aspirational and non-threatening.' },
+
+  { id:16, cat:'disinterest', trigger:'\"We\'ve tried digital marketing before and it didn\'t work.\"',
+    wrong:'\"That was probably done wrong.\"',
+    correct:'\"I hear that a lot. Can I ask what you tried? Because there\'s a big difference between running ads and having a proper website that converts the traffic. What I\'m showing you is the foundation — not ads.\"',
+    why:'Don\'t dismiss their bad experience. Ask what they tried — it shows respect and helps you understand the gap. Then differentiate clearly.' },
+
+  { id:17, cat:'disinterest', trigger:'\"I don\'t see the value.\"',
+    wrong:'\"Let me explain all the features of a website...\"',
+    correct:'\"That\'s exactly why I want 15 minutes — not to explain features but to show you how a customer actually experiences your dealership with a website versus without one. That usually makes the value obvious immediately.\"',
+    why:'Features don\'t create value — outcomes do. Offer to show the customer journey experience rather than listing technical benefits.' },
+
+  { id:18, cat:'disinterest', trigger:'\"This is not a priority right now.\"',
+    wrong:'\"It should be a priority, sir.\"',
+    correct:'\"Completely fair. Can I ask what\'s the main focus right now for the dealership? I want to understand your situation better before I ask for your time.\"',
+    why:'Asking what IS a priority builds rapport and gives you information. It also sometimes reveals that the website connects to their actual priority.' },
+
+  { id:19, cat:'disinterest', trigger:'\"I don\'t trust online things.\"',
+    wrong:'\"But everyone is online now...\"',
+    correct:'\"I understand that — there\'s a lot of scam online. That\'s exactly why I want to show you the website I already built before asking for anything. You see it, you judge it, you decide. No payment, no contracts, nothing upfront.\"',
+    why:'Trust concerns require proof, not persuasion. Offering the demo at zero commitment directly addresses the trust issue.' },
+
+  { id:20, cat:'disinterest', trigger:'\"Just leave your number, I\'ll call you.\"',
+    wrong:'\"Okay, my number is...\" [waits and they never call]',
+    correct:'\"Of course — I\'ll send you a WhatsApp right now so you have my contact. And I\'ll follow up with you on [day] just to make sure you received it. Is morning or afternoon better?\"',
+    why:'\"I\'ll call you\" almost never happens. Take control gracefully by sending the WhatsApp immediately and setting the follow-up time yourself.' },
+
+  /* ══ DELAY & STALLING (18) ══ */
+  { id:21, cat:'delay', trigger:'\"Call me tomorrow.\"',
+    wrong:'\"Okay, I\'ll call tomorrow.\" [no specific time set]',
+    correct:'\"Of course — is morning or afternoon better tomorrow? I want to respect your schedule and not call at a bad time.\"',
+    why:'\"Call tomorrow\" without a time is a soft no. Locking in a specific window converts it into a real appointment.' },
+
+  { id:22, cat:'delay', trigger:'\"Call me next week.\"',
+    wrong:'\"Okay, I\'ll call next week.\"',
+    correct:'\"No problem at all. Is Monday or Wednesday better next week? And mornings or afternoons?\"',
+    why:'Same principle. Get specific. A vague \"next week\" never converts; a specific \"Wednesday morning\" does.' },
+
+  { id:23, cat:'delay', trigger:'\"Send me a message and I\'ll get back to you.\"',
+    wrong:'\"Okay, I\'ll send a message.\" [sends and waits forever]',
+    correct:'\"I\'ll send it right now — and I\'ll follow up on WhatsApp on [day] just to make sure you got it and had a chance to look. Does that work?\"',
+    why:'Sending without a follow-up plan is giving up. Lock in the follow-up time on the same call.' },
+
+  { id:24, cat:'delay', trigger:'\"I\'m in a meeting right now.\"',
+    wrong:'\"Sorry to bother you, I\'ll try again later.\"',
+    correct:'\"No problem at all — when does the meeting wrap up? I can call back in an hour, or is another time better today?\"',
+    why:'This is often true. Respect it and schedule the callback immediately while you\'re on the line. Don\'t just say \"I\'ll try later.\"' },
+
+  { id:25, cat:'delay', trigger:'\"I\'m busy right now.\"',
+    wrong:'\"Okay, I\'ll call back.\"',
+    correct:'\"I completely understand — I\'ll be very brief. Is this about the wrong time of day to reach you, or should I call back at a specific time? I don\'t want to keep catching you at a bad moment.\"',
+    why:'Shows respect for their time and tries to find the right window. Sometimes they\'ll give you 2 minutes right then if you acknowledge their busyness.' },
+
+  { id:26, cat:'delay', trigger:'\"We\'re renovating / relocating right now.\"',
+    wrong:'\"Oh okay, I\'ll call back someday.\"',
+    correct:'\"That\'s actually perfect timing — a new location is a great reason to launch a website so your customers always know where to find you. How long until you\'re settled in? I can have the website ready before then.\"',
+    why:'Turn their transition into an opportunity. A relocation or renovation is a natural moment to upgrade their online presence.' },
+
+  { id:27, cat:'delay', trigger:'\"We\'re about to travel.\"',
+    wrong:'\"Okay, call me when you\'re back.\"',
+    correct:'\"No problem — when do you get back? I can reach out the week after so you\'re settled in first. I\'ll drop you a WhatsApp reminder before then.\"',
+    why:'Set a specific return-date follow-up. The WhatsApp reminder is the anchor.' },
+
+  { id:28, cat:'delay', trigger:'\"This is not a good time of year.\"',
+    wrong:'\"When is a good time?\"',
+    correct:'\"I understand — what\'s making this period difficult? Is it slow season or something else? I ask because a website actually helps the most during slow periods by bringing in leads you wouldn\'t normally reach.\"',
+    why:'Asking why surfaces the real issue. Slow season is actually the perfect time to invest in something that builds long-term traffic.' },
+
+  { id:29, cat:'delay', trigger:'\"Talk to me in three months.\"',
+    wrong:'\"Okay, I\'ll try again in three months.\"',
+    correct:'\"Of course. I\'ll put a reminder to reach out in three months. Before I let you go — can I send you a WhatsApp with a link to the website so you can take a look in your own time? No pressure at all.\"',
+    why:'Three months is a long time. Sending the website link now means they might look at it before then. Plant the seed.' },
+
+  { id:30, cat:'delay', trigger:'\"I need to think about it.\"',
+    wrong:'\"Okay, take your time.\"',
+    correct:'\"Of course — what specifically would you need to think through? I want to make sure I give you any information you need before we get off the call.\"',
+    why:'\"Think about it\" is usually a hidden objection. Asking what specifically needs thinking often surfaces the real concern you can address right now.' },
+
+  { id:31, cat:'delay', trigger:'\"We\'re in the middle of something big right now.\"',
+    wrong:'\"Okay, I\'ll check back later.\"',
+    correct:'\"I understand — sounds like a busy period. This will actually take less than 15 minutes. But if now isn\'t right, when does the dust settle? I\'ll reach out then.\"',
+    why:'Offer the 15-minute demo as genuinely low-effort. If they still defer, lock in the specific period they mention.' },
+
+  { id:32, cat:'delay', trigger:'\"It\'s end of month, I\'m very busy.\"',
+    wrong:'\"Okay, I\'ll call in a few weeks.\"',
+    correct:'\"Totally understand — end of month is always hectic. I\'ll reach out the first week of next month when things calm down. Mornings or afternoons better for you generally?\"',
+    why:'Acknowledge the real reason and set the specific re-contact timing. First week of the month is a good slot — things have settled and they\'re planning ahead.' },
+
+  { id:33, cat:'delay', trigger:'\"We just launched something new and are focused on that.\"',
+    wrong:'\"Okay.\"',
+    correct:'\"Congratulations — what did you launch? A website would actually help amplify whatever you\'ve just put out. But I don\'t want to interrupt the momentum — when do you expect things to settle?\"',
+    why:'Show genuine interest in their launch. It builds rapport and positions the website as supportive of their new initiative, not competitive with it.' },
+
+  { id:34, cat:'delay', trigger:'\"I\'ll discuss with my partner / co-owner first.\"',
+    wrong:'\"Okay, let me know.\"',
+    correct:'\"That makes sense. Would it be easier if I joined a quick call with both of you? That way I can answer any questions directly and you don\'t have to relay everything. When do you both have 15 minutes?\"',
+    why:'Offering to present to both decision-makers cuts the relay game that kills most deals. Joint calls close much faster.' },
+
+  { id:35, cat:'delay', trigger:'\"Give me your number, my boss will call you.\"',
+    wrong:'\"Okay, my number is...\" [waits indefinitely]',
+    correct:'\"Of course — I\'ll send a WhatsApp right now. Could you also let your boss know I\'ll follow up directly in a couple of days? I don\'t want to miss them. What\'s a good time to reach them?\"',
+    why:'Don\'t just give your number and wait. Get the boss\'s preferred time and take control of the follow-up.' },
+
+  { id:36, cat:'delay', trigger:'\"We\'re waiting for funding before we invest in anything.\"',
+    wrong:'\"Okay, call me when you get the funding.\"',
+    correct:'\"That makes sense. The good news is the website itself is completely free to build — the only ongoing cost is hosting, which is minimal. You don\'t need to wait for funding to get this running.\"',
+    why:'Reframe: the free build removes the funding barrier entirely. The hosting retainer is small enough that it doesn\'t require investment-level decisions.' },
+
+  { id:37, cat:'delay', trigger:'\"I\'ll think about it and call you back.\"',
+    wrong:'\"Okay, I\'ll wait for your call.\"',
+    correct:'\"I appreciate that. I\'ll also follow up with you on WhatsApp on [day] — just so we don\'t miss each other. Is morning or afternoon better?\"',
+    why:'They will almost certainly not call back. Taking control of the follow-up is essential.' },
+
+  { id:38, cat:'delay', trigger:'\"We\'re about to close for the holidays.\"',
+    wrong:'\"Oh okay, I\'ll call after holidays.\"',
+    correct:'\"Perfect timing actually — the holiday period is when Nigerians shop for cars as gifts or use their bonuses. A website live before the holidays could catch that traffic. When do you close? I can have something ready before then.\"',
+    why:'Holidays are peak buying season in Nigeria. Reframe the timing as urgent rather than inconvenient.' },
+
+  /* ══ MONEY & PRICING (16) ══ */
+  { id:39, cat:'money', trigger:'\"How much does it cost?\"',
+    wrong:'\"It\'s ₦X per month for hosting and...\" [full price dump]',
+    correct:'\"That\'s a great question — and I\'ll walk you through that in detail on the call. The build itself is completely free. What comes after is flexible depending on what you need. Are mornings or afternoons better for you?\"',
+    why:'Giving price before they\'ve seen the value kills the deal. This is a buying signal — defer the cost to the demo where they can connect value to price.' },
+
+  { id:40, cat:'money', trigger:'\"We don\'t have budget for this.\"',
+    wrong:'\"It\'s not expensive at all, just ₦X per month!\"',
+    correct:'\"The website build itself is free — there\'s no upfront cost. The only ongoing expense is hosting, which is very reasonable. I\'d love to show you the website first so you can see what you\'re deciding on before any numbers come up.\"',
+    why:'\"No budget\" often means \"I don\'t see enough value yet.\" Emphasising free build removes the budget concern and gets them to the demo where value is established.' },
+
+  { id:41, cat:'money', trigger:'\"We\'re currently cutting costs.\"',
+    wrong:'\"Our pricing is very competitive though.\"',
+    correct:'\"I completely understand — and the website build is free, so there\'s no cost to see it. If it makes sense after the demo, we can discuss a very minimal hosting arrangement. Nothing to lose by looking.\"',
+    why:'Cost-cutting mode means they need to justify every expense. Zero upfront cost removes the barrier entirely.' },
+
+  { id:42, cat:'money', trigger:'\"What\'s the monthly fee?\"',
+    wrong:'\"₦X per month, but it\'s worth it because...\"',
+    correct:'\"I\'ll cover that in full on the demo call — it depends on what features you need. What I can tell you now is it\'s designed specifically for Nigerian dealerships, so it\'s priced to make sense for your business. When works for a 15-minute call?\"',
+    why:'Same principle — defer pricing until value is established. Never negotiate against yourself before the demo.' },
+
+  { id:43, cat:'money', trigger:'\"We\'ve been burnt by tech people before — paid and got nothing.\"',
+    wrong:'\"I\'m not like those people, I promise!\"',
+    correct:'\"That\'s completely understandable — and it\'s exactly why I build the website first, for free, before asking for anything. You see the finished product before any money is discussed. There\'s nothing to lose by looking at what I\'ve built.\"',
+    why:'Past bad experience requires proof of trustworthiness, not promises. \"See it first, pay nothing\" directly counters their fear.' },
+
+  { id:44, cat:'money', trigger:'\"Other people quoted us ₦X and it was too expensive.\"',
+    wrong:'\"We\'re cheaper than them.\"',
+    correct:'\"I understand. Did those quotes come with a finished website to review before paying? Because you\'ll see the full website before any money is even discussed with me. The build is free — we only talk numbers after you love what you see.\"',
+    why:'Don\'t compete on price. Compete on the risk-free model. They pay nothing until after they\'ve seen and decided they want it.' },
+
+  { id:45, cat:'money', trigger:'\"We can\'t afford ongoing monthly payments.\"',
+    wrong:'\"But it\'s only ₦X, that\'s nothing!\"',
+    correct:'\"I hear you. Let me show you the website first and we can figure out what makes financial sense for your dealership from there. It might be simpler than you think. When can we do 15 minutes?\"',
+    why:'Don\'t argue about price before they\'ve seen the product. Get them to the demo — value makes affordability a different conversation.' },
+
+  { id:46, cat:'money', trigger:'\"Is there a free trial?\"',
+    wrong:'\"No, we don\'t offer free trials.\"',
+    correct:'\"The build itself is completely free — you see the finished website before any payment discussion. That\'s better than a trial because you\'re seeing the real product built specifically for your dealership, not a generic template.\"',
+    why:'Reframe the free build as better than a trial. They get a customised finished product, not a generic demo.' },
+
+  { id:47, cat:'money', trigger:'\"Can you do it cheaper?\"',
+    wrong:'\"Okay, I can reduce it to ₦X.\"',
+    correct:'\"Let me show you the website first and we can find what works for your budget. I don\'t want to negotiate numbers before you\'ve seen what you\'re getting — that\'s not fair to either of us.\"',
+    why:'Never discount before the demo. You haven\'t established value yet, so discounting is just giving money away.' },
+
+  { id:48, cat:'money', trigger:'\"We\'ll build it ourselves.\"',
+    wrong:'\"Building websites is very complex.\"',
+    correct:'\"That\'s possible — and I respect that. Just know that what I\'ve built is already done and ready to show you. If you still want to go the DIY route after seeing it, no problem. But why not take a look at what\'s already there?\"',
+    why:'Don\'t argue. Let the finished demo do the work. Seeing a polished, customised website often makes DIY feel less appealing.' },
+
+  { id:49, cat:'money', trigger:'\"We have a friend who does websites for cheap.\"',
+    wrong:'\"Cheap websites are usually bad quality.\"',
+    correct:'\"That\'s great to have a connection. What I\'d say is — let me show you what I\'ve built specifically for your dealership. If it\'s better than what your friend would deliver, it\'s worth knowing. If not, you have your answer.\"',
+    why:'Don\'t attack the competitor. Let the demo compete on quality. Confidence in your product beats trash-talking.' },
+
+  { id:50, cat:'money', trigger:'\"I don\'t pay for things I haven\'t seen.\"',
+    wrong:'\"But you haven\'t paid anything yet...\"',
+    correct:'\"Exactly right — and you won\'t. That\'s my whole approach: I build the website first, show it to you, and we only discuss any arrangement after you\'ve seen it and decided you want it. When works for 15 minutes?\"',
+    why:'This is actually an easy objection — their condition aligns perfectly with your model. Reflect it back clearly.' },
+
+  { id:51, cat:'money', trigger:'\"What\'s in it for you? Why build it for free?\"',
+    wrong:'\"Don\'t worry about that.\"',
+    correct:'\"Fair question — I\'m building a portfolio of dealership websites in Nigeria and I need happy clients to reference. If you love the website, I\'d hope you\'d keep it running on our hosting plan. But that conversation only happens if you like what you see. Simple as that.\"',
+    why:'Transparency builds trust. Nigerians especially appreciate honesty about motivation. A clear honest answer removes suspicion.' },
+
+  { id:52, cat:'money', trigger:'\"The hosting fee sounds too much.\"',
+    wrong:'\"It\'s not that much when you think about it.\"',
+    correct:'\"I understand. Let me put it this way — if the website brings in even one extra car sale per month, it\'s paid for itself many times over. But let\'s talk about that after you\'ve seen it. When can we do a quick 15-minute call?\"',
+    why:'Connect the cost to ROI in car sales, not in abstract value. One Camry sale makes the hosting cost irrelevant.' },
+
+  { id:53, cat:'money', trigger:'\"We\'re not making enough profit right now to invest.\"',
+    wrong:'\"This will help you make more profit!\"',
+    correct:'\"I hear you — and that\'s actually a strong reason to look at this now. The website is free to build and helps you get more customers, which addresses the profit problem directly. Nothing to lose by seeing it.\"',
+    why:'Low profit is a reason TO see the website, not against it. The solution to not enough customers is more visibility. Frame it that way.' },
+
+  { id:54, cat:'money', trigger:'\"Do you have a payment plan?\"',
+    wrong:'\"We don\'t offer payment plans.\"',
+    correct:'\"Let me show you the website first — once you\'ve seen it we can discuss what works for your situation. I want to make sure it makes financial sense for your dealership before we even get to that conversation.\"',
+    why:'Again, defer to the demo. Payment plan conversations happen after value is established, not before.' },
+
+  /* ══ ALREADY HAVE X (18) ══ */
+  { id:55, cat:'existing', trigger:'\"We already use WhatsApp Business.\"',
+    wrong:'\"WhatsApp Business is not the same as a website.\"',
+    correct:'\"WhatsApp Business is great for conversations — and a website makes those conversations better. Instead of random \'what cars do you have\' messages, you get people who already browsed your inventory and know exactly what they want. Better quality leads, less work for your team.\"',
+    why:'Position the website as a WhatsApp upgrade. It feeds better leads into the system they already use and trust.' },
+
+  { id:56, cat:'existing', trigger:'\"We already have a Facebook page.\"',
+    wrong:'\"A Facebook page is not enough.\"',
+    correct:'\"Facebook is great for reaching your existing audience. But a website means customers who\'ve never heard of you can still find you through Google search. It\'s a completely different traffic source that a Facebook page can\'t give you.\"',
+    why:'Don\'t dismiss Facebook. Add a new benefit (Google traffic) that Facebook genuinely can\'t provide.' },
+
+  { id:57, cat:'existing', trigger:'\"We already have an Instagram page.\"',
+    wrong:'\"Instagram has limitations.\"',
+    correct:'\"Instagram is where a lot of your visibility comes from — I\'m not here to replace that. A website is what happens after someone sees your Instagram and wants to browse everything in one place without scrolling through weeks of posts.\"',
+    why:'Position the website as the logical next step after Instagram, not a competitor to it.' },
+
+  { id:58, cat:'existing', trigger:'\"We already have a website.\"',
+    wrong:'\"Okay, no problem.\" [gives up]',
+    correct:'\"That\'s great — can I ask, is it actively bringing you leads right now? Like, do customers find you through Google and submit enquiries? Because a lot of dealership websites are technically live but not actually working for the business.\"',
+    why:'Most existing dealership websites are outdated or not converting. A simple question reveals whether it\'s actually working.' },
+
+  { id:59, cat:'existing', trigger:'\"Our existing website is fine.\"',
+    wrong:'\"Are you sure? Websites need constant updates.\"',
+    correct:'\"That\'s good to hear. Is it showing up on Google when someone searches for a car dealer in your area? And do customers use it to browse inventory, or do they still mostly come through WhatsApp?\"',
+    why:'Two questions that reveal whether it\'s truly working. Most will admit Google visibility and inventory browsing are gaps.' },
+
+  { id:60, cat:'existing', trigger:'\"We have someone managing our social media.\"',
+    wrong:'\"Social media is not the same as a website.\"',
+    correct:'\"That\'s great — a website actually makes their job easier. Instead of reposting the same cars repeatedly, customers can always find the current inventory on the site. It reduces the content pressure on your social media manager.\"',
+    why:'Position the website as a benefit to someone they\'re already paying. Reduces social media workload is a practical advantage.' },
+
+  { id:61, cat:'existing', trigger:'\"We tried a website before and nobody used it.\"',
+    wrong:'\"That was probably a bad website.\"',
+    correct:'\"That\'s really common — and usually it\'s because the website wasn\'t connected to their marketing. Can I ask, did it have your inventory searchable? Was it linked from your Instagram and Facebook? Because a website only works when traffic is being directed to it.\"',
+    why:'Diagnose before dismissing. Usually the problem was no traffic strategy, not the website itself. Show you understand why it failed.' },
+
+  { id:62, cat:'existing', trigger:'\"We have a Jiji listing.\"',
+    wrong:'\"Jiji is not a website.\"',
+    correct:'\"Jiji is useful for individual car listings — but it doesn\'t give you a brand presence. A customer who sees your Jiji listing has no way to know you\'re a serious dealership with full inventory. A website is your credibility anchor.\"',
+    why:'Acknowledge the value of Jiji but highlight what it lacks: brand credibility and a permanent home for their full inventory.' },
+
+  { id:63, cat:'existing', trigger:'\"We advertise on Cars45 / Cheki.\"',
+    wrong:'\"Those platforms have limitations.\"',
+    correct:'\"Those platforms are good for exposure on their own marketplace. A website means you own the customer relationship directly — no middleman, no listing fees per car, and the customer contacts you directly. It\'s complementary, not competing.\"',
+    why:'Platform listings serve the platform. A website serves the dealership directly. Own vs rent is a compelling frame for business owners.' },
+
+  { id:64, cat:'existing', trigger:'\"We have a Google Business profile.\"',
+    wrong:'\"That\'s not the same as a website.\"',
+    correct:'\"That\'s a great start — Google Business is important. A website strengthens it significantly though. Google actually ranks businesses with websites much higher in local search. Your profile becomes more credible and visible when it links to a proper site.\"',
+    why:'Connect the website to improved Google ranking for their existing profile. Practical and verifiable.' },
+
+  { id:65, cat:'existing', trigger:'\"We use email marketing.\"',
+    wrong:'\"Email marketing is old fashioned.\"',
+    correct:'\"Email marketing is effective for your existing customers. A website helps you acquire new customers who\'ve never heard of you — it\'s a different job entirely. Both are valuable.\"',
+    why:'Don\'t compete with existing tools. Position each as doing a different job.' },
+
+  { id:66, cat:'existing', trigger:'\"We already work with a marketing agency.\"',
+    wrong:'\"We can do it cheaper.\"',
+    correct:'\"That\'s great — do they manage your website as well, or mainly social media and ads? Because a lot of agencies focus on content and ads but the website itself often gets neglected. I\'d love to show you what I built regardless.\"',
+    why:'Ask specifically what the agency covers. Most do social content, not websites. This often reveals a real gap.' },
+
+  { id:67, cat:'existing', trigger:'\"We just redid our Instagram page.\"',
+    wrong:'\"Instagram is not enough.\"',
+    correct:'\"That\'s good timing — now that your Instagram looks great, a website gives people somewhere to go after they see your content. Instagram creates the interest; the website captures the lead. Let me show you how they work together.\"',
+    why:'Use their recent Instagram investment as momentum. The website is the logical next step.' },
+
+  { id:68, cat:'existing', trigger:'\"Our daughter/nephew/staff manages everything.\"',
+    wrong:'\"You still need a professional.\"',
+    correct:'\"That\'s great to have someone in-house. A website actually makes their job more manageable — instead of answering the same questions on WhatsApp every day, customers self-serve on the site. I\'d love to show the website to both of you together.\"',
+    why:'Offer to include their in-house person. It reduces resistance and often the in-house person becomes a champion for the website.' },
+
+  { id:69, cat:'existing', trigger:'\"We use Shopify / Woocommerce already.\"',
+    wrong:'\"Those are for e-commerce, not dealerships.\"',
+    correct:'\"Those are solid platforms — but are they set up specifically for car dealership inventory: make, model, year, mileage, condition? What I built is designed specifically for how Nigerian buyers browse for cars. The experience is different. Let me show you.\"',
+    why:'General e-commerce platforms aren\'t optimised for car browsing behaviour. Specificity is your differentiator.' },
+
+  { id:70, cat:'existing', trigger:'\"We have a YouTube channel.\"',
+    wrong:'\"YouTube is not a website.\"',
+    correct:'\"YouTube is powerful for building trust through video. A website gives those viewers a place to browse inventory and enquire after they watch. Your YouTube channel would drive traffic to the site — they work perfectly together.\"',
+    why:'Position the website as the destination for their YouTube traffic. Complementary, not competitive.' },
+
+  { id:71, cat:'existing', trigger:'\"We already pay for Google Ads.\"',
+    wrong:'\"Google Ads are expensive.\"',
+    correct:'\"If you\'re running Google Ads and sending traffic to Instagram or WhatsApp, you\'re probably losing most of it. A website is what makes Google Ads actually convert — it\'s the landing page your ads need to be effective.\"',
+    why:'Google Ads without a proper landing page is wasted money. This reframes the website as what makes their existing ad spend work.' },
+
+  { id:72, cat:'existing', trigger:'\"We use a booking app for appointments.\"',
+    wrong:'\"A booking app is not a full website.\"',
+    correct:'\"That\'s a smart system for managing appointments. A website would sit in front of that — it\'s where customers discover you, browse inventory, and then book through your existing system. It feeds the top of your funnel.\"',
+    why:'Position the website as the discovery layer that feeds their existing systems, not a replacement.' },
+
+  /* ══ TRUST & DOUBT (15) ══ */
+  { id:73, cat:'trust', trigger:'\"How do I know this isn\'t a scam?\"',
+    wrong:'\"I\'m not a scammer, I promise!\"',
+    correct:'\"That\'s a completely fair question in Nigeria today. I\'m not asking for any money — just 15 minutes of your time to show you a website I already built for your dealership. You see it, you judge it. No payment, no contract, nothing. What do you have to lose?\"',
+    why:'In Nigeria\'s scam-aware environment, trust concerns must be met with zero-risk proof. Nothing upfront is the strongest trust signal.' },
+
+  { id:74, cat:'trust', trigger:'\"How long have you been doing this?\"',
+    wrong:'\"I\'m new but I\'m very good.\"',
+    correct:'\"I\'ve been building websites for Nigerian businesses for [X time] — I actually have a portfolio I can share on WhatsApp. But the best answer is to show you what I built for your dealership specifically. You\'ll be able to judge the quality yourself.\"',
+    why:'Redirect from tenure to evidence. Your portfolio and their actual demo speak louder than years of experience.' },
+
+  { id:75, cat:'trust', trigger:'\"Can I see your previous work?\"',
+    wrong:'\"I\'ll send links later.\"',
+    correct:'\"Absolutely — let me send you my portfolio on WhatsApp right now. And your dealership\'s website is also ready to view. You\'ll have both in the next 2 minutes.\"',
+    why:'Send immediately while you\'re on the call. Delay = lost interest. Speed of delivery signals confidence and professionalism.' },
+
+  { id:76, cat:'trust', trigger:'\"Do you have other dealership clients?\"',
+    wrong:'\"Not yet, but yours will be my first.\"',
+    correct:'\"I\'m actively building a portfolio of dealership websites in Nigeria — which is exactly why I\'m offering the build for free. You get a high-quality website at no upfront cost, and I get a strong portfolio reference. It\'s a genuinely good deal for both sides.\"',
+    why:'Honesty about being in portfolio-building mode is more credible than lying. Frame it as a mutual benefit.' },
+
+  { id:77, cat:'trust', trigger:'\"What happens if you disappear after I pay?\"',
+    wrong:'\"I would never do that!\"',
+    correct:'\"That\'s a reasonable concern. A few things: first, you see the finished website before any money changes hands. Second, hosting is month-to-month — if you\'re ever unhappy, you stop paying and that\'s it. No lock-in.\"',
+    why:'Month-to-month removes the disappearance risk. If they\'re not happy, they simply stop. The risk is minimal by design.' },
+
+  { id:78, cat:'trust', trigger:'\"Are you registered? Do you have a company?\"',
+    wrong:'\"I don\'t have registration yet but...\"',
+    correct:'\"StoreLift is my agency — I can share our details on WhatsApp. But honestly, the best proof of who I am is the website I\'ve already built for your dealership. Would you like to see it?\"',
+    why:'Pivot from credentials to proof. The website is the most credible calling card you have.' },
+
+  { id:79, cat:'trust', trigger:'\"How do I know the website will actually bring customers?\"',
+    wrong:'\"It definitely will, I guarantee it!\"',
+    correct:'\"I can\'t promise a specific number — no one honestly can. What I can tell you is that a properly built, Google-indexed website gives your dealership visibility it currently doesn\'t have. Right now, customers searching Google at night can\'t find you. That changes immediately with a website.\"',
+    why:'Overpromising destroys credibility. Honest, specific benefit (Google visibility) is more believable than a guarantee.' },
+
+  { id:80, cat:'trust', trigger:'\"Who gave you my number?\"',
+    wrong:'\"I got it from... erm...\"',
+    correct:'\"I found your dealership on Instagram and tracked down a contact number from your page. I hope that\'s okay — I genuinely came across your dealership and built something I thought you\'d find useful.\"',
+    why:'Be completely honest. Nigerian business owners respond well to transparency about how you found them, especially if the answer is Instagram research.' },
+
+  { id:81, cat:'trust', trigger:'\"I\'ve heard of people taking deposits and disappearing.\"',
+    wrong:'\"That\'s terrible, but I wouldn\'t do that.\"',
+    correct:'\"I completely understand that fear — it\'s common. My model is the opposite: I build the website completely first, show it to you, and we only discuss payment after you\'ve seen it and decided you want to keep it. There is no deposit to take.\"',
+    why:'The proof is in the process. No upfront payment means no deposit to run away with. Their concern disappears by design.' },
+
+  { id:82, cat:'trust', trigger:'\"Can I meet you in person before we proceed?\"',
+    wrong:'\"I don\'t do in-person meetings.\"',
+    correct:'\"Absolutely — I\'m happy to meet. Let me show you the website on a quick call first so we have something concrete to discuss when we meet. That way we use the meeting time well. When can we do 15 minutes?\"',
+    why:'Welcome the in-person request. Use the video demo to create investment before the meeting so it\'s a closing meeting, not a discovery meeting.' },
+
+  { id:83, cat:'trust', trigger:'\"I need to verify you\'re a real company first.\"',
+    wrong:'\"I\'ll send you my RC number.\"',
+    correct:'\"Of course — I\'ll send you our details on WhatsApp right now, including my portfolio. And you\'ll see the website I built for your dealership in the same message. Take your time to verify everything before we speak again.\"',
+    why:'Give them everything at once — company info AND the demo. Let them verify at their own pace. Speed and transparency signal legitimacy.' },
+
+  { id:84, cat:'trust', trigger:'\"My friend used a web designer and it was a disaster.\"',
+    wrong:'\"I\'m better than them, trust me.\"',
+    correct:'\"I hear that — what went wrong? Was it the quality, did they go silent after payment, or something else? I ask because I want to make sure I\'m addressing whatever concern you have directly.\"',
+    why:'Ask about the specific failure. Understanding their past experience lets you show exactly how your model is different.' },
+
+  { id:85, cat:'trust', trigger:'\"I\'ll believe it when I see it.\"',
+    wrong:'\"Okay, I understand your doubt.\"',
+    correct:'\"That\'s exactly the right attitude — and it\'s exactly why I want to show you. You don\'t have to believe anything I say. Just look at the website I built for your dealership and judge for yourself. When can we do 15 minutes?\"',
+    why:'This is actually an invitation to demo. Accept it directly and close for the appointment.' },
+
+  { id:86, cat:'trust', trigger:'\"How do I know you won\'t sell my information?\"',
+    wrong:'\"I would never do that!\"',
+    correct:'\"Your information stays entirely with me and is only used to build and manage your website. I\'m not a data company — I\'m a web designer. But I completely understand the concern given how common data issues are. I\'m happy to put anything we agree on in writing.\"',
+    why:'Offer written agreement if needed. Most won\'t require it, but the offer signals seriousness and trustworthiness.' },
+
+  { id:87, cat:'trust', trigger:'\"You sound too young to know what you\'re doing.\"',
+    wrong:'\"I\'m actually very experienced...\"',
+    correct:'\"Fair point — let the work speak for itself. I\'d rather you look at the website I built for your dealership and tell me if it looks professional. Would you be willing to do that?\"',
+    why:'Arguing about age is a losing battle. Redirect to the work. If the demo looks professional, the age concern disappears.' },
+
+  /* ══ GATEKEEPER (13) ══ */
+  { id:88, cat:'gatekeeper', trigger:'\"The owner is not available.\"',
+    wrong:'\"Okay, I\'ll try again later.\"',
+    correct:'\"No problem. When is the best time to reach them? And is there a direct number or WhatsApp I can use so I\'m not calling the main line repeatedly?\"',
+    why:'Always ask for a direct number before hanging up. This one question doubles your chances of actually reaching the owner.' },
+
+  { id:89, cat:'gatekeeper', trigger:'\"What company are you from?\"',
+    wrong:'\"StoreLift — we\'re a web design company that...\" [long explanation]',
+    correct:'\"StoreLift — I\'m a web developer. I built a website for the dealership and I want to show it to the owner. Is he/she available?\"',
+    why:'Brief and specific. Gatekeepers don\'t need a pitch — they need enough to route the call. Less is more.' },
+
+  { id:90, cat:'gatekeeper', trigger:'\"What is it about? The owner will ask me.\"',
+    wrong:'\"It\'s about our web design services...\" [pitch mode]',
+    correct:'\"I built a website specifically for this dealership — I just want to show it to the owner. It\'s a visual thing so it needs to go directly to whoever makes decisions. Could you let them know Elijah from StoreLift called?\"',
+    why:'Keep it brief and specific. \"I built a website for your dealership\" is intriguing enough to pass through without triggering the \"we don\'t need it\" filter.' },
+
+  { id:91, cat:'gatekeeper', trigger:'\"The owner is busy with a customer.\"',
+    wrong:'\"Okay, I\'ll call back.\"',
+    correct:'\"Of course — I don\'t want to interrupt a customer. When do you expect them to be free? I can call back then, or would WhatsApp be better so they can respond when they have a moment?\"',
+    why:'Giving them the WhatsApp option means you might reach the owner asynchronously — often more effective than callback timing.' },
+
+  { id:92, cat:'gatekeeper', trigger:'\"He doesn\'t take calls from people he doesn\'t know.\"',
+    wrong:'\"Please, just let me speak to him for 2 minutes.\"',
+    correct:'\"I completely understand. Could you do me a favour — let him know Elijah from StoreLift built a website for the dealership and wants to show him? If he\'d like to see it he can WhatsApp me at this number. If not, no problem at all.\"',
+    why:'If direct access is blocked, plant a message and make it easy for the owner to reach you on their own terms. Low pressure, high intrigue.' },
+
+  { id:93, cat:'gatekeeper', trigger:'\"We receive too many calls like this.\"',
+    wrong:'\"I\'m different though!\"',
+    correct:'\"I understand — and I\'ll be quick. The difference is I\'ve already built a website for the dealership. I\'m not pitching an idea — there\'s something real to see. Could you pass that message to the owner? Elijah from StoreLift built a website for them.\"',
+    why:'The built-it-already hook differentiates you from every other caller without requiring a long explanation.' },
+
+  { id:94, cat:'gatekeeper', trigger:'\"You\'ll have to send an email.\"',
+    wrong:'\"Okay, what\'s the email address?\"',
+    correct:'\"I can do that. What\'s the email address? And while I have you — could you let them know to expect it? I find emails get missed sometimes. Also, is WhatsApp an option? That tends to get seen faster.\"',
+    why:'Get the email AND suggest WhatsApp. WhatsApp is far more likely to be seen promptly in Nigerian business culture.' },
+
+  { id:95, cat:'gatekeeper', trigger:'\"The owner is not interested in websites.\"',
+    wrong:'\"But you haven\'t even asked him!\"',
+    correct:'\"I appreciate you looking out for their time. Could you let them know I built something specifically for your dealership — not a pitch, an actual website — and ask if they\'d be open to a quick look? The decision is theirs to make directly.\"',
+    why:'Politely challenge the gatekeeper\'s assumption without confrontation. The owner should make their own decision after seeing what\'s built.' },
+
+  { id:96, cat:'gatekeeper', trigger:'\"We don\'t accept unsolicited calls.\"',
+    wrong:'\"Okay, sorry.\" [hangs up]',
+    correct:'\"I completely respect that policy. Could I leave my WhatsApp number with you to pass to the owner? I built a website for the dealership and I\'d just love for them to see it — even if they decide they\'re not interested after looking.\"',
+    why:'Respect the policy, stay in the game. A message with a specific hook (built a website for you) can still reach the owner.' },
+
+  { id:97, cat:'gatekeeper', trigger:'\"The manager handles all vendor relationships.\"',
+    wrong:'\"Okay, let me speak to the manager then.\"',
+    correct:'\"That makes sense. Is the manager available? I\'d love to show them what I\'ve built — it\'s specifically about the dealership\'s online presence so they\'d be the right person.\"',
+    why:'Accept the redirect gracefully and immediately ask to be connected. The manager may also be a useful ally.' },
+
+  { id:98, cat:'gatekeeper', trigger:'\"Leave your number and someone will get back to you.\"',
+    wrong:'\"Okay, my number is...\" [waits forever]',
+    correct:'\"Of course — I\'ll send a WhatsApp right now so it\'s easier. And could you let them know to expect a message from Elijah at StoreLift? I built a website for the dealership and just need 15 minutes of their time to show it.\"',
+    why:'Send the WhatsApp immediately and give the gatekeeper a specific message to relay. Passive waiting almost never works.' },
+
+  { id:99, cat:'gatekeeper', trigger:'\"We\'re not taking any new vendors.\"',
+    wrong:'\"I\'m not a vendor, I\'m a web designer!\"',
+    correct:'\"Understood — I\'m not looking to be a regular vendor. I just built a website for the dealership and want to show the owner. It\'s a one-time thing to look at — no contracts, no commitment. Could you pass that message to them?\"',
+    why:'Clarify you\'re not pitching a vendor relationship. A one-time look at a finished product is a much lower barrier.' },
+
+  { id:100, cat:'gatekeeper', trigger:'\"I can\'t give out the owner\'s personal number.\"',
+    wrong:'\"Please, just give me the number.\"',
+    correct:'\"I completely understand — that\'s your job to protect. Could you do me one favour: let the owner know Elijah from StoreLift called and built a website for the dealership. If they\'d like to see it, my WhatsApp is [number]. I\'ll also send a message to this line now.\"',
+    why:'Respect their gatekeeping role. Give your number through them and send the WhatsApp to the main line. Cover both channels without pressuring them.' },
+
+];
+
+/* ── RENDER ── */
+let openedSet = new Set();
+let currentCat = 'all';
+let currentSearch = '';
+
+function catClass(cat) {
+  return 'cat-' + cat;
+}
+
+function renderObjCards(filtered) {
+  const grid = document.getElementById('obj-grid');
+  const noResults = document.getElementById('no-results');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    noResults.style.display = 'block';
+    document.getElementById('visible-count').textContent = 0;
+    return;
+  }
+  noResults.style.display = 'none';
+  document.getElementById('visible-count').textContent = filtered.length;
+
+  grid.innerHTML = filtered.map(o => `
+    <div class="obj-card ${openedSet.has(o.id) ? 'open' : ''}" id="ocard-${o.id}" onclick="toggleObj(${o.id})">
+      <div class="obj-card-header">
+        <span class="obj-num">#${String(o.id).padStart(2,'0')}</span>
+        <span class="obj-trigger-text">${o.trigger}</span>
+        <span class="obj-cat-badge ${catClass(o.cat)}">${catLabel(o.cat)}</span>
+        <span class="obj-toggle">⌄</span>
+      </div>
+      <div class="obj-body">
+        <div class="obj-body-inner">
+          <div class="obj-section">
+            <div class="obj-section-label label-wrong">✗ Wrong response</div>
+            <div class="response-wrong">${o.wrong}</div>
+          </div>
+          <div class="obj-section">
+            <div class="obj-section-label label-correct">✓ Correct response</div>
+            <div class="correct-wrap">
+              <div class="response-correct" id="resp-${o.id}">${o.correct}</div>
+              <button class="copy-btn correct-copy" onclick="event.stopPropagation();copyResp(${o.id})">⎘ Copy</button>
+            </div>
+          </div>
+          <div class="obj-section">
+            <div class="obj-section-label label-why">🧠 Why it works</div>
+            <div class="response-why">${o.why}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function catLabel(cat) {
+  const labels = { disinterest:'Disinterest', delay:'Delay', money:'Money', existing:'Has X', trust:'Trust', gatekeeper:'Gatekeeper' };
+  return labels[cat] || cat;
+}
+
+function toggleObj(id) {
+  const card = document.getElementById('ocard-' + id);
+  const isOpen = card.classList.contains('open');
+  card.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    openedSet.add(id);
+  } else {
+    openedSet.delete(id);
+  }
+  updateProgress();
+}
+
+function copyResp(id) {
+  const el = document.getElementById('resp-' + id);
+  navigator.clipboard.writeText(el.innerText.trim()).then(() => showToast('Response copied!'));
+}
+
+function updateProgress() {
+  const pct = Math.round((openedSet.size / OBJECTIONS.length) * 100);
+  document.getElementById('module-progress-fill').style.width = pct + '%';
+  document.getElementById('section-count').textContent = `${openedSet.size} of ${OBJECTIONS.length} objections reviewed`;
+  document.getElementById('opened-count').textContent = openedSet.size;
+  setModuleProgress('objections', pct);
+}
+
+function filterCat(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  applyFilters();
+}
+
+function applyFilters() {
+  let filtered = OBJECTIONS;
+  if (currentCat !== 'all') filtered = filtered.filter(o => o.cat === currentCat);
+  if (currentSearch) {
+    const q = currentSearch.toLowerCase();
+    filtered = filtered.filter(o =>
+      o.trigger.toLowerCase().includes(q) ||
+      o.correct.toLowerCase().includes(q) ||
+      o.wrong.toLowerCase().includes(q) ||
+      o.why.toLowerCase().includes(q)
+    );
+  }
+  renderObjCards(filtered);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('objections');
+  renderObjCards(OBJECTIONS);
+
+  document.getElementById('obj-search').addEventListener('input', e => {
+    currentSearch = e.target.value.trim();
+    applyFilters();
+  });
+
+  const saved = getModuleProgress('objections');
+  if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+});
+
+function completeAndNext() {
+  markModuleComplete('objections');
+  showToast('Module 6 complete! Moving to Demo Presentation...');
+  setTimeout(() => location.href = 'demo.html', 1200);
+}
+</script>
+</body>
+</html>

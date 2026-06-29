@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nigerian Car Dealerships · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    /* Hero */
+    .dealer-hero {
+      background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.06));
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dealer-hero::after {
+      content: '🚗';
+      position: absolute;
+      right: 28px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.15;
+    }
+
+    /* Platform cards */
+    .platform-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .platform-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+    .platform-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .platform-card.instagram::before { background: linear-gradient(90deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888); }
+    .platform-card.facebook::before  { background: #1877f2; }
+    .platform-card.tiktok::before    { background: linear-gradient(90deg,#010101,#69c9d0,#ee1d52); }
+    .platform-card.whatsapp::before  { background: linear-gradient(90deg,#25d366,#128c7e); }
+
+    .platform-icon { font-size: 28px; margin-bottom: 10px; display: block; }
+    .platform-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .platform-usage {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-bottom: 12px;
+    }
+    .platform-problem {
+      font-size: 12px;
+      color: #fcd34d;
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.15);
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+      line-height: 1.5;
+    }
+    .platform-problem::before { content: '⚠ '; }
+
+    /* Pain points */
+    .pain-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-left: 3px solid #ef4444;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      margin-bottom: 10px;
+      transition: all var(--transition);
+    }
+    .pain-card:hover { background: var(--bg-card-hover); }
+    .pain-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .pain-emoji { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .pain-title { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+    .pain-scene {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      font-style: italic;
+      background: rgba(239,68,68,0.04);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .pain-reality {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Solution mapping */
+    .solution-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .solution-problem {
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .solution-arrow {
+      font-size: 20px;
+      color: var(--text-muted);
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .solution-fix {
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.15);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .solution-fix strong { color: #86efac; font-weight: 600; }
+
+    /* Customer journey */
+    .journey-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .journey-step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 19px;
+      top: 44px;
+      bottom: -8px;
+      width: 2px;
+      background: var(--border);
+    }
+    .journey-num {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 800;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .journey-num.old { background: rgba(239,68,68,0.15); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+    .journey-num.new { background: rgba(34,197,94,0.15); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+    .journey-content { flex: 1; padding-top: 6px; }
+    .journey-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+    .journey-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.55; }
+
+    /* Objection preview */
+    .objection-preview {
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+    .objection-preview-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .obj-preview-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(99,102,241,0.1);
+      font-size: 13px;
+    }
+    .obj-preview-item:last-child { border-bottom: none; }
+    .obj-preview-q { color: var(--text-muted); flex-shrink: 0; }
+    .obj-preview-a { color: var(--text-secondary); line-height: 1.5; }
+
+    /* Stats callouts */
+    .stat-callout {
+      text-align: center;
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .stat-callout-num {
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: var(--brand-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    .stat-callout-label { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* Knowledge quiz */
+    .quiz-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+    .quiz-question {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+    .quiz-options { display: flex; flex-direction: column; gap: 8px; }
+    .quiz-option {
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: left;
+    }
+    .quiz-option:hover { background: var(--bg-card-hover); color: var(--text-primary); border-color: var(--border-strong); }
+    .quiz-option.correct { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: #86efac; }
+    .quiz-option.wrong   { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #fca5a5; }
+    .quiz-feedback {
+      margin-top: 12px;
+      font-size: 13px;
+      line-height: 1.6;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      display: none;
+    }
+    .quiz-feedback.show { display: block; }
+    .quiz-feedback.correct { background: rgba(34,197,94,0.08); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+    .quiz-feedback.wrong   { background: rgba(239,68,68,0.08); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+    .quiz-next { margin-top: 12px; display: none; }
+    .quiz-next.show { display: flex; }
+
+    @media (max-width: 640px) {
+      .solution-row { grid-template-columns: 1fr; }
+      .solution-arrow { transform: rotate(90deg); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay"></div>
+
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 3 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Nigerian Car Dealerships</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Hero -->
+      <div class="dealer-hero animate-in">
+        <div class="page-eyebrow">🚗 Module 3</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Understanding Nigerian Car Dealerships</h1>
+        <p class="page-subtitle" style="max-width:560px;">Before you can sell to someone, you need to understand their world better than they do. This module makes you the expert on exactly how Nigerian dealerships operate — their pain, their habits, and why they desperately need what you're building.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 3 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">0 of 5 sections read</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- ─── MARKET STATS ─── -->
+      <div class="animate-in-delay-1" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">📊 The Market Opportunity</div>
+        <div class="section-desc" style="margin-bottom:20px;">Know the numbers. These are the reasons StoreLift exists.</div>
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div class="stat-callout">
+            <div class="stat-callout-num">95%</div>
+            <div class="stat-callout-label">of Nigerian car dealerships have no website — they rely entirely on social media and referrals</div>
+          </div>
+          <div class="stat-callout">
+            <div class="stat-callout-num">200M+</div>
+            <div class="stat-callout-label">Nigerians, with a growing middle class actively searching for cars online every day</div>
+          </div>
+          <div class="stat-callout">
+            <div class="stat-callout-num">₦0</div>
+            <div class="stat-callout-label">is what most dealerships spend on their online presence beyond Instagram — your competition is almost non-existent</div>
+          </div>
+        </div>
+        <div class="script-block">
+          <span class="script-label">Why this matters for your calls</span>
+          When a dealership owner says "we don't need a website," they're not making an informed decision. They've simply never been shown what one would do for their business. Your job is not to convince them — it's to educate them. Once they see the demo, they'll convince themselves.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 1: HOW THEY GET CUSTOMERS ─── -->
+      <div data-section="1" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">📱 How Nigerian Dealerships Currently Get Customers</div>
+        <div class="section-desc" style="margin-bottom:20px;">Every platform they use has a critical weakness. Learn these — they're the foundation of your pitch.</div>
+
+        <div class="grid-2" style="gap:14px;">
+
+          <div class="platform-card instagram">
+            <span class="platform-icon">📸</span>
+            <div class="platform-name">Instagram</div>
+            <div class="platform-usage">Their primary marketing channel. They post photos of available cars, prices in captions, and direct all interested buyers to WhatsApp DMs. Some run paid ads that link directly to their IG profile.</div>
+            <div class="platform-problem">Posts disappear in feeds within hours. Old inventory posts are buried. No searchable catalogue. Customers have to scroll through weeks of posts to find a specific car. No pricing structure.</div>
+          </div>
+
+          <div class="platform-card facebook">
+            <span class="platform-icon">👥</span>
+            <div class="platform-name">Facebook</div>
+            <div class="platform-usage">Used for Facebook Marketplace listings and Facebook Business Pages. Some post in large car-buying groups like "Cars for Sale in Lagos." Older demographic of buyers use Facebook more than Instagram.</div>
+            <div class="platform-problem">Facebook Marketplace listings expire. Group posts get buried quickly. No brand consistency — each post looks different. Customers can't compare inventory in one place.</div>
+          </div>
+
+          <div class="platform-card tiktok">
+            <span class="platform-icon">🎵</span>
+            <div class="platform-name">TikTok</div>
+            <div class="platform-usage">A growing number of dealerships post car walkthrough videos on TikTok to reach younger buyers. Some have gotten viral videos with hundreds of thousands of views driving inquiries.</div>
+            <div class="platform-problem">Viral reach is unpredictable — they can't rely on it. Even when a video goes viral, all interested buyers are still directed to WhatsApp DMs with no organised follow-up system.</div>
+          </div>
+
+          <div class="platform-card whatsapp">
+            <span class="platform-icon">💬</span>
+            <div class="platform-name">WhatsApp</div>
+            <div class="platform-usage">The final destination for almost every lead. Customers DM to ask about prices, availability, and specs. Many dealerships use WhatsApp Business with a catalogue feature, but it's manual and limited.</div>
+            <div class="platform-problem">Every single inquiry requires manual response. The same questions are answered 20 times a day. No way to show full inventory at once. Conversations get lost. Follow-ups fall through the cracks.</div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 2: THEIR FRUSTRATIONS ─── -->
+      <div data-section="2" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">😤 Their Real Frustrations — The Pain You're Solving</div>
+        <div class="section-desc" style="margin-bottom:20px;">These are not assumptions. These are the daily realities of running a Nigerian car dealership on social media alone. When you speak these out loud on a call, they'll feel heard.</div>
+
+        <div class="pain-card">
+          <div class="pain-header">
+            <span class="pain-emoji">🔁</span>
+            <div class="pain-title">Answering the same questions every single day</div>
+          </div>
+          <div class="pain-scene">"Oga, what cars do you have?" "Do you have Camry?" "What is the price of the Highlander?" "Is the 2019 Venza still available?" — these messages come in all day, every day, on WhatsApp, Instagram DMs, and Facebook.</div>
+          <div class="pain-reality">The sales team spends hours answering these manually. It's exhausting and pulls them away from actually closing deals. A website with a searchable inventory solves this completely.</div>
+        </div>
+
+        <div class="pain-card">
+          <div class="pain-header">
+            <span class="pain-emoji">🕳️</span>
+            <div class="pain-title">Old posts disappearing — inventory is invisible</div>
+          </div>
+          <div class="pain-scene">They posted a 2020 Toyota Corolla three weeks ago. It's still available. But the post is buried under 40 newer posts and nobody can find it. They have to keep reposting the same cars or customers never see them.</div>
+          <div class="pain-reality">A website keeps every car permanently visible and searchable. Customers find exactly what they're looking for without the dealership doing anything extra.</div>
+        </div>
+
+        <div class="pain-card">
+          <div class="pain-header">
+            <span class="pain-emoji">🤷</span>
+            <div class="pain-title">Customers can't compare vehicles on their own</div>
+          </div>
+          <div class="pain-scene">A customer is deciding between a 2018 Camry and a 2019 Accord. On Instagram, they have to scroll through random posts trying to find both, often giving up and going somewhere else. The dealership loses the sale and never knows why.</div>
+          <div class="pain-reality">A website lets customers filter by make, model, year, and price — and compare side by side. Buyers who can compare easily convert at much higher rates.</div>
+        </div>
+
+        <div class="pain-card">
+          <div class="pain-header">
+            <span class="pain-emoji">💸</span>
+            <div class="pain-title">Paying for ads that lead to WhatsApp chaos</div>
+          </div>
+          <div class="pain-scene">They spend ₦50,000–₦200,000 on Instagram or Facebook ads per month. The ads drive traffic to their profile or WhatsApp. Hundreds of people inquire. The team can't keep up. Leads go cold. The ad spend is wasted.</div>
+          <div class="pain-reality">A website turns ad traffic into structured leads — contact forms, enquiry submissions, and car-specific interest forms that the team can work through systematically. Every naira spent on ads works harder.</div>
+        </div>
+
+        <div class="pain-card">
+          <div class="pain-header">
+            <span class="pain-emoji">🌙</span>
+            <div class="pain-title">Missing customers who search at night</div>
+          </div>
+          <div class="pain-scene">At 11pm, someone in Abuja is searching Google for "used Toyota Camry Lagos." The dealership has a perfectly matching car. But there's no website. The customer finds a competitor and buys from them the next day.</div>
+          <div class="pain-reality">A website works 24/7. It captures leads even when the team is asleep. A well-structured contact form or WhatsApp link on a website converts late-night browsers into morning enquiries.</div>
+        </div>
+
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 3: HOW WEBSITES SOLVE IT ─── -->
+      <div data-section="3" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">✅ How a Website Solves Every Problem</div>
+        <div class="section-desc" style="margin-bottom:20px;">This is your value proposition mapped directly to their pain. Know this table by heart.</div>
+
+        <div class="solution-row">
+          <div class="solution-problem">📩 Same WhatsApp questions answered 20× a day</div>
+          <div class="solution-arrow">→</div>
+          <div class="solution-fix"><strong>FAQ page + searchable inventory</strong> answers the questions automatically before customers even reach out</div>
+        </div>
+        <div class="solution-row">
+          <div class="solution-problem">🕳️ Old inventory posts buried and invisible</div>
+          <div class="solution-arrow">→</div>
+          <div class="solution-fix"><strong>Permanent inventory page</strong> keeps every car visible, filterable, and findable at any time</div>
+        </div>
+        <div class="solution-row">
+          <div class="solution-problem">🤷 Customers can't compare cars easily</div>
+          <div class="solution-arrow">→</div>
+          <div class="solution-fix"><strong>Filter and browse system</strong> lets buyers sort by brand, model, year, and price on their own — no staff needed</div>
+        </div>
+        <div class="solution-row">
+          <div class="solution-problem">💸 Ad spend going to WhatsApp with no structure</div>
+          <div class="solution-arrow">→</div>
+          <div class="solution-fix"><strong>Landing page + enquiry forms</strong> convert ad traffic into organised leads the team can follow up systematically</div>
+        </div>
+        <div class="solution-row">
+          <div class="solution-problem">🌙 Missing customers who search at night</div>
+          <div class="solution-arrow">→</div>
+          <div class="solution-fix"><strong>Google-indexed website</strong> captures search traffic 24/7 — dealership gets leads even while sleeping</div>
+        </div>
+        <div class="solution-row">
+          <div class="solution-problem">😤 No professional online presence vs competitors</div>
+          <div class="solution-arrow">→</div>
+          <div class="solution-fix"><strong>Professional brand identity</strong> builds trust before the customer even makes contact — increases conversion rate</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 4: THE CUSTOMER JOURNEY ─── -->
+      <div data-section="4" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">🛤️ The Customer Journey: Before & After a Website</div>
+        <div class="section-desc" style="margin-bottom:20px;">Walk through this in your head before every demo call. This is the story you're telling the dealership owner.</div>
+
+        <div class="grid-2" style="gap:32px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">❌ Without a website</div>
+            <div class="journey-step">
+              <div class="journey-num old">1</div>
+              <div class="journey-content">
+                <div class="journey-title">Customer sees an Instagram ad</div>
+                <div class="journey-desc">Clicks through to the dealership's IG profile. Starts scrolling through posts trying to find the car they want.</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-num old">2</div>
+              <div class="journey-content">
+                <div class="journey-title">Can't find what they need</div>
+                <div class="journey-desc">After 5 minutes of scrolling, they give up or send a DM asking "do you have Camry?" Staff has to reply manually.</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-num old">3</div>
+              <div class="journey-content">
+                <div class="journey-title">WhatsApp inquiry — no structure</div>
+                <div class="journey-desc">Staff sends photos one by one. Customer asks about price, they respond. Customer goes quiet. No follow-up system.</div>
+              </div>
+            </div>
+            <div class="journey-step" style="margin-bottom:0;">
+              <div class="journey-num old">4</div>
+              <div class="journey-content">
+                <div class="journey-title">Deal lost — nobody knows why</div>
+                <div class="journey-desc">Customer bought from a competitor who had a proper website where they could browse and compare independently.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:13px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">✅ With a StoreLift website</div>
+            <div class="journey-step">
+              <div class="journey-num new">1</div>
+              <div class="journey-content">
+                <div class="journey-title">Customer sees the Instagram ad</div>
+                <div class="journey-desc">Clicks through to a professional website — immediately sees a full inventory of cars, neatly organised.</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-num new">2</div>
+              <div class="journey-content">
+                <div class="journey-title">Browses and finds the car</div>
+                <div class="journey-desc">Filters by Toyota. Finds a 2020 Camry. Sees full specs, photos, and price. Compares it with a 2019 Accord. Makes a decision independently.</div>
+              </div>
+            </div>
+            <div class="journey-step">
+              <div class="journey-num new">3</div>
+              <div class="journey-content">
+                <div class="journey-title">Submits an enquiry — organised lead</div>
+                <div class="journey-desc">Clicks "Enquire on this car." Fills a simple form. The dealership receives a structured lead with the exact car and customer contact.</div>
+              </div>
+            </div>
+            <div class="journey-step" style="margin-bottom:0;">
+              <div class="journey-num new">4</div>
+              <div class="journey-content">
+                <div class="journey-title">Staff calls a warm, qualified lead</div>
+                <div class="journey-desc">The customer already knows the car, the price, and has shown intent. The close is 10× easier. Deal is done.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 5: WHAT TO SAY ON THE CALL ─── -->
+      <div data-section="5" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">📞 Using This Knowledge on the Call</div>
+        <div class="section-desc" style="margin-bottom:20px;">How to translate everything you've learned into specific language that resonates with dealership owners.</div>
+
+        <div class="grid-2" style="gap:16px;margin-bottom:20px;">
+          <div>
+            <div class="script-block" style="margin-bottom:12px;">
+              <span class="script-label">Opening — mention something specific</span>
+              "I was on your Instagram page this morning and I saw the 2020 Highlander you posted last week — really nice unit. But I noticed someone in the comments was asking for the price and nobody had replied yet. I think you're losing customers right there."
+            </div>
+            <div class="script-block">
+              <span class="script-label">Pain identification</span>
+              "Can I ask — how many WhatsApp messages do you get daily asking about which cars you have available? Because I'm guessing that's taking up a lot of your team's time."
+            </div>
+          </div>
+          <div>
+            <div class="script-block" style="margin-bottom:12px;">
+              <span class="script-label">Creating curiosity</span>
+              "I actually built something for your dealership already — a full website where all your cars are listed, people can filter by make and model, and anyone interested clicks a button that sends you their details directly. I just want to show it to you for 15 minutes."
+            </div>
+            <div class="script-block">
+              <span class="script-label">If they say "we use WhatsApp fine"</span>
+              "I understand — and WhatsApp is great for conversation. But what happens to the customer who's searching Google at 11pm for a used Corolla in Lagos? Right now, your dealership doesn't exist for that person. A website changes that."
+            </div>
+          </div>
+        </div>
+
+        <!-- Knowledge check quiz -->
+        <div style="margin-bottom:4px;font-size:14px;font-weight:600;color:var(--text-primary);">🎯 Knowledge Check</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:16px;">Test what you've absorbed. Answer each question before moving on.</div>
+
+        <div style="display:flex;flex-direction:column;gap:16px;" id="quiz-container">
+
+          <!-- Q1 -->
+          <div class="quiz-card" id="q1">
+            <div class="quiz-question">A dealership owner says "We already use Instagram and it's working fine." What's the real underlying problem they haven't identified?</div>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="answer('q1','a','wrong')">A. They don't understand what a website is</button>
+              <button class="quiz-option" onclick="answer('q1','b','correct')">B. Their inventory is invisible to customers searching Google, and old posts disappear from feeds — they're losing customers they never even know about</button>
+              <button class="quiz-option" onclick="answer('q1','c','wrong')">C. They don't have enough followers</button>
+              <button class="quiz-option" onclick="answer('q1','d','wrong')">D. Their prices are too high</button>
+            </div>
+            <div class="quiz-feedback" id="q1-feedback"></div>
+            <div class="quiz-next" id="q1-next">
+              <button class="btn btn-ghost btn-sm" onclick="scrollToQ('q2')">Next question →</button>
+            </div>
+          </div>
+
+          <!-- Q2 -->
+          <div class="quiz-card" id="q2">
+            <div class="quiz-question">A dealership spends ₦100,000 on Instagram ads every month. All the traffic goes to their WhatsApp. What's the biggest problem with this?</div>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="answer('q2','a','wrong')">A. ₦100,000 is too much to spend on ads</button>
+              <button class="quiz-option" onclick="answer('q2','b','wrong')">B. Instagram ads don't work in Nigeria</button>
+              <button class="quiz-option" onclick="answer('q2','c','correct')">C. Hundreds of leads flood WhatsApp with no structure — staff can't keep up, leads go cold, and the ad spend is mostly wasted</button>
+              <button class="quiz-option" onclick="answer('q2','d','wrong')">D. They should use Facebook instead</button>
+            </div>
+            <div class="quiz-feedback" id="q2-feedback"></div>
+            <div class="quiz-next" id="q2-next">
+              <button class="btn btn-ghost btn-sm" onclick="scrollToQ('q3')">Next question →</button>
+            </div>
+          </div>
+
+          <!-- Q3 -->
+          <div class="quiz-card" id="q3">
+            <div class="quiz-question">Which is the most powerful benefit of a website to mention to a Nigerian dealership owner who runs Facebook ads?</div>
+            <div class="quiz-options">
+              <button class="quiz-option" onclick="answer('q3','a','wrong')">A. "Your website will look very professional"</button>
+              <button class="quiz-option" onclick="answer('q3','b','correct')">B. "Every naira you spend on ads will work harder because leads go to a structured page instead of getting lost in WhatsApp"</button>
+              <button class="quiz-option" onclick="answer('q3','c','wrong')">C. "You'll get a .com.ng domain name"</button>
+              <button class="quiz-option" onclick="answer('q3','d','wrong')">D. "It's completely free to build"</button>
+            </div>
+            <div class="quiz-feedback" id="q3-feedback"></div>
+            <div class="quiz-next" id="q3-next">
+              <button class="btn btn-success btn-sm" onclick="completeAndNext()">✓ Complete Module 3 →</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Bottom nav -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;" class="animate-in">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Cold Calling Masterclass →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="mindset.html" class="btn btn-ghost">← Sales Mindset</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+
+<script src="js/app.js"></script>
+<script>
+  const QUIZ_FEEDBACK = {
+    q1: {
+      correct: "Exactly right. Instagram posts disappear in feeds, old inventory is invisible, and customers searching Google at 2am never find them. 'It's working fine' just means they don't know what they're missing.",
+      wrong:   "Not quite. The real issue is discoverability — Instagram only shows their cars to current followers. Any potential buyer searching Google, or a previous follower who missed the post, never finds them. That's the gap."
+    },
+    q2: {
+      correct: "Correct. Unstructured WhatsApp volume is one of the biggest pain points for Nigerian dealerships. Hundreds of 'what cars do you have?' messages that all need individual replies — and leads that go cold because nobody followed up in time.",
+      wrong:   "Think about what happens after the ad click. The traffic goes to WhatsApp — and then what? Every lead requires manual handling, same questions answered over and over, and no way to track who followed up with who."
+    },
+    q3: {
+      correct: "Perfect. Business owners care about ROI. Telling them their ad spend will 'work harder' directly connects the website to money they're already spending. That's the most powerful frame you can use.",
+      wrong:   "That's a feature, not a benefit. Nigerian business owners respond to outcomes — more customers, less wasted money, more organised leads. Connect the website directly to something they already care about: their ad spend."
+    }
+  };
+
+  const answered = {};
+
+  function answer(qId, choice, result) {
+    if (answered[qId]) return;
+    answered[qId] = true;
+
+    const card = document.getElementById(qId);
+    const options = card.querySelectorAll('.quiz-option');
+    options.forEach(btn => {
+      btn.disabled = true;
+      btn.style.cursor = 'default';
+    });
+
+    const selected = card.querySelectorAll('.quiz-option')[['a','b','c','d'].indexOf(choice)];
+    selected.classList.add(result);
+
+    const feedback = document.getElementById(qId + '-feedback');
+    feedback.textContent = QUIZ_FEEDBACK[qId][result];
+    feedback.className = `quiz-feedback show ${result}`;
+
+    const next = document.getElementById(qId + '-next');
+    next.classList.add('show');
+  }
+
+  function scrollToQ(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initSidebar('dealerships');
+
+    const sections = document.querySelectorAll('[data-section]');
+    const totalSections = sections.length;
+    let readSections = new Set();
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          readSections.add(entry.target.dataset.section);
+          const pct = Math.round((readSections.size / totalSections) * 100);
+          document.getElementById('module-progress-fill').style.width = pct + '%';
+          document.getElementById('section-count').textContent = `${readSections.size} of ${totalSections} sections read`;
+          setModuleProgress('dealerships', pct);
+        }
+      });
+    }, { threshold: 0.3 });
+
+    sections.forEach(s => observer.observe(s));
+
+    const saved = getModuleProgress('dealerships');
+    if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+  });
+
+  function completeAndNext() {
+    markModuleComplete('dealerships');
+    showToast('Module 3 complete! Moving to Cold Calling...');
+    setTimeout(() => location.href = 'cold-calling.html', 1200);
+  }
+</script>
+</body>
+</html>

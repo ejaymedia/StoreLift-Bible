@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Sales System · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .dss-hero {
+      background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.06));
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .dss-hero::after {
+      content: '📅';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Tab system */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn:hover { color: var(--text-secondary); }
+    .tab-btn.active {
+      color: #a5b4fc;
+      border-bottom-color: var(--brand-from);
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Daily workflow timeline */
+    .workflow-block {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      position: relative;
+    }
+    .workflow-block:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 21px;
+      top: 44px;
+      bottom: -8px;
+      width: 2px;
+      background: var(--border);
+    }
+    .workflow-time-col {
+      width: 44px;
+      flex-shrink: 0;
+    }
+    .workflow-time-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .workflow-content {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      transition: all var(--transition);
+    }
+    .workflow-content:hover { background: var(--bg-card-hover); }
+    .workflow-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .workflow-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .workflow-time-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+    .workflow-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .workflow-tip {
+      font-size: 12px;
+      color: var(--purple);
+      font-style: italic;
+    }
+
+    /* Lead research card */
+    .research-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .research-platform {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--purple);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .research-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .research-step {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 8px;
+      line-height: 1.4;
+    }
+    .research-step::before {
+      content: '→';
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Interactive daily checklist */
+    .day-checklist {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .checklist-section-header {
+      padding: 12px 16px;
+      background: rgba(0,0,0,0.15);
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+    }
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .checklist-item:last-child { border-bottom: none; }
+    .checklist-item:hover { background: var(--bg-card-hover); }
+    .cl-box {
+      width: 18px; height: 18px;
+      border: 1.5px solid var(--border-strong);
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition);
+    }
+    .checklist-item.done .cl-box {
+      background: linear-gradient(135deg,#6366f1,#8b5cf6);
+      border-color: transparent;
+    }
+    .checklist-item.done .cl-box::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+    .cl-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      flex: 1;
+    }
+    .checklist-item.done .cl-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+    .cl-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* Tracker table */
+    .tracker-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .tracker-table th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .tracker-table td {
+      padding: 10px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      vertical-align: middle;
+    }
+    .tracker-table tr:last-child td { border-bottom: none; }
+    .tracker-table tr:hover td { background: rgba(255,255,255,0.02); }
+    .tracker-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 5px 10px;
+      font-size: 13px;
+      color: var(--text-primary);
+      width: 70px;
+      text-align: center;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+    .tracker-input:focus { border-color: rgba(99,102,241,0.5); }
+    .rate-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* Review cards */
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+    .review-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .review-icon {
+      font-size: 24px;
+      width: 44px; height: 44px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .review-title { font-size: 15px; font-weight: 700; color: var(--text-primary); }
+    .review-subtitle { font-size: 12px; color: var(--text-muted); }
+    .review-questions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .review-q {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .review-q::before {
+      content: '?';
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(99,102,241,0.15);
+      color: #a5b4fc;
+      font-size: 11px;
+      font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Lead pipeline */
+    .pipeline-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .pipeline-col-header {
+      padding: 12px 16px;
+      font-size: 12px;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .pipeline-count {
+      font-size: 11px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 2px 8px;
+      color: var(--text-muted);
+    }
+    .pipeline-lead {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .pipeline-lead:hover { background: var(--bg-card-hover); }
+    .pipeline-lead:last-child { border-bottom: none; }
+    .pipeline-lead-name { font-weight: 600; color: var(--text-primary); margin-bottom: 2px; font-size: 13px; }
+    .pipeline-lead-detail { font-size: 11px; color: var(--text-muted); }
+    .pipeline-empty {
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 11 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Daily Sales System</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="dss-hero animate-in">
+        <div class="page-eyebrow">📅 Module 11</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Daily Sales System</h1>
+        <p class="page-subtitle" style="max-width:560px;">Consistency beats talent. This module turns StoreLift into a repeatable daily machine — from finding leads in the morning to reviewing results at night. Follow this system every day and the results will compound.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 11 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">Select a tab to begin</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar animate-in-delay-1">
+        <button class="tab-btn active" onclick="showTab('workflow')">📋 Daily Workflow</button>
+        <button class="tab-btn" onclick="showTab('leads')">🔍 Finding Leads</button>
+        <button class="tab-btn" onclick="showTab('checklist')">✅ Daily Checklist</button>
+        <button class="tab-btn" onclick="showTab('tracker')">📊 Results Tracker</button>
+        <button class="tab-btn" onclick="showTab('weekly')">📆 Weekly Review</button>
+        <button class="tab-btn" onclick="showTab('monthly')">🗓️ Monthly Review</button>
+      </div>
+
+      <!-- ═══ TAB: DAILY WORKFLOW ═══ -->
+      <div class="tab-panel active" id="panel-workflow">
+
+        <div class="section-title" style="margin-bottom:6px;">📋 The Daily StoreLift Workflow</div>
+        <div class="section-desc" style="margin-bottom:24px;">This is your operating system. Run this every weekday without exception. Consistency is what separates one-off lucky closes from a real pipeline.</div>
+
+        <div class="workflow-block">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(245,158,11,0.15);">🌅</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">Morning Prep — Read & Research</div>
+              <span class="workflow-time-label">6:00 – 7:00am</span>
+            </div>
+            <div class="workflow-desc">Start your day before you pick up the phone. Read your daily motivation from the Dashboard. Identify 10–15 dealerships to call today by searching Instagram hashtags and location tags. For each one, note one specific thing — a car model, a recent post, a comment that went unanswered.</div>
+            <div class="workflow-tip">💡 Quality research = confident calls. You sound 3× more credible when you mention something specific.</div>
+          </div>
+        </div>
+
+        <div class="workflow-block">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(34,197,94,0.15);">📞</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">First Calling Block</div>
+              <span class="workflow-time-label">7:00 – 10:00am</span>
+            </div>
+            <div class="workflow-desc">This is your prime calling window. Nigerian business owners are most reachable between 7am and 10am — before the day gets chaotic. Make your first 15–20 calls here. Stand up, smile, and work through your list systematically. After every 5 calls, take a 3-minute break to reset your energy.</div>
+            <div class="workflow-tip">💡 The first call of the day is the hardest. Do it immediately — don't warm up with admin. Build momentum by dialling first.</div>
+          </div>
+        </div>
+
+        <div class="workflow-block">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(59,130,246,0.15);">🖥️</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">Website Building / Demo Prep</div>
+              <span class="workflow-time-label">10:00am – 12:00pm</span>
+            </div>
+            <div class="workflow-desc">Use this block for building websites for any dealerships you booked demos with. Also prep any demos happening today — test links, confirm inventory is populated, rehearse your walkthrough. One well-prepared demo converts at 2× the rate of an unprepared one.</div>
+            <div class="workflow-tip">💡 You have 3 days to build each website. Start the same day you book the demo — not the night before.</div>
+          </div>
+        </div>
+
+        <div class="workflow-block">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(139,92,246,0.15);">🍽️</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">Lunch & Rest</div>
+              <span class="workflow-time-label">12:00 – 1:00pm</span>
+            </div>
+            <div class="workflow-desc">Step away from the work completely. Eat, rest, move your body. Sales is mentally demanding — a proper break means your afternoon energy is higher than if you pushed through.</div>
+            <div class="workflow-tip">💡 Fatigue is the enemy of a good cold call. Your voice, energy, and patience all drop when you're tired.</div>
+          </div>
+        </div>
+
+        <div class="workflow-block">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(34,197,94,0.15);">📞</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">Second Calling Block + Follow-Ups</div>
+              <span class="workflow-time-label">1:00 – 4:00pm</span>
+            </div>
+            <div class="workflow-desc">Afternoon calling for the remaining leads on your list. Also use this block for follow-up calls to anyone you called this morning and couldn't reach, and WhatsApp follow-ups to prospects who haven't responded from previous days. Afternoon demos can also happen in this window.</div>
+            <div class="workflow-tip">💡 1–4pm is when business owners slow down and are sometimes more willing to have a brief conversation than during the morning rush.</div>
+          </div>
+        </div>
+
+        <div class="workflow-block">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(245,158,11,0.15);">🖥️</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">Demo Window</div>
+              <span class="workflow-time-label">4:00 – 6:00pm</span>
+            </div>
+            <div class="workflow-desc">Keep this window reserved for demo calls. Business owners are often more settled in the late afternoon — decisions about staff, inventory, and operations have been made, and they can give you focused attention. Send your 30-minute reminder at 3:30pm.</div>
+            <div class="workflow-tip">💡 If a demo gets cancelled, use the slot for prospecting or WhatsApp follow-ups. Never let the time go to waste.</div>
+          </div>
+        </div>
+
+        <div class="workflow-block" style="margin-bottom:0;">
+          <div class="workflow-time-col">
+            <div class="workflow-time-badge" style="background:rgba(99,102,241,0.15);">📝</div>
+          </div>
+          <div class="workflow-content">
+            <div class="workflow-header">
+              <div class="workflow-title">End-of-Day Review</div>
+              <span class="workflow-time-label">6:00 – 6:30pm</span>
+            </div>
+            <div class="workflow-desc">Log your numbers in the Results Tracker. Note the calls that went well and the ones that didn't — one specific lesson from each. Update your pipeline: who needs a follow-up tomorrow? Who booked a demo? Who closed? Prepare your list for tomorrow morning.</div>
+            <div class="workflow-tip">💡 The 30 minutes you spend reviewing today multiplies the quality of tomorrow. Never skip the review.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: FINDING LEADS ═══ -->
+      <div class="tab-panel" id="panel-leads">
+
+        <div class="section-title" style="margin-bottom:6px;">🔍 Finding Nigerian Dealership Leads</div>
+        <div class="section-desc" style="margin-bottom:20px;">Where to find dealerships, how to qualify them quickly, and what information to gather before calling.</div>
+
+        <div class="grid-2" style="gap:16px;margin-bottom:24px;">
+
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Finding on Instagram</div>
+
+            <div class="research-card">
+              <div class="research-platform">📸 Hashtag Search</div>
+              <div class="research-steps">
+                <div class="research-step">Search: #carsales, #lagoscars, #abujacars, #nigeriacars, #usedcarsnigeria, #tokunbocars</div>
+                <div class="research-step">Filter by Recent — not Top — so you find active accounts</div>
+                <div class="research-step">Look for accounts with 500–10,000 followers posting inventory regularly</div>
+                <div class="research-step">Check if they have a website link in bio — no link = perfect prospect</div>
+              </div>
+            </div>
+
+            <div class="research-card">
+              <div class="research-platform">📍 Location Tag Search</div>
+              <div class="research-steps">
+                <div class="research-step">Search Lagos, Abuja, Port Harcourt, Ibadan location tags</div>
+                <div class="research-step">Browse car-related posts from those locations</div>
+                <div class="research-step">Note dealerships posting frequently — active = serious business</div>
+              </div>
+            </div>
+
+            <div class="research-card">
+              <div class="research-platform">🔗 Explore & Similar Accounts</div>
+              <div class="research-steps">
+                <div class="research-step">When you find one dealership, check who they follow and who follows them</div>
+                <div class="research-step">Instagram suggests similar accounts — work through those</div>
+                <div class="research-step">One good account can lead to 10 similar prospects</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Other Lead Sources</div>
+
+            <div class="research-card">
+              <div class="research-platform">🛒 Jiji & Cars45</div>
+              <div class="research-steps">
+                <div class="research-step">Browse Jiji.ng car listings — dealers post frequently</div>
+                <div class="research-step">Look for dealers with multiple listings (5+ = serious dealership)</div>
+                <div class="research-step">Their contact number is usually right there — call directly</div>
+                <div class="research-step">Look for their Instagram page name in the listing description</div>
+              </div>
+            </div>
+
+            <div class="research-card">
+              <div class="research-platform">🗺️ Google Maps</div>
+              <div class="research-steps">
+                <div class="research-step">Search "car dealership [city name]" in Google Maps</div>
+                <div class="research-step">Many will show a phone number and website (or lack of one)</div>
+                <div class="research-step">No website = immediate prospect</div>
+                <div class="research-step">Check their reviews for clues about their reputation and activity</div>
+              </div>
+            </div>
+
+            <div class="research-card">
+              <div class="research-platform">📘 Facebook Groups</div>
+              <div class="research-steps">
+                <div class="research-step">Join groups: "Cars for Sale Lagos", "Abuja Car Market", "Nigeria Car Dealers"</div>
+                <div class="research-step">Find active dealers posting inventory — message for their contact number</div>
+                <div class="research-step">Look for dealers with consistent posts but no website link</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Qualification checklist -->
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+          <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:14px;">✅ Quick Qualification — Is This Worth Calling?</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">✓ Good prospect (call them)</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-secondary);">
+                <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Active on Instagram (posts in last 7 days)</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Selling real inventory (cars clearly shown)</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> No website link in bio</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Getting engagement (comments, DMs visible)</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Contact number visible or findable</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Appears to be actual dealership (multiple car types)</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">✗ Skip for now</div>
+              <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text-secondary);">
+                <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Last post was 3+ weeks ago (inactive)</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Already has a good, working website</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Only 1–2 cars listed (too small)</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> No contact number anywhere</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Appears to be individual reseller, not dealership</div>
+                <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Already declined previously (give 4 weeks before retry)</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Info to collect -->
+        <div style="margin-top:16px;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.15);border-radius:var(--radius-lg);padding:16px;">
+          <div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:10px;">📋 What to note before calling each dealership</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px;color:var(--text-secondary);">
+            <div style="display:flex;gap:6px;">✓ <span>Dealership name</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>Instagram handle</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>Phone number</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>City / area</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>One specific recent post to mention</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>Car model to reference on the call</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>Any unanswered comments to cite</span></div>
+            <div style="display:flex;gap:6px;">✓ <span>Whether they run ads (check for Sponsored posts)</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: DAILY CHECKLIST ═══ -->
+      <div class="tab-panel" id="panel-checklist">
+
+        <div class="section-title" style="margin-bottom:6px;">✅ Interactive Daily Checklist</div>
+        <div class="section-desc" style="margin-bottom:20px;">Tick off each task as you complete it. Your state saves automatically — come back tomorrow and start fresh.</div>
+
+        <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="resetChecklist()">↺ Reset for Today</button>
+          <div id="checklist-progress-label" style="display:flex;align-items:center;font-size:13px;color:var(--text-muted);gap:8px;">
+            <div class="progress-track" style="width:120px;"><div class="progress-fill" id="checklist-fill" style="width:0%"></div></div>
+            <span id="checklist-pct">0%</span> complete
+          </div>
+        </div>
+
+        <div class="day-checklist">
+          <div class="checklist-section-header">🌅 Morning Prep (6:00 – 7:00am)</div>
+          <div class="checklist-item" data-id="c1" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Read daily motivation on the Dashboard</div><span class="cl-time">5 min</span></div>
+          <div class="checklist-item" data-id="c2" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Research 10–15 dealerships on Instagram for today's call list</div><span class="cl-time">30 min</span></div>
+          <div class="checklist-item" data-id="c3" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Note one specific observation for each dealership to mention</div><span class="cl-time">15 min</span></div>
+          <div class="checklist-item" data-id="c4" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Read opening script out loud — warm up voice</div><span class="cl-time">5 min</span></div>
+          <div class="checklist-item" data-id="c5" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Review any follow-ups due today from pipeline</div><span class="cl-time">5 min</span></div>
+
+          <div class="checklist-section-header">📞 Calling Blocks (7:00am – 4:00pm)</div>
+          <div class="checklist-item" data-id="c6" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Made first call before 7:30am — no procrastinating</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c7" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Logged each call result (connected, voicemail, no answer, booked)</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c8" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Sent WhatsApp follow-up within 2 minutes of every booked demo</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c9" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Handled all objections calmly — no giving up on first no</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c10" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Reached 30 call target (or noted how many short and why)</div><span class="cl-time">—</span></div>
+
+          <div class="checklist-section-header">🖥️ Website & Demo Work</div>
+          <div class="checklist-item" data-id="c11" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Made progress on any active website builds</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c12" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Tested any demo websites — all links working, mobile checked</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c13" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Sent 30-minute demo reminder to any demo booked for today</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c14" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Conducted demo call professionally — followed the 15-min structure</div><span class="cl-time">—</span></div>
+
+          <div class="checklist-section-header">💬 WhatsApp Follow-Ups</div>
+          <div class="checklist-item" data-id="c15" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Sent all scheduled follow-up messages from pipeline</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c16" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Checked for and replied to any incoming WhatsApp messages</div><span class="cl-time">—</span></div>
+          <div class="checklist-item" data-id="c17" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Updated pipeline for anyone who replied or went cold</div><span class="cl-time">—</span></div>
+
+          <div class="checklist-section-header">📝 End-of-Day Review (6:00 – 6:30pm)</div>
+          <div class="checklist-item" data-id="c18" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Logged today's numbers in Results Tracker</div><span class="cl-time">5 min</span></div>
+          <div class="checklist-item" data-id="c19" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Noted one thing that worked well today</div><span class="cl-time">2 min</span></div>
+          <div class="checklist-item" data-id="c20" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Noted one thing to improve tomorrow</div><span class="cl-time">2 min</span></div>
+          <div class="checklist-item" data-id="c21" onclick="toggleCL(this)"><div class="cl-box"></div><div class="cl-text">Prepared call list for tomorrow morning</div><span class="cl-time">10 min</span></div>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: RESULTS TRACKER ═══ -->
+      <div class="tab-panel" id="panel-tracker">
+
+        <div class="section-title" style="margin-bottom:6px;">📊 Daily Results Tracker</div>
+        <div class="section-desc" style="margin-bottom:20px;">Log your numbers every day. Your weekly averages reveal exactly where your funnel leaks.</div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:20px;">
+          <table class="tracker-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Calls</th>
+                <th>Reached</th>
+                <th>Conversations</th>
+                <th>Demos Booked</th>
+                <th>Demos Held</th>
+                <th>Closed</th>
+                <th>Reach Rate</th>
+              </tr>
+            </thead>
+            <tbody id="tracker-tbody">
+              <!-- Built by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Totals row -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:20px;" id="totals-row">
+        </div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">🎯 Target benchmarks (weekly)</div>
+          <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-secondary);">
+            <div style="display:flex;justify-content:space-between;"><span>Calls per day</span><span style="color:var(--text-primary);font-weight:600;">30+</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Reach rate (calls → conversations)</span><span style="color:var(--text-primary);font-weight:600;">15–25%</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Conversation → demo booked</span><span style="color:var(--text-primary);font-weight:600;">30–40%</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Demo → close</span><span style="color:var(--text-primary);font-weight:600;">30–50%</span></div>
+            <div style="display:flex;justify-content:space-between;"><span>Clients per week (from 150 calls)</span><span style="color:#86efac;font-weight:700;">2–4 clients</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: WEEKLY REVIEW ═══ -->
+      <div class="tab-panel" id="panel-weekly">
+
+        <div class="section-title" style="margin-bottom:6px;">📆 Weekly Review Framework</div>
+        <div class="section-desc" style="margin-bottom:20px;">Every Sunday, spend 30 minutes reviewing the week. This is where your skills compound — you get better every single week if you do this consistently.</div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-icon">📊</div>
+            <div>
+              <div class="review-title">Numbers Review</div>
+              <div class="review-subtitle">Look at your weekly tracker data</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">Did I make at least 150 calls this week (30/day × 5 days)?</div>
+            <div class="review-q">What was my reach rate — what percentage of calls got through to a real person?</div>
+            <div class="review-q">Of conversations had, what percentage became booked demos?</div>
+            <div class="review-q">Of demos held, what percentage closed?</div>
+            <div class="review-q">Where is the biggest drop-off in my funnel this week?</div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-icon">🎙️</div>
+            <div>
+              <div class="review-title">Call Quality Review</div>
+              <div class="review-subtitle">Listen to 3 recorded calls from this week</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">Did I sound confident and unhurried on my opener?</div>
+            <div class="review-q">Did I make specific observations about each dealership, or was I generic?</div>
+            <div class="review-q">Did I pause after stating the pain point — or rush to the solution?</div>
+            <div class="review-q">Did I use binary close ("mornings or afternoons") or open question ("when are you free?")?</div>
+            <div class="review-q">What's one phrase I said that I should replace with something better?</div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-icon">🎯</div>
+            <div>
+              <div class="review-title">Demo Quality Review</div>
+              <div class="review-subtitle">Review any demos held this week</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">Did I open the demo by setting the customer journey frame?</div>
+            <div class="review-q">Did I translate features into outcomes — or did I present technically?</div>
+            <div class="review-q">Did I ask excitement questions and let them speak, or did I keep presenting?</div>
+            <div class="review-q">Did I recognise buying signals and close on them — or keep pitching?</div>
+            <div class="review-q">What would I do differently in next week's demos?</div>
+          </div>
+        </div>
+
+        <div class="review-card" style="margin-bottom:0;">
+          <div class="review-header">
+            <div class="review-icon">🚀</div>
+            <div>
+              <div class="review-title">Next Week Planning</div>
+              <div class="review-subtitle">Set intentions before the week starts</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">How many calls will I make next week? (Target: 150+)</div>
+            <div class="review-q">Which follow-ups need to happen Monday morning?</div>
+            <div class="review-q">Are there any demos already booked for next week to prepare for?</div>
+            <div class="review-q">What's the one skill I will specifically focus on improving next week?</div>
+            <div class="review-q">What will I do differently based on what didn't work this week?</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ TAB: MONTHLY REVIEW ═══ -->
+      <div class="tab-panel" id="panel-monthly">
+
+        <div class="section-title" style="margin-bottom:6px;">🗓️ Monthly Review Framework</div>
+        <div class="section-desc" style="margin-bottom:20px;">Once a month, zoom out. Look at the big picture. This is where strategic decisions get made — which niches to expand into, which parts of the system to double down on, and what your business looks like at scale.</div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-icon">💰</div>
+            <div>
+              <div class="review-title">Revenue & Client Review</div>
+              <div class="review-subtitle">The business numbers</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">How many clients signed this month? How does that compare to last month?</div>
+            <div class="review-q">What is my total monthly recurring revenue (MRR) from hosting retainers?</div>
+            <div class="review-q">Did any clients churn (cancel)? If so, why?</div>
+            <div class="review-q">Are existing clients happy? When did I last check in with each one?</div>
+            <div class="review-q">Are there upsell opportunities with any existing clients (SEO, extra pages, etc)?</div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-icon">📈</div>
+            <div>
+              <div class="review-title">Sales System Review</div>
+              <div class="review-subtitle">What's working, what isn't</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">What was my average call-to-demo rate this month? Is it improving?</div>
+            <div class="review-q">What was my average demo-to-close rate? Is it improving?</div>
+            <div class="review-q">Which objections came up most frequently? Do I handle them well?</div>
+            <div class="review-q">Are there patterns in who converts vs who doesn't (city, dealership size, platform)?</div>
+            <div class="review-q">What single change to my system would have the biggest impact next month?</div>
+          </div>
+        </div>
+
+        <div class="review-card">
+          <div class="review-header">
+            <div class="review-icon">🗺️</div>
+            <div>
+              <div class="review-title">Strategy & Growth Review</div>
+              <div class="review-subtitle">Zoomed out — the big picture</div>
+            </div>
+          </div>
+          <div class="review-questions">
+            <div class="review-q">Should I expand to a new city or niche, or deepen focus in the current one?</div>
+            <div class="review-q">Are there referral systems I can activate from happy existing clients?</div>
+            <div class="review-q">What does my business look like if I maintain this month's pace for 6 more months?</div>
+            <div class="review-q">Is there anything I should stop doing that's taking time without producing results?</div>
+            <div class="review-q">What would doubling my monthly closes require? More calls? Better demos? Both?</div>
+          </div>
+        </div>
+
+        <div style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.06));border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-lg);padding:20px;">
+          <div style="font-size:14px;font-weight:700;color:#a5b4fc;margin-bottom:12px;">📊 Monthly Targets — Where to Aim</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:13px;">
+            <div><div style="color:var(--text-muted);margin-bottom:4px;">Month 1 (Learning)</div><div style="color:var(--text-primary);font-weight:600;">1–2 clients · ₦25k–₦80k MRR</div></div>
+            <div><div style="color:var(--text-muted);margin-bottom:4px;">Month 2 (Momentum)</div><div style="color:var(--text-primary);font-weight:600;">3–5 clients · ₦75k–₦200k MRR</div></div>
+            <div><div style="color:var(--text-muted);margin-bottom:4px;">Month 3 (System)</div><div style="color:var(--text-primary);font-weight:600;">6–10 clients · ₦150k–₦400k MRR</div></div>
+            <div><div style="color:#86efac;margin-bottom:4px;">Month 6 (Scale)</div><div style="color:#86efac;font-weight:700;">15–25 clients · ₦375k–₦1M MRR</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="divider" style="margin-top:32px;"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: AI Call Simulator →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="psychology.html" class="btn btn-ghost">← Sales Psychology</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+
+/* ── TABS ── */
+const TABS = ['workflow','leads','checklist','tracker','weekly','monthly'];
+let visitedTabs = new Set(['workflow']);
+
+function showTab(id) {
+  TABS.forEach(t => {
+    document.getElementById('panel-' + t).classList.remove('active');
+    document.querySelectorAll('.tab-btn').forEach((b,i) => { if(TABS[i]===t) b.classList.remove('active'); });
+  });
+  document.getElementById('panel-' + id).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach((b,i) => { if(TABS[i]===id) b.classList.add('active'); });
+  visitedTabs.add(id);
+  updateProgress();
+}
+
+function updateProgress() {
+  const pct = Math.round((visitedTabs.size / TABS.length) * 100);
+  document.getElementById('module-progress-fill').style.width = pct + '%';
+  document.getElementById('section-count').textContent = `${visitedTabs.size} of ${TABS.length} sections visited`;
+  setModuleProgress('daily-system', pct);
+}
+
+/* ── DAILY CHECKLIST ── */
+const CL_KEY = 'sl_daily_cl_' + new Date().toDateString();
+let clState = {};
+
+function loadCL() {
+  try { clState = JSON.parse(localStorage.getItem(CL_KEY)) || {}; } catch { clState = {}; }
+  document.querySelectorAll('.checklist-item').forEach(el => {
+    if (clState[el.dataset.id]) el.classList.add('done');
+  });
+  updateCLProgress();
+}
+
+function toggleCL(el) {
+  const id = el.dataset.id;
+  clState[id] = !clState[id];
+  el.classList.toggle('done', clState[id]);
+  localStorage.setItem(CL_KEY, JSON.stringify(clState));
+  updateCLProgress();
+}
+
+function updateCLProgress() {
+  const total = document.querySelectorAll('.checklist-item').length;
+  const done  = Object.values(clState).filter(Boolean).length;
+  const pct = Math.round((done/total)*100);
+  const fill = document.getElementById('checklist-fill');
+  const label = document.getElementById('checklist-pct');
+  if (fill) fill.style.width = pct + '%';
+  if (label) label.textContent = pct + '%';
+  if (pct === 100) showToast('All daily tasks complete! Great work today 🔥', '🔥');
+}
+
+function resetChecklist() {
+  clState = {};
+  localStorage.setItem(CL_KEY, JSON.stringify(clState));
+  document.querySelectorAll('.checklist-item').forEach(el => el.classList.remove('done'));
+  updateCLProgress();
+  showToast('Checklist reset for today');
+}
+
+/* ── RESULTS TRACKER ── */
+const DAYS = ['Monday','Tuesday','Wednesday','Thursday','Friday'];
+const TR_KEY = 'sl_weekly_tracker_' + getWeekKey();
+
+function getWeekKey() {
+  const d = new Date();
+  const startOfYear = new Date(d.getFullYear(), 0, 1);
+  const week = Math.ceil(((d - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
+  return d.getFullYear() + '_w' + week;
+}
+
+function loadTracker() {
+  let data;
+  try { data = JSON.parse(localStorage.getItem(TR_KEY)) || {}; } catch { data = {}; }
+
+  const tbody = document.getElementById('tracker-tbody');
+  if (!tbody) return;
+
+  tbody.innerHTML = DAYS.map(day => {
+    const d = data[day] || { calls:0, reached:0, convos:0, demos_b:0, demos_h:0, closed:0 };
+    const rate = d.calls > 0 ? Math.round((d.reached/d.calls)*100) : 0;
+    const rateColor = rate >= 20 ? 'badge-green' : rate >= 10 ? 'badge-amber' : 'badge-red';
+    return `
+      <tr>
+        <td style="font-weight:600;color:var(--text-primary);">${day}</td>
+        <td><input class="tracker-input" type="number" min="0" value="${d.calls}" onchange="saveTrackerRow('${day}','calls',this.value,data)" /></td>
+        <td><input class="tracker-input" type="number" min="0" value="${d.reached}" onchange="saveTrackerRow('${day}','reached',this.value,data)" /></td>
+        <td><input class="tracker-input" type="number" min="0" value="${d.convos}" onchange="saveTrackerRow('${day}','convos',this.value,data)" /></td>
+        <td><input class="tracker-input" type="number" min="0" value="${d.demos_b}" onchange="saveTrackerRow('${day}','demos_b',this.value,data)" /></td>
+        <td><input class="tracker-input" type="number" min="0" value="${d.demos_h}" onchange="saveTrackerRow('${day}','demos_h',this.value,data)" /></td>
+        <td><input class="tracker-input" type="number" min="0" value="${d.closed}" onchange="saveTrackerRow('${day}','closed',this.value,data)" /></td>
+        <td><span class="rate-badge ${rateColor}" id="rate-${day}">${rate}%</span></td>
+      </tr>
+    `;
+  }).join('');
+
+  renderTotals(data);
+}
+
+function saveTrackerRow(day, field, value, data) {
+  if (!data[day]) data[day] = { calls:0, reached:0, convos:0, demos_b:0, demos_h:0, closed:0 };
+  data[day][field] = parseInt(value) || 0;
+  localStorage.setItem(TR_KEY, JSON.stringify(data));
+  renderTotals(data);
+}
+
+function renderTotals(data) {
+  const totals = { calls:0, reached:0, convos:0, demos_b:0, demos_h:0, closed:0 };
+  DAYS.forEach(day => {
+    const d = data[day] || {};
+    Object.keys(totals).forEach(k => totals[k] += (d[k] || 0));
+  });
+  const tr = document.getElementById('totals-row');
+  if (!tr) return;
+  const items = [
+    { label:'Total Calls', val: totals.calls, target:150, color:'#93c5fd' },
+    { label:'Conversations', val: totals.convos, target:25, color:'#a5b4fc' },
+    { label:'Demos Booked', val: totals.demos_b, target:10, color:'#fcd34d' },
+    { label:'Demos Held', val: totals.demos_h, target:8, color:'#f9a8d4' },
+    { label:'Clients Closed', val: totals.closed, target:2, color:'#86efac' },
+  ];
+  tr.innerHTML = items.map(i => `
+    <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:${i.color};letter-spacing:-0.02em;margin-bottom:2px;">${i.val}</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;">${i.label}</div>
+      <div class="progress-track" style="height:4px;">
+        <div class="progress-fill" style="width:${Math.min(100,Math.round((i.val/i.target)*100))}%;background:${i.color};"></div>
+      </div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:4px;">Target: ${i.target}</div>
+    </div>
+  `).join('');
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('daily-system');
+  loadCL();
+  loadTracker();
+  updateProgress();
+  const saved = getModuleProgress('daily-system');
+  if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+});
+
+function completeAndNext() {
+  markModuleComplete('daily-system');
+  showToast('Module 11 complete! Moving to AI Call Simulator...');
+  setTimeout(() => location.href = 'simulator.html', 1200);
+}
+</script>
+</body>
+</html>

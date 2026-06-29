@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Templates · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .wa-hero {
+      background: linear-gradient(135deg, rgba(37,211,102,0.1), rgba(18,140,126,0.06));
+      border: 1px solid rgba(37,211,102,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .wa-hero::after {
+      content: '💬';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Category filter */
+    .wa-cats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .wa-cat {
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .wa-cat:hover { background: var(--bg-card-hover); color: var(--text-secondary); }
+    .wa-cat.active {
+      background: rgba(37,211,102,0.12);
+      border-color: rgba(37,211,102,0.3);
+      color: #86efac;
+    }
+
+    /* Template cards */
+    .template-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .template-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: all var(--transition);
+      display: flex;
+      flex-direction: column;
+    }
+    .template-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+
+    .template-header {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .template-title-wrap { display: flex; align-items: center; gap: 8px; }
+    .template-icon {
+      width: 30px; height: 30px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .template-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .template-cat-badge {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    /* WhatsApp bubble preview */
+    .wa-bubble-wrap {
+      padding: 14px 16px;
+      background: #0b1419;
+      flex: 1;
+      position: relative;
+    }
+    .wa-bubble-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.01'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+    .wa-bubble {
+      background: #1f2c33;
+      border-radius: 8px 8px 8px 0;
+      padding: 10px 12px;
+      position: relative;
+      max-width: 100%;
+    }
+    .wa-bubble::before {
+      content: '';
+      position: absolute;
+      left: -6px; top: 0;
+      border-right: 6px solid #1f2c33;
+      border-bottom: 6px solid transparent;
+    }
+    .wa-bubble-text {
+      font-size: 13px;
+      color: #e9edef;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .wa-bubble-time {
+      text-align: right;
+      font-size: 10px;
+      color: #8696a0;
+      margin-top: 4px;
+    }
+
+    /* Editable variables */
+    .var-highlight {
+      background: rgba(37,211,102,0.15);
+      color: #86efac;
+      border-radius: 3px;
+      padding: 0 3px;
+      font-weight: 600;
+    }
+
+    /* Template footer */
+    .template-footer {
+      padding: 10px 16px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .template-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      flex: 1;
+    }
+    .copy-wa-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      background: rgba(37,211,102,0.1);
+      border: 1px solid rgba(37,211,102,0.25);
+      color: #86efac;
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .copy-wa-btn:hover { background: rgba(37,211,102,0.2); }
+    .copy-wa-btn.copied { background: rgba(37,211,102,0.25); }
+
+    /* When-to-use */
+    .when-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: 10px;
+    }
+
+    /* Sequence banner */
+    .sequence-banner {
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.05));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .sequence-steps {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      padding: 4px 0;
+    }
+    .seq-step {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .seq-bubble {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: center;
+      white-space: nowrap;
+    }
+    .seq-bubble strong { display: block; color: var(--text-primary); font-size: 11px; margin-bottom: 2px; }
+    .seq-arrow {
+      font-size: 16px;
+      color: var(--text-muted);
+      padding: 0 6px;
+    }
+
+    /* Tips */
+    .wa-tip {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+    .wa-tip:last-child { border-bottom: none; }
+    .wa-tip-icon { font-size: 16px; flex-shrink: 0; }
+    .wa-tip-text { color: var(--text-secondary); line-height: 1.55; }
+    .wa-tip-text strong { color: var(--text-primary); }
+
+    @media (max-width: 640px) {
+      .template-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 9 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">WhatsApp Templates</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="wa-hero animate-in">
+        <div class="page-eyebrow">💚 Module 9</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">WhatsApp Templates</h1>
+        <p class="page-subtitle" style="max-width:560px;">Every message you send on WhatsApp either moves a deal forward or lets it go cold. These ready-to-copy templates cover every stage of your pipeline — from first follow-up to payment reminder. Just replace the highlighted variables and send.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 9 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">0 of 30 templates viewed</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Follow-up sequence overview -->
+      <div class="sequence-banner animate-in-delay-1" style="margin-bottom:24px;">
+        <div style="font-size:13px;font-weight:700;color:#a5b4fc;margin-bottom:12px;">📋 The Full Follow-Up Sequence</div>
+        <div class="sequence-steps">
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Call Day 0</strong>First contact</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Day 0</strong>Booking confirm</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Day 3</strong>Demo reminder</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Post-demo</strong>Follow-up</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Day 5–8</strong>No response</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Day 21</strong>Re-engage</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Post-close</strong>Thank you</div>
+            <span class="seq-arrow">→</span>
+          </div>
+          <div class="seq-step">
+            <div class="seq-bubble"><strong>Monthly</strong>Payment</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category tabs -->
+      <div class="wa-cats animate-in-delay-1">
+        <button class="wa-cat active" onclick="filterWA('all')">All Templates</button>
+        <button class="wa-cat" onclick="filterWA('booking')">📅 Booking</button>
+        <button class="wa-cat" onclick="filterWA('reminder')">⏰ Reminders</button>
+        <button class="wa-cat" onclick="filterWA('followup')">🔁 Follow-Up</button>
+        <button class="wa-cat" onclick="filterWA('noreply')">🔕 No Response</button>
+        <button class="wa-cat" onclick="filterWA('close')">🤝 Post-Close</button>
+        <button class="wa-cat" onclick="filterWA('referral')">🌟 Referral</button>
+        <button class="wa-cat" onclick="filterWA('payment')">💰 Payment</button>
+      </div>
+
+      <!-- Template grid -->
+      <div class="template-grid animate-in" id="template-grid"></div>
+
+      <div class="divider" style="margin-top:32px;"></div>
+
+      <!-- WhatsApp tips -->
+      <div class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:16px;">💡 WhatsApp Messaging Rules for Nigerian Clients</div>
+        <div class="glass-card" style="padding:20px;">
+          <div class="wa-tip">
+            <span class="wa-tip-icon">⏰</span>
+            <div class="wa-tip-text"><strong>Send within 2 minutes of hanging up.</strong> Nigerian business owners have busy days. If you wait an hour, they've forgotten the conversation entirely. Send while you're still fresh in their mind.</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">📵</span>
+            <div class="wa-tip-text"><strong>Never send between 10pm and 7am.</strong> Respect their personal time. Messages that arrive late at night feel intrusive and are often ignored or cause irritation.</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">📏</span>
+            <div class="wa-tip-text"><strong>Keep messages short.</strong> Nigerian business owners skim long WhatsApp messages. Your key point should be visible in the preview without opening. If it needs scrolling on a phone screen, it's too long.</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">🙋</span>
+            <div class="wa-tip-text"><strong>Always use their name.</strong> "Good morning [Name]" feels personal. "Good morning" feels like a broadcast. Personalisation increases open and response rates significantly.</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">✅</span>
+            <div class="wa-tip-text"><strong>One clear action per message.</strong> Don't ask three questions in one message. One message, one ask. "Is morning or afternoon better?" not "When are you free? Also, should I add more cars? And what do you think of the colours?"</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">🔕</span>
+            <div class="wa-tip-text"><strong>3-message rule for no response.</strong> If someone doesn't reply after 3 well-spaced follow-up messages, move them to the "Re-engage in 3 weeks" category. Persistence is good; harassment is not.</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">😊</span>
+            <div class="wa-tip-text"><strong>Use emojis sparingly and strategically.</strong> One or two emojis make a message feel warmer and more human. A message full of emojis looks unprofessional. 👋 to open, 🙏 to close — that's usually enough.</div>
+          </div>
+          <div class="wa-tip">
+            <span class="wa-tip-icon">🔗</span>
+            <div class="wa-tip-text"><strong>Include the website link every time you mention the demo.</strong> Don't make them search for it. Every message that references the website should contain the link so they can tap and view immediately.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Sales Psychology →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="closing.html" class="btn btn-ghost">← Closing Clients</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+
+const TEMPLATES = [
+
+  /* ── BOOKING (5) ── */
+  {id:1, cat:'booking', name:'Post-Call Booking Confirm', icon:'📅',
+   iconBg:'rgba(99,102,241,0.15)', badge:'Booking', badgeClass:'badge-purple',
+   when:'Send immediately after hanging up — within 2 minutes',
+   text:`Hi [Name] 👋
+
+This is Elijah from StoreLift — we just spoke about your dealership's website.
+
+I'm putting the finishing touches on it now and will reach out on [Day] to show you. Looking forward to it!
+
+Feel free to reach me on this number anytime.`,
+   note:'Replace [Name] and [Day] before sending'},
+
+  {id:2, cat:'booking', name:'Booking Confirm with Link Preview', icon:'🔗',
+   iconBg:'rgba(59,130,246,0.15)', badge:'Booking', badgeClass:'badge-blue',
+   when:'Use when they seemed very interested and you want to build excitement',
+   text:`Hi [Name] 👋
+
+Elijah here from StoreLift — great speaking with you just now!
+
+Your dealership website is almost ready. I'll send you the link on [Day] so you can see exactly what I've built for [Dealership Name].
+
+Talk soon! 🚗`,
+   note:'Great for enthusiastic prospects — builds anticipation'},
+
+  {id:3, cat:'booking', name:'Gatekeeper Warm Handoff', icon:'🚪',
+   iconBg:'rgba(245,158,11,0.15)', badge:'Booking', badgeClass:'badge-amber',
+   when:'Send after speaking to a gatekeeper who took your message',
+   text:`Hi, good afternoon.
+
+This is Elijah from StoreLift. I called earlier about a website I built for [Dealership Name] — your colleague said they'd pass the message on.
+
+I'd love to show the owner what I put together. Could you kindly let them know I'll follow up tomorrow morning?
+
+Thank you so much 🙏`,
+   note:'Warm and respectful tone — gatekeeper is still your ally'},
+
+  {id:4, cat:'booking', name:'Reschedule Request', icon:'📆',
+   iconBg:'rgba(139,92,246,0.15)', badge:'Booking', badgeClass:'badge-purple',
+   when:'When a booked demo needs to be rescheduled',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. We had a demo call planned for [Original Day] — just checking if that still works for you, or if you'd prefer to reschedule?
+
+I'm flexible. Just let me know what time suits and I'll be there. The website is ready and looking sharp 😊`,
+   note:'Non-pressuring — makes rescheduling easy for them'},
+
+  {id:5, cat:'booking', name:'Demo Day Morning Confirmation', icon:'☀️',
+   iconBg:'rgba(245,158,11,0.15)', badge:'Booking', badgeClass:'badge-amber',
+   when:'Send the morning of the demo call to confirm',
+   text:`Good morning [Name] 👋
+
+Elijah from StoreLift here. Your website demo is ready for today!
+
+Just confirming — are you still good for a quick 15-minute call this [morning/afternoon]?
+
+Let me know your preferred time and I'll send the link. Looking forward to showing you what I built 🚗`,
+   note:'Always confirm demo day morning — reduces no-shows significantly'},
+
+  /* ── REMINDERS (4) ── */
+  {id:6, cat:'reminder', name:'24-Hour Demo Reminder', icon:'⏰',
+   iconBg:'rgba(34,197,94,0.15)', badge:'Reminder', badgeClass:'badge-green',
+   when:'Send 24 hours before a booked demo',
+   text:`Hi [Name] 👋
+
+Quick reminder — we have your website demo tomorrow [morning/afternoon].
+
+I'll send you the link 30 minutes before we start. Your website for [Dealership Name] is ready and I think you're going to like what I've done with it.
+
+See you tomorrow! 🙏`,
+   note:'Keeps the appointment alive and builds anticipation'},
+
+  {id:7, cat:'reminder', name:'30-Minute Demo Reminder', icon:'🔔',
+   iconBg:'rgba(239,68,68,0.15)', badge:'Reminder', badgeClass:'badge-red',
+   when:'Send exactly 30 minutes before the demo call',
+   text:`Hi [Name] 👋
+
+We're on in 30 minutes! Here's the website link for [Dealership Name]:
+
+[Website URL]
+
+You can open it on your phone now and have a quick look before we speak. I'll call you at [Time].
+
+Talk soon! 🚗`,
+   note:'Include the link here so they can preview before the call'},
+
+  {id:8, cat:'reminder', name:'Monthly Payment Reminder', icon:'💰',
+   iconBg:'rgba(34,197,94,0.15)', badge:'Reminder', badgeClass:'badge-green',
+   when:'Send 3 days before monthly renewal date',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. Your website hosting renewal for [Dealership Name] is coming up on [Date].
+
+The monthly amount is ₦[X]. I'll send the payment details below. As always, let me know if you need any changes or updates to the site this month 🙏
+
+Account Name: [Your Name]
+Bank: [Bank]
+Account No: [Number]`,
+   note:'Send 3 days before — gives them time without feeling rushed'},
+
+  {id:9, cat:'reminder', name:'Follow-Up Call Reminder', icon:'📞',
+   iconBg:'rgba(99,102,241,0.15)', badge:'Reminder', badgeClass:'badge-purple',
+   when:'When you promised to call back at a specific time',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here — we agreed I'd reach out today about the website I built for [Dealership Name].
+
+Are you available for a quick 15-minute call today? Just say the word and I'll call you right away 🙏`,
+   note:'Reference the specific agreement — shows you keep your word'},
+
+  /* ── FOLLOW-UP (6) ── */
+  {id:10, cat:'followup', name:'Post-Demo Follow-Up (Same Day)', icon:'🔁',
+   iconBg:'rgba(20,184,166,0.15)', badge:'Follow-Up', badgeClass:'badge-green',
+   when:'Send 2 hours after the demo if no decision was made on the call',
+   text:`Hi [Name] 👋
+
+Thank you for taking the time to see the website today — really appreciated!
+
+The link is still live whenever you want to show it to your team or partner: [Website URL]
+
+If you have any questions or want any changes, I'm here. Looking forward to hearing your thoughts 🙏`,
+   note:'Low pressure — gives them space while keeping the link accessible'},
+
+  {id:11, cat:'followup', name:'Post-Demo Follow-Up (Next Day)', icon:'📋',
+   iconBg:'rgba(99,102,241,0.15)', badge:'Follow-Up', badgeClass:'badge-purple',
+   when:'If no response the day after the demo',
+   text:`Good morning [Name] 👋
+
+Elijah from StoreLift here. Just checking in after yesterday's demo.
+
+Is there anything you'd like me to adjust on the website before you decide? I can change colours, add more cars, or tweak any section — just say the word.
+
+The link is here: [Website URL]
+
+What are your thoughts so far? 🙏`,
+   note:'Offering changes shows flexibility and re-engages them'},
+
+  {id:12, cat:'followup', name:'Partner Decision Follow-Up', icon:'👥',
+   iconBg:'rgba(139,92,246,0.15)', badge:'Follow-Up', badgeClass:'badge-purple',
+   when:'When they said they need to discuss with a partner or spouse',
+   text:`Hi [Name] 👋
+
+Elijah here from StoreLift. Following up on our conversation — have you had a chance to show [Dealership Name]'s website to your partner?
+
+Here's the link again in case it's useful: [Website URL]
+
+I'm happy to jump on a quick call with you both if that would help — just let me know what works 🙏`,
+   note:'Offering to join the partner call dramatically increases conversion'},
+
+  {id:13, cat:'followup', name:'Specific Change Offer Follow-Up', icon:'🔧',
+   iconBg:'rgba(245,158,11,0.15)', badge:'Follow-Up', badgeClass:'badge-amber',
+   when:'When they mentioned something they wanted changed on the demo',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. I made the changes we discussed to your website — [briefly describe change, e.g. "added the Mercedes section and updated the contact number"].
+
+Here's the updated link: [Website URL]
+
+Have a look and let me know what you think. Happy to adjust anything further 🙏`,
+   note:'Acting on their feedback quickly builds serious trust'},
+
+  {id:14, cat:'followup', name:'Value Reminder Follow-Up', icon:'💡',
+   iconBg:'rgba(59,130,246,0.15)', badge:'Follow-Up', badgeClass:'badge-blue',
+   when:'3–4 days after demo with no decision',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. Just a quick thought — while we've been following up, your competitors might already be building their online presence.
+
+The first dealership in your area to get indexed on Google gets a real head start on that traffic.
+
+Your site is ready whenever you are: [Website URL]
+
+Let me know if you have any questions 🙏`,
+   note:'Introduce competitive urgency gently — not pressure, just perspective'},
+
+  {id:15, cat:'followup', name:'Month-End Re-Engage', icon:'📅',
+   iconBg:'rgba(34,197,94,0.15)', badge:'Follow-Up', badgeClass:'badge-green',
+   when:'End of month — many business owners review decisions then',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. End of the month — a good time to think about what's working and what could be better for [Dealership Name].
+
+Your website is still here and ready to go live: [Website URL]
+
+If the timing is right now, I can have everything set up and live by this weekend. Just say the word 🙏`,
+   note:'End of month is a natural decision-making moment for Nigerian business owners'},
+
+  /* ── NO RESPONSE (5) ── */
+  {id:16, cat:'noreply', name:'First No-Response Follow-Up', icon:'🔕',
+   iconBg:'rgba(245,158,11,0.15)', badge:'No Reply', badgeClass:'badge-amber',
+   when:'3 days after demo with no reply at all',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here — just checking you received my previous message about the [Dealership Name] website.
+
+No pressure at all — I just want to make sure it didn't get lost.
+
+The site is still live: [Website URL]
+
+Let me know your thoughts whenever you're ready 🙏`,
+   note:'Gentle and assumes good faith — "message got lost" removes awkwardness'},
+
+  {id:17, cat:'noreply', name:'Second No-Response Follow-Up', icon:'📭',
+   iconBg:'rgba(239,68,68,0.15)', badge:'No Reply', badgeClass:'badge-red',
+   when:'5–6 days after demo with no reply',
+   text:`Hi [Name] 👋
+
+Elijah here from StoreLift. I've reached out a couple of times about the website I built for [Dealership Name].
+
+I completely understand if the timing isn't right — no hard feelings at all.
+
+If you'd like to see it at any point, the link is here: [Website URL]
+
+I'll check back in a few weeks. Have a great week 🙏`,
+   note:'Graceful reduction of pressure — paradoxically often prompts a response'},
+
+  {id:18, cat:'noreply', name:'Genuine Check-In (New Angle)', icon:'👀',
+   iconBg:'rgba(99,102,241,0.15)', badge:'No Reply', badgeClass:'badge-purple',
+   when:'8–10 days after demo — use a specific observation about their business',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. I noticed you posted a new batch of cars on Instagram — some really nice units this week.
+
+Just a reminder that your website can give those listings a permanent home where customers can browse anytime, not just when the post is in their feed.
+
+The site: [Website URL]
+
+Hope business is going well! 🚗`,
+   note:'Reference something specific and current from their Instagram — shows you\'re paying attention'},
+
+  {id:19, cat:'noreply', name:'Final Soft Close', icon:'🚪',
+   iconBg:'rgba(139,92,246,0.15)', badge:'No Reply', badgeClass:'badge-purple',
+   when:'After 3 unanswered messages — final contact before extended pause',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. I've followed up a few times now and I don't want to keep disturbing you.
+
+The website for [Dealership Name] will stay ready for when the timing is right. If you ever want to see it or have questions, I'm always here: [Website URL]
+
+I'll reach back out in about a month. Take care and have a great one! 🙏`,
+   note:'End with warmth — you never know when circumstances change'},
+
+  {id:20, cat:'noreply', name:'3-Week Re-Engagement', icon:'🔄',
+   iconBg:'rgba(20,184,166,0.15)', badge:'No Reply', badgeClass:'badge-green',
+   when:'3 weeks after last contact — fresh approach with a new angle',
+   text:`Good morning [Name] 👋
+
+Elijah from StoreLift — it's been a few weeks since we last spoke. Hope business has been good!
+
+I made a few improvements to the website I built for [Dealership Name] since we last spoke. Would love to show you the updated version — just 10 minutes.
+
+Link here: [Website URL]
+
+Let me know if this week works for a quick look 🙏`,
+   note:'\"Made improvements\" gives a genuine reason to reconnect after a gap'},
+
+  /* ── POST-CLOSE (4) ── */
+  {id:21, cat:'close', name:'Welcome / Thank You Message', icon:'🎉',
+   iconBg:'rgba(34,197,94,0.15)', badge:'Post-Close', badgeClass:'badge-green',
+   when:'Immediately after first payment is received',
+   text:`Hi [Name] 🎉
+
+Payment received — thank you so much! Welcome to StoreLift!
+
+I'm starting the domain setup and full configuration now. You'll receive your live website link within 48 hours.
+
+Here's what happens next:
+✅ Domain setup & configuration
+✅ Final inventory upload
+✅ Live testing on mobile & desktop
+✅ Your live link delivered on WhatsApp
+
+Excited to get [Dealership Name] online! 🚗`,
+   note:'Structured next steps reassure the client they made a good decision'},
+
+  {id:22, cat:'close', name:'Website Live Notification', icon:'🚀',
+   iconBg:'rgba(99,102,241,0.15)', badge:'Post-Close', badgeClass:'badge-purple',
+   when:'When the website goes live',
+   text:`Hi [Name] 🚀
+
+Your website is LIVE!
+
+🌐 [Website URL]
+
+Open it on your phone and browse through — everything is set up and working. Your dealership is now on Google and reachable 24/7.
+
+A few things to do now:
+📌 Save the link and share it on your Instagram bio
+📌 Add it to your WhatsApp Business profile
+📌 Share in your WhatsApp status
+
+Any changes needed, just let me know. Congratulations [Name]! 🎉`,
+   note:'Give them immediate action steps — helps them get value from day 1'},
+
+  {id:23, cat:'close', name:'First Month Check-In', icon:'📊',
+   iconBg:'rgba(245,158,11,0.15)', badge:'Post-Close', badgeClass:'badge-amber',
+   when:'2 weeks after going live',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift — your website has been live for 2 weeks now! 🎉
+
+Just checking in — have you noticed any enquiries coming through the site? And are there any new cars you'd like me to add to the inventory?
+
+Also — if any of your dealership contacts could benefit from a website, I'd really appreciate a referral 🙏
+
+Have a great week!`,
+   note:'Asking about referrals at the 2-week mark is natural — they\'re satisfied but not yet bored'},
+
+  {id:24, cat:'close', name:'Quarterly Value Check-In', icon:'📈',
+   iconBg:'rgba(59,130,246,0.15)', badge:'Post-Close', badgeClass:'badge-blue',
+   when:'Every 3 months for active clients',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here — your website has been live for [X months] now!
+
+I'd love to do a quick update: add any new inventory, refresh the homepage, and make sure everything is running perfectly.
+
+Also — if there's anything you'd like to improve or add (WhatsApp chat button, new section, etc.) just let me know and I'll take care of it.
+
+You're one of my favourite clients to work with 🙏 Let me know if there's anything you need!`,
+   note:'Regular check-ins prevent churn and open upsell conversations'},
+
+  /* ── REFERRAL (4) ── */
+  {id:25, cat:'referral', name:'Direct Referral Request', icon:'🌟',
+   iconBg:'rgba(245,158,11,0.15)', badge:'Referral', badgeClass:'badge-amber',
+   when:'After a client is happy and the website has been live 2–4 weeks',
+   text:`Hi [Name] 👋
+
+Quick one — do you know any other car dealerships or businesses that might benefit from a website like yours?
+
+I'm looking to help more dealerships in [City] get online, and a referral from you would mean a lot.
+
+If anyone comes to mind, just send them my WhatsApp or forward this message. I'll take great care of them 🙏
+
+Thank you!`,
+   note:'Keep it simple and personal — referral requests work best from satisfied clients'},
+
+  {id:26, cat:'referral', name:'Referral with Incentive', icon:'🎁',
+   iconBg:'rgba(34,197,94,0.15)', badge:'Referral', badgeClass:'badge-green',
+   when:'When you want to offer a specific incentive for referrals',
+   text:`Hi [Name] 👋
+
+I'm expanding StoreLift and looking for more dealership clients in [City].
+
+If you refer a dealership owner who signs up with us, I'll give you one free month of hosting as a thank you 🙏
+
+Know anyone who might need a website? Just forward this message or drop me their number and I'll handle it from there.
+
+Really appreciate your support! 🚗`,
+   note:'A concrete incentive (free month) makes referrals much more likely'},
+
+  {id:27, cat:'referral', name:'Referral Thank You', icon:'🤝',
+   iconBg:'rgba(99,102,241,0.15)', badge:'Referral', badgeClass:'badge-purple',
+   when:'When a client gives you a referral',
+   text:`Hi [Name] 👋
+
+Thank you so much for referring [Referral Name/Dealership] to StoreLift — I really appreciate it!
+
+I'll reach out to them today and take great care of them.
+
+As promised, I've noted your free month — it will be applied to your next renewal on [Date] 🎉
+
+You're the best! 🙏`,
+   note:'Acknowledge referrals quickly — it encourages more'},
+
+  {id:28, cat:'referral', name:'Lost Deal — Referral Ask', icon:'💫',
+   iconBg:'rgba(139,92,246,0.15)', badge:'Referral', badgeClass:'badge-purple',
+   when:'When a prospect doesn\'t become a client but the interaction was positive',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. I understand the timing isn't right for [Dealership Name] right now — no worries at all!
+
+One small favour: if you know any other dealerships or businesses that might need a website, I'd really appreciate a mention.
+
+And if things change on your end in the future, I'm always here 🙏
+
+Wishing you and [Dealership Name] continued success! 🚗`,
+   note:'A gracious exit sometimes triggers a delayed yes — or a valuable referral'},
+
+  /* ── PAYMENT (4) ── */
+  {id:29, cat:'payment', name:'Payment Request', icon:'💳',
+   iconBg:'rgba(34,197,94,0.15)', badge:'Payment', badgeClass:'badge-green',
+   when:'Immediately after they confirm they want to proceed',
+   text:`Hi [Name] 👋
+
+Great news — excited to get [Dealership Name] live!
+
+Here are the payment details for the first month (₦[X]):
+
+🏦 Bank: [Your Bank]
+👤 Account Name: [Your Name]
+🔢 Account No: [Account Number]
+
+Once I receive confirmation, I'll start the setup immediately and have your website live within 48 hours.
+
+Any questions, I'm right here 🙏`,
+   note:'Send payment details immediately while excitement is high'},
+
+  {id:30, cat:'payment', name:'Payment Overdue Reminder', icon:'⚠️',
+   iconBg:'rgba(239,68,68,0.15)', badge:'Payment', badgeClass:'badge-red',
+   when:'When monthly payment is 3+ days overdue',
+   text:`Hi [Name] 👋
+
+Elijah from StoreLift here. I hope all is well!
+
+Your monthly hosting for [Dealership Name] was due on [Date] — I just wanted to check in to make sure everything is okay.
+
+If you need a few extra days, no problem — just let me know. Otherwise, here are the payment details again:
+
+🏦 Bank: [Your Bank]
+👤 Account Name: [Your Name]
+🔢 Account No: [Account Number]
+
+Thank you so much, [Name] 🙏`,
+   note:'Warm and understanding tone — assume the best, not the worst'},
+];
+
+/* ── RENDER ── */
+let viewedTemplates = new Set();
+let currentCat = 'all';
+
+function catColour(cat) {
+  const map = { booking:'rgba(99,102,241,0.12)', reminder:'rgba(245,158,11,0.12)', followup:'rgba(20,184,166,0.12)', noreply:'rgba(239,68,68,0.12)', close:'rgba(34,197,94,0.12)', referral:'rgba(139,92,246,0.12)', payment:'rgba(34,197,94,0.12)' };
+  return map[cat] || 'rgba(255,255,255,0.05)';
+}
+
+function renderTemplates(filtered) {
+  const grid = document.getElementById('template-grid');
+  grid.innerHTML = filtered.map(t => {
+    const text = t.text.replace(/\[([^\]]+)\]/g, '<span class="var-highlight">[$1]</span>');
+    return `
+      <div class="template-card" id="tcard-${t.id}" onclick="markViewed(${t.id})">
+        <div class="template-header">
+          <div class="template-title-wrap">
+            <div class="template-icon" style="background:${t.iconBg};">${t.icon}</div>
+            <div class="template-name">${t.name}</div>
+          </div>
+          <span class="template-cat-badge ${t.badgeClass}" style="font-size:10px;padding:2px 8px;border-radius:10px;">${t.badge}</span>
+        </div>
+        <div class="wa-bubble-wrap">
+          <div class="when-tag">⏰ ${t.when}</div>
+          <div class="wa-bubble">
+            <div class="wa-bubble-text">${text}</div>
+            <div class="wa-bubble-time">✓✓ ${new Date().toLocaleTimeString('en-NG',{hour:'2-digit',minute:'2-digit'})}</div>
+          </div>
+        </div>
+        <div class="template-footer">
+          <div class="template-note">💡 ${t.note}</div>
+          <button class="copy-wa-btn" id="copybtn-${t.id}" onclick="event.stopPropagation();copyTemplate(${t.id})">⎘ Copy</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  document.getElementById('section-count').textContent = `${viewedTemplates.size} of ${TEMPLATES.length} templates viewed`;
+}
+
+function markViewed(id) {
+  viewedTemplates.add(id);
+  const pct = Math.round((viewedTemplates.size / TEMPLATES.length) * 100);
+  document.getElementById('module-progress-fill').style.width = pct + '%';
+  document.getElementById('section-count').textContent = `${viewedTemplates.size} of ${TEMPLATES.length} templates viewed`;
+  setModuleProgress('whatsapp', pct);
+}
+
+function copyTemplate(id) {
+  const t = TEMPLATES.find(t => t.id === id);
+  if (!t) return;
+  navigator.clipboard.writeText(t.text.trim()).then(() => {
+    markViewed(id);
+    const btn = document.getElementById('copybtn-' + id);
+    btn.classList.add('copied');
+    btn.textContent = '✓ Copied!';
+    showToast('Template copied to clipboard!');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.textContent = '⎘ Copy';
+    }, 2000);
+  });
+}
+
+function filterWA(cat) {
+  currentCat = cat;
+  document.querySelectorAll('.wa-cat').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  const filtered = cat === 'all' ? TEMPLATES : TEMPLATES.filter(t => t.cat === cat);
+  renderTemplates(filtered);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('whatsapp');
+  renderTemplates(TEMPLATES);
+  const saved = getModuleProgress('whatsapp');
+  if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+});
+
+function completeAndNext() {
+  markModuleComplete('whatsapp');
+  showToast('Module 9 complete! Moving to Sales Psychology...');
+  setTimeout(() => location.href = 'psychology.html', 1200);
+}
+</script>
+</body>
+</html>

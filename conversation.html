@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Conversation Flow · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .cf-hero {
+      background: linear-gradient(135deg, rgba(20,184,166,0.1), rgba(59,130,246,0.06));
+      border: 1px solid rgba(20,184,166,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cf-hero::after {
+      content: '💬';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* ── Flow diagram ── */
+    .flow-diagram {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+
+    .flow-node {
+      display: flex;
+      gap: 20px;
+      align-items: stretch;
+      cursor: pointer;
+    }
+
+    .flow-node-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 56px;
+    }
+
+    .flow-circle {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 800;
+      flex-shrink: 0;
+      border: 2px solid transparent;
+      transition: all var(--transition);
+      position: relative;
+      z-index: 1;
+    }
+
+    .flow-line {
+      flex: 1;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--border-strong), var(--border));
+      margin: 0 auto;
+      min-height: 24px;
+    }
+
+    .flow-node-right {
+      flex: 1;
+      padding-bottom: 24px;
+    }
+
+    .flow-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      transition: all var(--transition);
+      margin-top: 4px;
+    }
+    .flow-card:hover, .flow-card.active {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+    }
+    .flow-card.active { border-color: rgba(99,102,241,0.4); }
+
+    .flow-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0;
+    }
+
+    .flow-stage-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+    .flow-stage-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2px 10px;
+    }
+
+    .flow-stage-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-top: 6px;
+    }
+
+    .flow-detail {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .flow-detail.open { max-height: 1200px; }
+    .flow-detail-inner { padding-top: 16px; border-top: 1px solid var(--border); margin-top: 14px; }
+
+    /* Stage colours */
+    .stage-1 .flow-circle { background: rgba(99,102,241,0.15); color: #a5b4fc; border-color: rgba(99,102,241,0.3); }
+    .stage-2 .flow-circle { background: rgba(20,184,166,0.15); color: #5eead4; border-color: rgba(20,184,166,0.3); }
+    .stage-3 .flow-circle { background: rgba(239,68,68,0.15); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
+    .stage-4 .flow-circle { background: rgba(245,158,11,0.15); color: #fcd34d; border-color: rgba(245,158,11,0.3); }
+    .stage-5 .flow-circle { background: rgba(139,92,246,0.15); color: #c4b5fd; border-color: rgba(139,92,246,0.3); }
+    .stage-6 .flow-circle { background: rgba(59,130,246,0.15); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
+    .stage-7 .flow-circle { background: rgba(34,197,94,0.15); color: #86efac; border-color: rgba(34,197,94,0.3); }
+
+    .stage-1.active .flow-circle { background: rgba(99,102,241,0.3); box-shadow: 0 0 20px rgba(99,102,241,0.3); }
+    .stage-2.active .flow-circle { background: rgba(20,184,166,0.3); box-shadow: 0 0 20px rgba(20,184,166,0.3); }
+    .stage-3.active .flow-circle { background: rgba(239,68,68,0.3); box-shadow: 0 0 20px rgba(239,68,68,0.3); }
+    .stage-4.active .flow-circle { background: rgba(245,158,11,0.3); box-shadow: 0 0 20px rgba(245,158,11,0.3); }
+    .stage-5.active .flow-circle { background: rgba(139,92,246,0.3); box-shadow: 0 0 20px rgba(139,92,246,0.3); }
+    .stage-6.active .flow-circle { background: rgba(59,130,246,0.3); box-shadow: 0 0 20px rgba(59,130,246,0.3); }
+    .stage-7.active .flow-circle { background: rgba(34,197,94,0.3); box-shadow: 0 0 20px rgba(34,197,94,0.3); }
+
+    /* Do / Don't grid */
+    .do-dont {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .do-box {
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .dont-box {
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+    }
+    .do-dont-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .do-box .do-dont-label { color: #86efac; }
+    .dont-box .do-dont-label { color: #fca5a5; }
+    .do-dont-item {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 4px 0;
+      display: flex;
+      gap: 6px;
+    }
+
+    /* Signal cards */
+    .signal-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .signal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .signal-type {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .signal-type.good { color: #86efac; }
+    .signal-type.warn { color: #fcd34d; }
+    .signal-type.bad  { color: #fca5a5; }
+    .signal-example {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .signal-meaning {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Transition phrases */
+    .transition-pill {
+      display: inline-block;
+      background: rgba(99,102,241,0.1);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 13px;
+      color: #a5b4fc;
+      margin: 4px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .transition-pill:hover {
+      background: rgba(99,102,241,0.2);
+      transform: translateY(-1px);
+    }
+
+    /* Full convo simulator */
+    .convo-bubble {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 14px;
+      align-items: flex-start;
+    }
+    .convo-bubble.them { flex-direction: row; }
+    .convo-bubble.you  { flex-direction: row-reverse; }
+
+    .bubble-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .them .bubble-avatar { background: rgba(239,68,68,0.15); }
+    .you  .bubble-avatar { background: rgba(99,102,241,0.2); }
+
+    .bubble-text {
+      max-width: 75%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+    .them .bubble-text {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-secondary);
+      border-top-left-radius: 4px;
+    }
+    .you .bubble-text {
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.25);
+      color: var(--text-primary);
+      border-top-right-radius: 4px;
+      text-align: right;
+    }
+    .bubble-stage {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--purple);
+      margin-bottom: 4px;
+      display: block;
+    }
+    .you .bubble-stage { text-align: right; }
+
+    @media (max-width: 640px) {
+      .do-dont { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 5 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Conversation Flow</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Hero -->
+      <div class="cf-hero animate-in">
+        <div class="page-eyebrow">💬 Module 5</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Conversation Flow</h1>
+        <p class="page-subtitle" style="max-width:560px;">Great sales calls aren't scripted monologues — they're guided conversations. This module teaches you the natural arc of every successful call: how to move from greeting to booked demo without ever feeling pushy.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 5 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">Click each stage to explore</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- ─── INTERACTIVE FLOW DIAGRAM ─── -->
+      <div class="animate-in-delay-1" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">🗺️ The 7-Stage Conversation Map</div>
+        <div class="section-desc" style="margin-bottom:24px;">Click any stage to expand the full breakdown — what to say, what to watch for, and how to transition naturally to the next stage.</div>
+
+        <div class="flow-diagram" id="flow-diagram">
+
+          <!-- Stage 1: Greeting -->
+          <div class="flow-node stage-1" id="node-1" onclick="toggleNode(1)">
+            <div class="flow-node-left">
+              <div class="flow-circle">👋</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-1">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 1 — Greeting</div>
+                  <span class="flow-stage-time">0–15 sec</span>
+                </div>
+                <div class="flow-stage-desc">Confirm identity, state your name, set a warm and confident tone before anything else.</div>
+                <div class="flow-detail" id="detail-1">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">The greeting</span>
+                      "Hello, good day — please is this [Name]?"<br/><br/>
+                      <em style="font-size:12px;color:var(--text-muted);">[Wait for confirmation]</em><br/><br/>
+                      "Alright! My name is Elijah — I run a web design agency called StoreLift."
+                    </div>
+                    <div class="do-dont">
+                      <div class="do-box">
+                        <div class="do-dont-label">✓ Do</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> Smile before the call connects</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> Speak slowly and clearly</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> Sound like you expected them to pick up</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> Pause after confirming their name</div>
+                      </div>
+                      <div class="dont-box">
+                        <div class="do-dont-label">✗ Don't</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> Start with "sorry to bother you"</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> Rush through your name</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> Say "I just wanted to quickly..."</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> Sound surprised they answered</div>
+                      </div>
+                    </div>
+                    <div style="margin-top:12px;font-size:12px;color:var(--text-muted);font-style:italic;">
+                      Transition: Once they confirm who they are, move immediately into the observation about their business. No filler.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 2: Rapport -->
+          <div class="flow-node stage-2" id="node-2" onclick="toggleNode(2)">
+            <div class="flow-node-left">
+              <div class="flow-circle">🤝</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-2">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 2 — Rapport</div>
+                  <span class="flow-stage-time">15–45 sec</span>
+                </div>
+                <div class="flow-stage-desc">Show you did your homework. Compliment something specific and real about their business.</div>
+                <div class="flow-detail" id="detail-2">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">Building rapport</span>
+                      "I came across your dealership on Instagram this morning — you have some really nice units. I saw the 2020 Highlander you posted and the Lexus ES you had last week. Your page is active, I can see you're putting in the work."
+                    </div>
+                    <div style="background:rgba(20,184,166,0.06);border:1px solid rgba(20,184,166,0.15);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;">
+                      <div style="font-size:11px;font-weight:700;color:#5eead4;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">💡 The rapport rule</div>
+                      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+                        Always mention something <strong style="color:var(--text-primary);">specific</strong> — a car model, a recent post, something you genuinely saw. Generic compliments ("your page looks nice") are forgettable and unconvincing. Specific observations prove you looked and make them lower their guard.
+                      </div>
+                    </div>
+                    <div class="do-dont">
+                      <div class="do-box">
+                        <div class="do-dont-label">✓ Specific (works)</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "I saw the 2020 Camry you posted Tuesday"</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "Your TikTok on the Highlander got good engagement"</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "I noticed someone in the comments asking for a price"</div>
+                      </div>
+                      <div class="dont-box">
+                        <div class="do-dont-label">✗ Generic (fails)</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "Your page looks great"</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "You seem to be doing well"</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "I like your business"</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 3: Pain -->
+          <div class="flow-node stage-3" id="node-3" onclick="toggleNode(3)">
+            <div class="flow-node-left">
+              <div class="flow-circle">😤</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-3">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 3 — Identifying Pain</div>
+                  <span class="flow-stage-time">45 sec – 1:30</span>
+                </div>
+                <div class="flow-stage-desc">Name the gap you observed. Make them feel the problem before you offer the solution.</div>
+                <div class="flow-detail" id="detail-3">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">Naming the pain</span>
+                      "But I noticed something — I went through your whole page and there's no way to actually see all your current inventory in one place. Someone in the comments was asking about pricing and it hadn't been answered. A lot of your potential customers won't bother to DM — they'll just move on."
+                    </div>
+                    <div style="margin-bottom:12px;">
+                      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">Pain questions — use these to deepen the pain naturally:</div>
+                      <div style="display:flex;flex-direction:column;gap:6px;">
+                        <div class="transition-pill" style="display:block;border-radius:var(--radius-sm);">"How many WhatsApp messages do you get daily asking what cars you have available?"</div>
+                        <div class="transition-pill" style="display:block;border-radius:var(--radius-sm);">"When someone finds your Instagram at 11pm and wants to browse your inventory — what happens?"</div>
+                        <div class="transition-pill" style="display:block;border-radius:var(--radius-sm);">"Do you feel like your Instagram ads are converting well, or are most people just enquiring without buying?"</div>
+                      </div>
+                    </div>
+                    <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-sm);padding:12px 14px;">
+                      <div style="font-size:11px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">⚠ The pain delivery rule</div>
+                      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+                        Say the pain statement and then <strong style="color:var(--text-primary);">pause</strong>. Don't rush to the solution. Let it land. Silence after naming a real problem is powerful — it gives them a moment to agree with you internally. Filling the silence immediately weakens the impact.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 4: Curiosity -->
+          <div class="flow-node stage-4" id="node-4" onclick="toggleNode(4)">
+            <div class="flow-node-left">
+              <div class="flow-circle">🤔</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-4">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 4 — Creating Curiosity</div>
+                  <span class="flow-stage-time">1:30 – 2:00</span>
+                </div>
+                <div class="flow-stage-desc">Tease the solution without revealing everything. Make them want to see it.</div>
+                <div class="flow-detail" id="detail-4">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">The curiosity hook</span>
+                      "So here's why I'm calling — I actually built a website for your dealership already. All your cars listed and searchable, with pricing, photos, and a simple enquiry form. Customers browse on their own and send you their details directly — no WhatsApp back-and-forth needed."
+                    </div>
+                    <div style="margin-bottom:12px;">
+                      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">What makes curiosity work:</div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+                          <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Specificity</div>
+                          <div style="font-size:12px;color:var(--text-secondary);">Say "I built a website for YOUR dealership" — not "I can build a website." Already done = more powerful.</div>
+                        </div>
+                        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+                          <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">The open loop</div>
+                          <div style="font-size:12px;color:var(--text-secondary);">Don't describe every feature. Give just enough that they want to see it. Incomplete information creates curiosity.</div>
+                        </div>
+                        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+                          <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Outcomes not features</div>
+                          <div style="font-size:12px;color:var(--text-secondary);">Don't say "it has a homepage, about page, and inventory page." Say "customers browse and enquire directly — less WhatsApp chaos."</div>
+                        </div>
+                        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;">
+                          <div style="font-size:12px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">No cost mention yet</div>
+                          <div style="font-size:12px;color:var(--text-secondary);">Pricing kills curiosity before value is established. Don't mention money until the demo.</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 5: Solution -->
+          <div class="flow-node stage-5" id="node-5" onclick="toggleNode(5)">
+            <div class="flow-node-left">
+              <div class="flow-circle">💡</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-5">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 5 — Presenting the Solution</div>
+                  <span class="flow-stage-time">2:00 – 2:30</span>
+                </div>
+                <div class="flow-stage-desc">State the offer simply. Free website, 15 minutes to show it. No pressure.</div>
+                <div class="flow-detail" id="detail-5">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">Presenting the offer</span>
+                      "I'm not asking you to commit to anything right now. The website build itself is completely free — I just want 15 minutes to show you what I put together for your dealership. If you like it, we'll talk about what comes next. If not, no problem at all — we go our separate ways."
+                    </div>
+                    <div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:12px;">
+                      <div style="font-size:11px;font-weight:700;color:#c4b5fd;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">🧠 Why this framing works</div>
+                      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+                        "No commitment" removes risk. "If you like it, great. If not, no problem" shows detachment — which signals confidence. The Nigerian business owner is now thinking: "what do I have to lose?" The answer is nothing. That's when they say yes.
+                      </div>
+                    </div>
+                    <div class="do-dont">
+                      <div class="do-box">
+                        <div class="do-dont-label">✓ Say this</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "Just 15 minutes of your time"</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "Completely free to build"</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "If you like it, great — if not, no problem"</div>
+                        <div class="do-dont-item"><span style="color:#86efac;">→</span> "No commitment needed"</div>
+                      </div>
+                      <div class="dont-box">
+                        <div class="do-dont-label">✗ Never say</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "It won't cost you anything, I promise"</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "Please just give me a chance"</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "The hosting is only ₦X per month"</div>
+                        <div class="do-dont-item"><span style="color:#fca5a5;">→</span> "I think you'll really love it"</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 6: Booking -->
+          <div class="flow-node stage-6" id="node-6" onclick="toggleNode(6)">
+            <div class="flow-node-left">
+              <div class="flow-circle">📅</div>
+              <div class="flow-line"></div>
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-6">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 6 — Booking the Demo</div>
+                  <span class="flow-stage-time">2:30 – 3:00</span>
+                </div>
+                <div class="flow-stage-desc">Close for the appointment using a binary choice. Lock it down before hanging up.</div>
+                <div class="flow-detail" id="detail-6">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">The booking close</span>
+                      "Give me 3 days to finish it up and I'll reach out to schedule the call. Are mornings or afternoons generally better for you?"<br/><br/>
+                      <em style="font-size:12px;color:var(--text-muted);">[They answer]</em><br/><br/>
+                      "Perfect. And the best WhatsApp to reach you on is this number?"<br/><br/>
+                      <em style="font-size:12px;color:var(--text-muted);">[Confirm number]</em><br/><br/>
+                      "Brilliant — I'll send you a message right now so you have my contact, and I'll reach out on [day] to set the time. Looking forward to showing you what I built."
+                    </div>
+                    <div class="signal-grid">
+                      <div class="signal-card">
+                        <div class="signal-type good">✓ Green signal</div>
+                        <div class="signal-example">"How much does it cost?"</div>
+                        <div class="signal-meaning">They're already thinking about paying. Defer to the demo: "That's exactly what I'll walk you through on the call."</div>
+                      </div>
+                      <div class="signal-card">
+                        <div class="signal-type good">✓ Green signal</div>
+                        <div class="signal-example">"What does it look like?"</div>
+                        <div class="signal-meaning">Curiosity confirmed. "That's what I want to show you — it's much better seen than described."</div>
+                      </div>
+                      <div class="signal-card">
+                        <div class="signal-type warn">⚡ Warm signal</div>
+                        <div class="signal-example">"Okay, send me something first"</div>
+                        <div class="signal-meaning">They want proof before committing. Send the WhatsApp link and follow up. Don't abandon — follow up twice.</div>
+                      </div>
+                      <div class="signal-card">
+                        <div class="signal-type bad">⚠ Stall signal</div>
+                        <div class="signal-example">"Call me tomorrow"</div>
+                        <div class="signal-meaning">Polite deflection. Try to lock in a specific time now: "Of course — is morning or afternoon better tomorrow?" Don't leave it open.</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Stage 7: Professional close -->
+          <div class="flow-node stage-7" id="node-7" onclick="toggleNode(7)" style="cursor:pointer;">
+            <div class="flow-node-left">
+              <div class="flow-circle">🎯</div>
+              <!-- No line after last node -->
+            </div>
+            <div class="flow-node-right">
+              <div class="flow-card" id="card-7">
+                <div class="flow-card-header">
+                  <div class="flow-stage-name">Stage 7 — Ending Professionally</div>
+                  <span class="flow-stage-time">Final 15 sec</span>
+                </div>
+                <div class="flow-stage-desc">Leave them feeling respected and positive. Your last impression is what they remember.</div>
+                <div class="flow-detail" id="detail-7">
+                  <div class="flow-detail-inner">
+                    <div class="script-block" style="margin-bottom:12px;">
+                      <span class="script-label">Professional sign-off</span>
+                      "Great — I'll let you get back to it. I'm sending the WhatsApp now so you have my number. Talk to you on [day], have a great day!"
+                    </div>
+                    <div style="margin-bottom:12px;">
+                      <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">If they said no — end gracefully:</div>
+                      <div class="script-block">
+                        "Completely understood — I appreciate your time. Would it be alright if I check back in a few weeks? Business needs change and I want to make sure you have the option when the timing is right."
+                      </div>
+                    </div>
+                    <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-sm);padding:12px 14px;">
+                      <div style="font-size:11px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">✓ The 2-minute WhatsApp rule</div>
+                      <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+                        Within 2 minutes of hanging up — whether they said yes or no — send a brief WhatsApp. Yes: confirm the demo. No: leave a positive impression that keeps the door open. Nigerian business owners talk to each other. A gracious follow-up on a no can still generate a referral.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── FULL SAMPLE CONVERSATION ─── -->
+      <div class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">🗣️ Full Sample Conversation</div>
+        <div class="section-desc" style="margin-bottom:20px;">Read through a real cold call from start to booked demo. Notice the flow, the pauses, and the transitions.</div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;">
+
+          <div class="convo-bubble you">
+            <div class="bubble-avatar">E</div>
+            <div>
+              <span class="bubble-stage">Stage 1 — Greeting</span>
+              <div class="bubble-text">"Hello, good afternoon — please is this Mr Chukwudi?"</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble them">
+            <div class="bubble-avatar">🚗</div>
+            <div>
+              <div class="bubble-text">"Yes, this is Chukwudi. Who is this?"</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble you">
+            <div class="bubble-avatar">E</div>
+            <div>
+              <span class="bubble-stage">Stage 1 → 2 — Rapport</span>
+              <div class="bubble-text">"My name is Elijah — I run a web design agency called StoreLift. I came across your dealership, CK Motors, on Instagram this morning and I saw the 2021 Lexus RX you posted last week — really clean unit."</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble them">
+            <div class="bubble-avatar">🚗</div>
+            <div>
+              <div class="bubble-text">"Oh okay, yes. What do you want?"</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble you">
+            <div class="bubble-avatar">E</div>
+            <div>
+              <span class="bubble-stage">Stage 3 — Pain</span>
+              <div class="bubble-text">"I noticed something — I went through your whole page and I couldn't find a way to see all your current inventory in one place. Someone in the comments on the RX post was asking for the price and nobody had replied. I think you might be losing potential buyers right there who won't bother to DM."</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble them">
+            <div class="bubble-avatar">🚗</div>
+            <div>
+              <div class="bubble-text">"Hmm... yes, we get a lot of messages. So what are you selling?"</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble you">
+            <div class="bubble-avatar">E</div>
+            <div>
+              <span class="bubble-stage">Stage 4–5 — Curiosity + Solution</span>
+              <div class="bubble-text">"I actually built a website for CK Motors already. All your cars listed and searchable — customers browse on their own, see pricing and photos, and send you an enquiry directly. No WhatsApp back-and-forth. The build is completely free — I just want 15 minutes to show you what I put together. If you like it, great. If not, no stress at all."</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble them">
+            <div class="bubble-avatar">🚗</div>
+            <div>
+              <div class="bubble-text">"Okay... so how much does this cost?"</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble you">
+            <div class="bubble-avatar">E</div>
+            <div>
+              <span class="bubble-stage">Buying signal handled → Stage 6 — Booking</span>
+              <div class="bubble-text">"That's exactly what I'll walk you through on the call — it's flexible depending on what you need. Give me 3 days to put the finishing touches on it. Are mornings or afternoons better for you generally?"</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble them">
+            <div class="bubble-avatar">🚗</div>
+            <div>
+              <div class="bubble-text">"Mornings are fine."</div>
+            </div>
+          </div>
+
+          <div class="convo-bubble you">
+            <div class="bubble-avatar">E</div>
+            <div>
+              <span class="bubble-stage">Stage 7 — Professional close</span>
+              <div class="bubble-text">"Perfect. And the best WhatsApp to reach you is this number? Great — I'll send you a message right now. I'll reach out Thursday morning to confirm a time. Have a great afternoon, Mr Chukwudi!"</div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px;padding:12px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-sm);font-size:13px;color:#86efac;text-align:center;font-weight:600;">
+            ✓ Demo booked. Total call time: approximately 3 minutes.
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── TRANSITION PHRASES ─── -->
+      <div class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">🔗 Natural Transition Phrases</div>
+        <div class="section-desc" style="margin-bottom:16px;">Use these to move between stages without it feeling like you're following a script.</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          <span class="transition-pill">"So here's why I'm calling..."</span>
+          <span class="transition-pill">"I noticed something interesting..."</span>
+          <span class="transition-pill">"That's actually exactly what I want to show you..."</span>
+          <span class="transition-pill">"Which brings me to why I reached out..."</span>
+          <span class="transition-pill">"And that's the problem I built something to solve..."</span>
+          <span class="transition-pill">"So the question is..."</span>
+          <span class="transition-pill">"I just want 15 minutes to show you..."</span>
+          <span class="transition-pill">"If you like it, great — if not, no pressure..."</span>
+          <span class="transition-pill">"Are mornings or afternoons better for you?"</span>
+          <span class="transition-pill">"Let me send you a WhatsApp right now..."</span>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Bottom nav -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Objection Handling — 100+ objections →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="cold-calling.html" class="btn btn-ghost">← Cold Calling</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+  const openNodes = new Set();
+  const totalNodes = 7;
+
+  function toggleNode(n) {
+    const detail = document.getElementById('detail-' + n);
+    const card   = document.getElementById('card-' + n);
+    const node   = document.getElementById('node-' + n);
+    const isOpen = detail.classList.contains('open');
+
+    detail.classList.toggle('open', !isOpen);
+    card.classList.toggle('active', !isOpen);
+    node.classList.toggle('active', !isOpen);
+
+    if (!isOpen) {
+      openNodes.add(n);
+    } else {
+      openNodes.delete(n);
+    }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const pct = Math.round((openNodes.size / totalNodes) * 100);
+    document.getElementById('module-progress-fill').style.width = pct + '%';
+    document.getElementById('section-count').textContent =
+      openNodes.size === 0
+        ? 'Click each stage to explore'
+        : `${openNodes.size} of ${totalNodes} stages explored`;
+    setModuleProgress('conversation', pct);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initSidebar('conversation');
+    const saved = getModuleProgress('conversation');
+    if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+  });
+
+  function completeAndNext() {
+    markModuleComplete('conversation');
+    showToast('Module 5 complete! Moving to Objection Handling...');
+    setTimeout(() => location.href = 'objections.html', 1200);
+  }
+</script>
+</body>
+</html>

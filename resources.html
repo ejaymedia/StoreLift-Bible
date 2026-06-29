@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resources · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .res-hero {
+      background: linear-gradient(135deg, rgba(20,184,166,0.1), rgba(59,130,246,0.06));
+      border: 1px solid rgba(20,184,166,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .res-hero::after {
+      content: '📚';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Tab bar */
+    .tab-bar {
+      display: flex;
+      gap: 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 28px;
+      overflow-x: auto;
+    }
+    .tab-btn {
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .tab-btn:hover { color: var(--text-secondary); }
+    .tab-btn.active { color: #5eead4; border-bottom-color: var(--teal); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* Cheat sheet cards */
+    .cheat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .cheat-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: rgba(0,0,0,0.15);
+    }
+    .cheat-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .cheat-body { padding: 16px 18px; }
+
+    /* Quick ref list */
+    .qr-list { display: flex; flex-direction: column; gap: 6px; }
+    .qr-item {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .qr-item:last-child { border-bottom: none; }
+    .qr-bullet {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .qr-item strong { color: var(--text-primary); }
+
+    /* Two-col lists */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media(max-width:640px) { .two-col { grid-template-columns: 1fr; } }
+
+    /* Glossary */
+    .glossary-item {
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      display: flex;
+      gap: 14px;
+    }
+    .glossary-item:last-child { border-bottom: none; }
+    .glossary-term {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-primary);
+      min-width: 140px;
+      flex-shrink: 0;
+    }
+    .glossary-def {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Mistake cards */
+    .mistake-item {
+      background: rgba(239,68,68,0.04);
+      border: 1px solid rgba(239,68,68,0.12);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .mistake-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fca5a5;
+      margin-bottom: 6px;
+      display: flex;
+      gap: 8px;
+    }
+    .mistake-fix {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      display: flex;
+      gap: 8px;
+    }
+    .mistake-fix::before { content: '→'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    /* Quick reference card — compact single-page */
+    .quick-ref-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+      gap: 14px;
+    }
+    .quick-ref-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+    }
+    .quick-ref-box-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .quick-ref-line {
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding: 4px 0;
+      display: flex;
+      gap: 6px;
+      line-height: 1.4;
+    }
+
+    /* Completion banner */
+    .completion-banner {
+      background: linear-gradient(135deg, rgba(34,197,94,0.12), rgba(20,184,166,0.08));
+      border: 1px solid rgba(34,197,94,0.25);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .completion-icon { font-size: 56px; margin-bottom: 12px; }
+    .completion-title { font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .completion-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; max-width: 480px; margin: 0 auto 20px; }
+    .completion-stats { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .comp-stat { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-md); padding: 12px 20px; text-align: center; }
+    .comp-stat-num { font-size: 28px; font-weight: 800; color: #86efac; letter-spacing: -0.02em; display: block; }
+    .comp-stat-label { font-size: 11px; color: var(--text-muted); }
+
+    /* Print styles for cheat sheet */
+    @media print {
+      .sidebar, .topbar, .tab-bar, .sim-hero, .res-hero, .btn, .completion-banner { display: none !important; }
+      .main-content { margin-left: 0 !important; }
+      .quick-ref-grid { page-break-inside: avoid; }
+    }
+
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 13 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Resources</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="window.print()">🖨 Print Cheat Sheets</button>
+        <button class="btn btn-success btn-sm" onclick="completeModule()">✓ Mark Complete</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="res-hero animate-in">
+        <div class="page-eyebrow">📚 Module 13</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Resources & Cheat Sheets</h1>
+        <p class="page-subtitle" style="max-width:560px;">Everything in one place — quick reference cards, checklists, terminology glossary, and the most common mistakes distilled into a single module you can return to any time.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 13 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">Browse each tab to complete</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tab-bar animate-in-delay-1">
+        <button class="tab-btn active" onclick="showTab('quickref')">⚡ Quick Reference</button>
+        <button class="tab-btn" onclick="showTab('precall')">📋 Pre-Call Checklist</button>
+        <button class="tab-btn" onclick="showTab('postcall')">✅ Post-Call Checklist</button>
+        <button class="tab-btn" onclick="showTab('mistakes')">🚫 Common Mistakes</button>
+        <button class="tab-btn" onclick="showTab('glossary')">📖 Glossary</button>
+        <button class="tab-btn" onclick="showTab('complete')">🎉 Completion</button>
+      </div>
+
+      <!-- ═══ QUICK REFERENCE ═══ -->
+      <div class="tab-panel active" id="panel-quickref">
+
+        <div class="section-title" style="margin-bottom:14px;">⚡ Quick Reference Cards</div>
+
+        <div class="quick-ref-grid" style="margin-bottom:20px;">
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#86efac;">📞 Cold Call Structure</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">1.</span> Confirm name · smile · slow</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">2.</span> Specific observation about their page</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">3.</span> Name the gap / pain</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">4.</span> "I built something for your dealership"</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">5.</span> Free · 15 minutes · no commitment</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">6.</span> "Mornings or afternoons?" — binary close</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">7.</span> Get WhatsApp · send immediately</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#93c5fd;">🖥️ Demo Structure (15 min)</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">0–2m</span> Set frame · open on phone</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">2–3m</span> Share link · stay silent 15 sec</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">3–9m</span> Walk customer journey</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">9–12m</span> Ask excitement questions</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">12–15m</span> Transition to close</div>
+            <div class="quick-ref-line" style="margin-top:6px;color:#fcd34d;">Translate features → outcomes always</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#fcd34d;">💰 Pricing Sequence</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">1.</span> "Build is completely free"</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">2.</span> Explain what monthly covers</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">3.</span> State price — pause — say nothing</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">4.</span> "One car sale pays for months"</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">5.</span> "Month-to-month, no contract"</div>
+            <div class="quick-ref-line" style="margin-top:6px;color:#fca5a5;">Never apologise for the price</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#fca5a5;">🚫 Never Say These</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "Sorry to bother you..."</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "I just wanted to quickly..."</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "When are you free?"</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "Please just give me a chance"</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "It's not expensive at all"</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "We are the best in the market"</div>
+            <div class="quick-ref-line" style="color:#fca5a5;">✗ "How much for a website?"</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#c4b5fd;">🛡️ Objection Framework</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">1.</span> Acknowledge — don't argue</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">2.</span> Ask a clarifying question</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">3.</span> Reframe toward the real pain</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">4.</span> Pivot back to demo ask</div>
+            <div class="quick-ref-line" style="margin-top:6px;">First objection = almost always automatic</div>
+            <div class="quick-ref-line">Most deals close after 3–4 objections</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#5eead4;">📡 Buying Signals</div>
+            <div class="quick-ref-line"><span style="color:#86efac;">→</span> "How much does it cost?"</div>
+            <div class="quick-ref-line"><span style="color:#86efac;">→</span> "Can you add our logo?"</div>
+            <div class="quick-ref-line"><span style="color:#86efac;">→</span> "When can it be live?"</div>
+            <div class="quick-ref-line"><span style="color:#86efac;">→</span> "I want to show my team"</div>
+            <div class="quick-ref-line"><span style="color:#86efac;">→</span> "This is exactly what we need"</div>
+            <div class="quick-ref-line" style="margin-top:6px;color:#fcd34d;">Signal = stop pitching, start closing</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#86efac;">🔁 Follow-Up Sequence</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">Day 0</span> WhatsApp within 2 min of call</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">Day 3</span> Demo day morning confirm</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">Day 5</span> No reply — second touch</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">Day 8</span> Soft close / graceful exit</div>
+            <div class="quick-ref-line"><span style="color:#a5b4fc;font-weight:700;">Day 21</span> Re-engage with new angle</div>
+            <div class="quick-ref-line" style="color:#fca5a5;margin-top:6px;">3 messages max before long pause</div>
+          </div>
+
+          <div class="quick-ref-box">
+            <div class="quick-ref-box-title" style="color:#fcd34d;">🎯 Daily Targets</div>
+            <div class="quick-ref-line"><span style="color:#fcd34d;font-weight:700;">30</span> Calls per day</div>
+            <div class="quick-ref-line"><span style="color:#fcd34d;font-weight:700;">5</span> Real conversations</div>
+            <div class="quick-ref-line"><span style="color:#fcd34d;font-weight:700;">2</span> Demos booked</div>
+            <div class="quick-ref-line"><span style="color:#fcd34d;font-weight:700;">1</span> Client closed (weekly avg)</div>
+            <div class="quick-ref-line" style="margin-top:6px;color:#86efac;">Month 6 target: 15–25 clients MRR</div>
+          </div>
+
+        </div>
+
+        <!-- 8 Psychology principles quick ref -->
+        <div class="cheat-card">
+          <div class="cheat-header">
+            <div class="cheat-title">🧠 8 Psychology Principles — At a Glance</div>
+            <button class="copy-btn" onclick="copyPsychPrinciples()">⎘ Copy</button>
+          </div>
+          <div class="cheat-body">
+            <div class="two-col">
+              <div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(245,158,11,0.2);color:#fcd34d;">👑</div><div><strong>Authority</strong> — Specific knowledge about their page = expert status</div></div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(239,68,68,0.2);color:#fca5a5;">⏳</div><div><strong>Scarcity</strong> — First dealership in area indexed on Google wins</div></div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(34,197,94,0.2);color:#86efac;">🎁</div><div><strong>Reciprocity</strong> — Free website build creates obligation to reciprocate</div></div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(59,130,246,0.2);color:#93c5fd;">🌟</div><div><strong>Social Proof</strong> — Other dealerships moving online makes it safe</div></div>
+              </div>
+              <div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(20,184,166,0.2);color:#5eead4;">🤝</div><div><strong>Commitment</strong> — Micro-yeses build momentum toward the big yes</div></div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(245,158,11,0.2);color:#fcd34d;">❓</div><div><strong>Curiosity</strong> — "I built something" = open loop they must close</div></div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(99,102,241,0.2);color:#a5b4fc;">⚓</div><div><strong>Anchoring</strong> — Free build anchors high before monthly fee</div></div>
+                <div class="qr-item"><div class="qr-bullet" style="background:rgba(239,68,68,0.2);color:#fca5a5;">😨</div><div><strong>Loss Aversion</strong> — Customers lost at 11pm > customers gained</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ PRE-CALL CHECKLIST ═══ -->
+      <div class="tab-panel" id="panel-precall">
+
+        <div class="section-title" style="margin-bottom:6px;">📋 Pre-Call Checklist</div>
+        <div class="section-desc" style="margin-bottom:20px;">Run through this before every calling session. It takes 5 minutes and doubles your call quality.</div>
+
+        <div class="cheat-card" style="margin-bottom:16px;">
+          <div class="cheat-header">
+            <div class="cheat-title">🧠 Mindset</div>
+            <div style="font-size:12px;color:var(--text-muted);" id="pre-mindset-count">0 / 5</div>
+          </div>
+          <div class="cheat-body" id="pre-mindset-list" data-checklist="pre-mindset">
+            <div class="check-item" data-item="pm1"><div class="check-box"></div><span class="check-text">I am solving a problem — not selling a product. My mindset is service, not desperation.</span></div>
+            <div class="check-item" data-item="pm2"><div class="check-box"></div><span class="check-text">Rejection is information, not personal failure. Every no brings me closer to a yes.</span></div>
+            <div class="check-item" data-item="pm3"><div class="check-box"></div><span class="check-text">My only goal is to book the 15-minute demo. Nothing more, nothing less.</span></div>
+            <div class="check-item" data-item="pm4"><div class="check-box"></div><span class="check-text">I am thinking in batches of 30 calls — not as individual calls that must each succeed.</span></div>
+            <div class="check-item" data-item="pm5"><div class="check-box"></div><span class="check-text">I am willing to walk away from any call that isn't working. Detachment = confidence.</span></div>
+          </div>
+        </div>
+
+        <div class="cheat-card" style="margin-bottom:16px;">
+          <div class="cheat-header">
+            <div class="cheat-title">📋 Preparation</div>
+            <div style="font-size:12px;color:var(--text-muted);" id="pre-prep-count">0 / 6</div>
+          </div>
+          <div class="cheat-body" id="pre-prep-list" data-checklist="pre-prep">
+            <div class="check-item" data-item="pp1"><div class="check-box"></div><span class="check-text">I have researched at least 10 dealerships on Instagram with specific observations noted for each.</span></div>
+            <div class="check-item" data-item="pp2"><div class="check-box"></div><span class="check-text">I know a specific car model, post, or unanswered comment for at least 5 dealerships on my list.</span></div>
+            <div class="check-item" data-item="pp3"><div class="check-box"></div><span class="check-text">I have read my opening script out loud at least twice this morning.</span></div>
+            <div class="check-item" data-item="pp4"><div class="check-box"></div><span class="check-text">I have reviewed the objections I struggled with most yesterday.</span></div>
+            <div class="check-item" data-item="pp5"><div class="check-box"></div><span class="check-text">My call list is ready — names, numbers, dealerships, observations.</span></div>
+            <div class="check-item" data-item="pp6"><div class="check-box"></div><span class="check-text">I have checked for any follow-ups due today from previous conversations.</span></div>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-header">
+            <div class="cheat-title">🎙️ Physical & Environment</div>
+            <div style="font-size:12px;color:var(--text-muted);" id="pre-phys-count">0 / 5</div>
+          </div>
+          <div class="cheat-body" id="pre-phys-list" data-checklist="pre-phys">
+            <div class="check-item" data-item="ph1"><div class="check-box"></div><span class="check-text">I am standing or sitting upright — not slouched. My posture affects my voice.</span></div>
+            <div class="check-item" data-item="ph2"><div class="check-box"></div><span class="check-text">I have drunk water and warmed up my voice — said a few sentences out loud before the first call.</span></div>
+            <div class="check-item" data-item="ph3"><div class="check-box"></div><span class="check-text">I am in a quiet place where I won't be interrupted during calls.</span></div>
+            <div class="check-item" data-item="ph4"><div class="check-box"></div><span class="check-text">My phone is charged and my network connection is stable.</span></div>
+            <div class="check-item" data-item="ph5"><div class="check-box"></div><span class="check-text">I have a smile on my face right now — I can feel it — and I will keep it there on every call.</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ POST-CALL CHECKLIST ═══ -->
+      <div class="tab-panel" id="panel-postcall">
+
+        <div class="section-title" style="margin-bottom:6px;">✅ Post-Call Checklist</div>
+        <div class="section-desc" style="margin-bottom:20px;">Run through this after every meaningful call — booked demo or not. Consistent review is what separates improving salespeople from stagnant ones.</div>
+
+        <div class="cheat-card" style="margin-bottom:16px;">
+          <div class="cheat-header">
+            <div class="cheat-title">📞 After Every Call</div>
+          </div>
+          <div class="cheat-body" data-checklist="post-every">
+            <div class="check-item" data-item="pe1"><div class="check-box"></div><span class="check-text">Logged the outcome: connected / voicemail / no answer / booked / declined</span></div>
+            <div class="check-item" data-item="pe2"><div class="check-box"></div><span class="check-text">If booked: sent WhatsApp within 2 minutes of hanging up</span></div>
+            <div class="check-item" data-item="pe3"><div class="check-box"></div><span class="check-text">If declined: noted the specific objection for later review</span></div>
+            <div class="check-item" data-item="pe4"><div class="check-box"></div><span class="check-text">Updated the pipeline: follow-up date set if needed</span></div>
+          </div>
+        </div>
+
+        <div class="cheat-card" style="margin-bottom:16px;">
+          <div class="cheat-header">
+            <div class="cheat-title">🎯 After a Booked Demo</div>
+          </div>
+          <div class="cheat-body" data-checklist="post-demo">
+            <div class="check-item" data-item="pd1"><div class="check-box"></div><span class="check-text">Sent the WhatsApp booking confirmation message immediately</span></div>
+            <div class="check-item" data-item="pd2"><div class="check-box"></div><span class="check-text">Set a reminder to send the 24-hour demo reminder</span></div>
+            <div class="check-item" data-item="pd3"><div class="check-box"></div><span class="check-text">Set a reminder to send the 30-minute link message on demo day</span></div>
+            <div class="check-item" data-item="pd4"><div class="check-box"></div><span class="check-text">Started or scheduled the website build for this dealership</span></div>
+            <div class="check-item" data-item="pd5"><div class="check-box"></div><span class="check-text">Added their inventory details so the demo site has their actual cars</span></div>
+          </div>
+        </div>
+
+        <div class="cheat-card" style="margin-bottom:16px;">
+          <div class="cheat-header">
+            <div class="cheat-title">🤝 After a Closed Deal</div>
+          </div>
+          <div class="cheat-body" data-checklist="post-close">
+            <div class="check-item" data-item="pc1"><div class="check-box"></div><span class="check-text">Sent payment details on WhatsApp immediately while on the call</span></div>
+            <div class="check-item" data-item="pc2"><div class="check-box"></div><span class="check-text">Confirmed payment received and sent a welcome message</span></div>
+            <div class="check-item" data-item="pc3"><div class="check-box"></div><span class="check-text">Started the domain and hosting setup same day</span></div>
+            <div class="check-item" data-item="pc4"><div class="check-box"></div><span class="check-text">Set a 48-hour reminder to deliver the live link</span></div>
+            <div class="check-item" data-item="pc5"><div class="check-box"></div><span class="check-text">Set a 2-week reminder to check in and ask for referrals</span></div>
+            <div class="check-item" data-item="pc6"><div class="check-box"></div><span class="check-text">Updated the Results Tracker with the closed deal</span></div>
+          </div>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-header">
+            <div class="cheat-title">📊 End of Every Calling Session</div>
+          </div>
+          <div class="cheat-body" data-checklist="post-session">
+            <div class="check-item" data-item="ps1"><div class="check-box"></div><span class="check-text">Logged total calls, conversations, demos booked in the Results Tracker</span></div>
+            <div class="check-item" data-item="ps2"><div class="check-box"></div><span class="check-text">Identified the one objection I handled worst today — looked it up in Module 6</span></div>
+            <div class="check-item" data-item="ps3"><div class="check-box"></div><span class="check-text">Noted one thing I said well today to reinforce tomorrow</span></div>
+            <div class="check-item" data-item="ps4"><div class="check-box"></div><span class="check-text">Prepared tomorrow's call list — at least 10 dealerships researched</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ COMMON MISTAKES ═══ -->
+      <div class="tab-panel" id="panel-mistakes">
+
+        <div class="section-title" style="margin-bottom:6px;">🚫 The 25 Most Common Mistakes</div>
+        <div class="section-desc" style="margin-bottom:20px;">These are the specific habits that kill deals. Read through and honestly identify which ones you're guilty of.</div>
+
+        <div class="two-col">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">On the Cold Call</div>
+            <div class="mistake-item"><div class="mistake-title">✗ Starting with "Sorry to bother you"</div><div class="mistake-fix">Start with "Hello, good day — please is this [Name]?" You have nothing to apologise for.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Speaking too fast when nervous</div><div class="mistake-fix">Slow down by 20% deliberately. Pause after their name. Pause after the pain point. Silence is power.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Explaining too much on the first call</div><div class="mistake-fix">Your only job is to book the demo. Stop at the offer — don't explain hosting, pricing, or tech.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Asking "when are you free?"</div><div class="mistake-fix">Always binary: "mornings or afternoons?" Open questions get "I'll let you know" which means never.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Generic opening with no research</div><div class="mistake-fix">Mention a specific car, post, or unanswered comment. Generic = forgotten instantly. Specific = credibility.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Giving up after the first objection</div><div class="mistake-fix">First objection is almost always automatic. Stay calm, acknowledge, and pivot with a question.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Not sending WhatsApp immediately</div><div class="mistake-fix">Within 2 minutes of every booked call. Not 30 minutes. Not "later." Immediately. That's the rule.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Sounding like you're reading a script</div><div class="mistake-fix">The script is training wheels. Learn it cold, then have a real conversation. Listen and respond.</div></div>
+          </div>
+
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">On the Demo & Close</div>
+            <div class="mistake-item"><div class="mistake-title">✗ Presenting features instead of outcomes</div><div class="mistake-fix">"Inventory page with filters" → "Customers find the exact car they want without messaging you." Always translate.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Talking during the silence after sharing the link</div><div class="mistake-fix">Share the link. Stop talking for 15 seconds minimum. Let their first reaction happen naturally.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Giving the price before showing the demo</div><div class="mistake-fix">Price before value = objection guaranteed. Value first, then price, then ROI framing, then remove risk.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Apologising for the price</div><div class="mistake-fix">State the price confidently. Pause. Say nothing. "It's only ₦X" signals you think it's expensive.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Discounting before they've objected</div><div class="mistake-fix">Never offer a discount unprompted. You're giving money away. Let them push back first.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Pitching after a buying signal</div><div class="mistake-fix">"How much does it cost?" = stop pitching, start closing. Missing this is one of the costliest mistakes.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Accepting "I'll pay later" without a date</div><div class="mistake-fix">Get a specific payment date confirmed while on the call. "Later" without a date is almost always never.</div></div>
+            <div class="mistake-item"><div class="mistake-title">✗ Disappearing after payment</div><div class="mistake-fix">Over-communicate during setup. Every step confirmed on WhatsApp. Trust = repeat business + referrals.</div></div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px;">Mindset & System Mistakes</div>
+          <div class="two-col">
+            <div>
+              <div class="mistake-item"><div class="mistake-title">✗ Treating each call as pass/fail</div><div class="mistake-fix">Think in batches. 30 calls today. Some yes, most no — that's the math. Volume + consistency = results.</div></div>
+              <div class="mistake-item"><div class="mistake-title">✗ Skipping the end-of-day review</div><div class="mistake-fix">30 minutes of daily review compounds your improvement faster than anything else. Never skip it.</div></div>
+              <div class="mistake-item"><div class="mistake-title">✗ Not recording and listening to calls</div><div class="mistake-fix">You can't fix what you can't hear. Record every call. Listen back weekly. One insight per session is enough.</div></div>
+            </div>
+            <div>
+              <div class="mistake-item"><div class="mistake-title">✗ Building websites before booking demos</div><div class="mistake-fix">Build after the call, not before. Spend your time on calls first — demos come from calls, not from perfect sites.</div></div>
+              <div class="mistake-item"><div class="mistake-title">✗ Not asking for referrals from happy clients</div><div class="mistake-fix">Two weeks after go-live, ask directly. Happy clients are your cheapest, highest-converting lead source.</div></div>
+              <div class="mistake-item"><div class="mistake-title">✗ Losing momentum after a bad day</div><div class="mistake-fix">Bad days are part of the system. Reset with the rejection reset exercise and start fresh the next morning.</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ GLOSSARY ═══ -->
+      <div class="tab-panel" id="panel-glossary">
+
+        <div class="section-title" style="margin-bottom:6px;">📖 Sales Terminology Glossary</div>
+        <div class="section-desc" style="margin-bottom:20px;">Every term used in the Sales Bible defined in plain English.</div>
+
+        <div class="cheat-card">
+          <div class="cheat-body" style="padding:0 18px;">
+            <div class="glossary-item"><div class="glossary-term">Cold Call</div><div class="glossary-def">A sales call made to a prospect who has had no prior contact with you. Called "cold" because there's no existing relationship to warm it up.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Warm Lead</div><div class="glossary-def">A prospect who has already shown some interest — replied to your WhatsApp, watched the demo, or was referred by a client. Much easier to close than a cold lead.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Gatekeeper</div><div class="glossary-def">The person who answers the phone and controls access to the decision-maker. Could be a receptionist, sales rep, or assistant.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Decision Maker</div><div class="glossary-def">The person with authority to say yes or no to a purchase. In Nigerian dealerships, this is almost always the owner or a senior partner.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Pain Point</div><div class="glossary-def">A specific problem or frustration the prospect experiences regularly. The most powerful pain points are ones they're already aware of — you just name them out loud.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Open Loop</div><div class="glossary-def">An unanswered question or incomplete statement that creates psychological tension. "I built something for your dealership" is an open loop — the brain needs to close it by finding out what it is.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Buying Signal</div><div class="glossary-def">A verbal or behavioural cue that indicates a prospect has internally decided to buy. "How much does it cost?" "When can it be live?" "Can you add our logo?" — all buying signals.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Assumptive Close</div><div class="glossary-def">A closing technique where you proceed as if the prospect has already decided to buy. "Let me get the setup started — what domain name would you like?" assumes they said yes.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Objection</div><div class="glossary-def">A stated reason why a prospect won't move forward. Almost always a question in disguise — "we don't have budget" = "I don't see enough value yet."</div></div>
+            <div class="glossary-item"><div class="glossary-term">Anchor</div><div class="glossary-def">The first number mentioned in a price negotiation, which becomes the reference point for all comparisons. "The build is free" (₦0) anchors before the monthly fee is mentioned.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Loss Aversion</div><div class="glossary-def">The psychological principle that losing something hurts twice as much as gaining the same thing feels good. "You're losing customers every night at 11pm" is more motivating than "you could gain customers."</div></div>
+            <div class="glossary-item"><div class="glossary-term">MRR</div><div class="glossary-def">Monthly Recurring Revenue — the total predictable revenue you receive each month from active clients paying their hosting retainer.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Pipeline</div><div class="glossary-def">The set of all active prospects at various stages: cold leads, contacted, demo booked, demo held, negotiating, closed. Managing the pipeline means knowing where everyone is and what the next action is.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Churn</div><div class="glossary-def">When a paying client cancels their subscription. Reducing churn means keeping clients happy through consistent service and check-ins.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Conversion Rate</div><div class="glossary-def">The percentage of prospects who move to the next stage. Call-to-demo conversion rate, demo-to-close conversion rate — tracking these tells you exactly where to improve.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Upsell</div><div class="glossary-def">Selling an additional service to an existing client after the relationship is established. SEO, extra pages, social media management — these are StoreLift upsells.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Retainer</div><div class="glossary-def">A recurring monthly fee. Your hosting and maintenance fee is a retainer — clients pay it monthly to keep the service active.</div></div>
+            <div class="glossary-item"><div class="glossary-term">Social Proof</div><div class="glossary-def">Evidence that others similar to the prospect have made the same decision successfully. Client testimonials, portfolio examples, and referrals are all forms of social proof.</div></div>
+            <div class="glossary-item" style="border-bottom:none;"><div class="glossary-term">ROI (Return on Investment)</div><div class="glossary-def">The value returned relative to cost. "One extra car sale per month pays for the hosting 10× over" is an ROI argument — connecting the monthly fee to business outcomes the owner already understands.</div></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══ COMPLETION ═══ -->
+      <div class="tab-panel" id="panel-complete">
+
+        <div class="completion-banner" id="completion-banner">
+          <div class="completion-icon">🎉</div>
+          <div class="completion-title">StoreLift Sales Bible Complete</div>
+          <div class="completion-sub">You've worked through all 13 modules. You now have everything you need to cold call Nigerian dealership owners with confidence, handle every objection, present compelling demos, and close clients consistently. Now go make calls.</div>
+          <div class="completion-stats" id="completion-stats">
+            <!-- Built by JS -->
+          </div>
+          <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+            <a href="simulator.html" class="btn btn-primary btn-lg">🎯 Keep Practising in Simulator</a>
+            <a href="index.html" class="btn btn-ghost btn-lg">📊 Back to Dashboard</a>
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap:16px;margin-bottom:24px;">
+          <div class="glass-card" style="padding:20px;">
+            <div class="section-title" style="margin-bottom:12px;">🚀 Your Next 7 Days</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D1</span>Research 20 dealerships. Make first 30 calls. Expect 0–1 demos booked.</div>
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D2</span>Follow up on yesterday. Call 30 more. Build first demo website.</div>
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D3</span>Hold first demo call. Focus on outcomes, not features.</div>
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D4</span>30 more calls. Follow up demo from D3. Simulator: 10 reps.</div>
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D5</span>30 calls. Review the week. What's your call-to-demo rate?</div>
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D6</span>Weekly review. Plan next week. Identify top 3 improvements.</div>
+              <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);"><span style="color:var(--purple);font-weight:700;width:20px;">D7</span>Rest. But remember: your first client is one call away.</div>
+            </div>
+          </div>
+
+          <div class="glass-card" style="padding:20px;">
+            <div class="section-title" style="margin-bottom:12px;">💡 The 5 Things That Matter Most</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text-secondary);"><span style="font-size:18px;">📞</span><div><strong style="color:var(--text-primary);">Volume.</strong> 30 calls per day, every weekday. Nothing compounds without this.</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text-secondary);"><span style="font-size:18px;">🔍</span><div><strong style="color:var(--text-primary);">Research.</strong> Specific observations on every call. Generic calls get hung up on.</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text-secondary);"><span style="font-size:18px;">💬</span><div><strong style="color:var(--text-primary);">Speed.</strong> WhatsApp within 2 minutes of every booked call. Every time.</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text-secondary);"><span style="font-size:18px;">📊</span><div><strong style="color:var(--text-primary);">Review.</strong> 30 minutes daily. One improvement per day = 365 improvements per year.</div></div>
+              <div style="display:flex;gap:10px;align-items:flex-start;font-size:13px;color:var(--text-secondary);"><span style="font-size:18px;">🎯</span><div><strong style="color:var(--text-primary);">Practice.</strong> 10 simulator reps daily. Objection handling becomes automatic after 100 reps.</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="motivation-banner">
+          <div class="motivation-icon">🚗</div>
+          <div class="motivation-text">
+            <div class="motivation-quote">"There are thousands of Nigerian car dealerships on Instagram right now with no website, losing customers at 11pm to competitors who are already online. You have the solution. Every call you make today is a dealership owner who's about to find out their business is about to change. Pick up the phone."</div>
+            <div class="motivation-author">— StoreLift Sales Bible</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="divider" style="margin-top:32px;"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">All 13 modules complete 🎉</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Return to Dashboard to review your overall progress.</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="simulator.html" class="btn btn-ghost">🎯 Simulator</a>
+          <a href="index.html" class="btn btn-primary">📊 Dashboard →</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+const RTABS = ['quickref','precall','postcall','mistakes','glossary','complete'];
+let visitedRTabs = new Set(['quickref']);
+
+function showTab(id) {
+  RTABS.forEach(t => {
+    document.getElementById('panel-' + t).classList.remove('active');
+  });
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    b.classList.toggle('active', RTABS[i] === id);
+  });
+  document.getElementById('panel-' + id).classList.add('active');
+  visitedRTabs.add(id);
+  updateProgress();
+  if (id === 'complete') buildCompletionStats();
+}
+
+function updateProgress() {
+  const pct = Math.round((visitedRTabs.size / RTABS.length) * 100);
+  document.getElementById('module-progress-fill').style.width = pct + '%';
+  document.getElementById('section-count').textContent = `${visitedRTabs.size} of ${RTABS.length} sections visited`;
+  setModuleProgress('resources', pct);
+}
+
+function buildCompletionStats() {
+  const progress = getProgress();
+  const completed = Object.values(progress).filter(v => v === 100).length;
+  const totalMods = MODULES.length;
+  const simReps = parseInt(localStorage.getItem('sl_sim_stats') || '0');
+  const el = document.getElementById('completion-stats');
+  if (!el) return;
+  el.innerHTML = `
+    <div class="comp-stat"><span class="comp-stat-num">${completed}/${totalMods}</span><span class="comp-stat-label">Modules Complete</span></div>
+    <div class="comp-stat"><span class="comp-stat-num">${simReps}</span><span class="comp-stat-label">Simulator Reps</span></div>
+    <div class="comp-stat"><span class="comp-stat-num">${Math.round((completed/totalMods)*100)}%</span><span class="comp-stat-label">Overall Progress</span></div>
+  `;
+}
+
+function copyPsychPrinciples() {
+  const text = `8 Sales Psychology Principles — StoreLift\n\n1. Authority — Specific knowledge about their page = expert status\n2. Scarcity — First dealership indexed on Google wins\n3. Reciprocity — Free website build creates obligation to reciprocate\n4. Social Proof — Other dealerships moving online makes it safe\n5. Commitment — Micro-yeses build momentum toward the big yes\n6. Curiosity — "I built something" = open loop they must close\n7. Anchoring — Free build anchors high before monthly fee\n8. Loss Aversion — Customers lost at 11pm > customers gained`;
+  navigator.clipboard.writeText(text).then(() => showToast('Psychology principles copied!'));
+}
+
+function completeModule() {
+  markModuleComplete('resources');
+  showToast('Module 13 complete! All modules done! 🎉');
+  setTimeout(() => showTab('complete'), 1000);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('resources');
+
+  /* Init all checklists */
+  ['pre-mindset','pre-prep','pre-phys','post-every','post-demo','post-close','post-session'].forEach(id => {
+    initCheckboxes(id);
+  });
+
+  const saved = getModuleProgress('resources');
+  if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+  updateProgress();
+});
+</script>
+</body>
+</html>

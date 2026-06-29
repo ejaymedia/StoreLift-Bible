@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Closing Clients · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .close-hero {
+      background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.06));
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .close-hero::after {
+      content: '🤝';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Buying signal cards */
+    .signal-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .signal-row:last-child { border-bottom: none; }
+    .signal-icon { font-size: 20px; flex-shrink: 0; width: 28px; }
+    .signal-content { flex: 1; }
+    .signal-phrase {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-style: italic;
+      margin-bottom: 4px;
+    }
+    .signal-meaning {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .signal-response {
+      font-size: 12px;
+      color: #86efac;
+      font-style: italic;
+      margin-top: 6px;
+      padding: 6px 10px;
+      background: rgba(34,197,94,0.06);
+      border-radius: var(--radius-sm);
+      border-left: 2px solid rgba(34,197,94,0.3);
+    }
+
+    /* Close technique cards */
+    .technique-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 12px;
+      transition: border-color var(--transition);
+    }
+    .technique-card:hover { border-color: var(--border-strong); }
+    .technique-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 20px;
+      cursor: pointer;
+    }
+    .technique-num {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: #a5b4fc;
+      flex-shrink: 0;
+    }
+    .technique-meta { flex: 1; }
+    .technique-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .technique-tagline {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .technique-toggle {
+      font-size: 16px;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+    }
+    .technique-card.open .technique-toggle { transform: rotate(180deg); color: #a5b4fc; }
+    .technique-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .technique-card.open .technique-body { max-height: 600px; }
+    .technique-body-inner {
+      padding: 4px 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Pricing presentation */
+    .pricing-reveal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+    }
+    .pricing-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+    .pricing-step-num {
+      width: 26px;
+      height: 26px;
+      background: var(--brand-grad);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .pricing-step-content { flex: 1; }
+    .pricing-step-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--purple);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+    }
+    .pricing-step-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Hesitation handler */
+    .hesitation-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      margin-bottom: 10px;
+    }
+    .hesitation-trigger {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-style: italic;
+      margin-bottom: 8px;
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .hesitation-trigger::before { content: '💬'; flex-shrink: 0; }
+    .hesitation-handle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.55;
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.15);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+    }
+    .hesitation-why {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.5;
+    }
+
+    /* Commitment flow */
+    .commit-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .commit-step {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .commit-arrow {
+      width: 32px;
+      text-align: center;
+      font-size: 18px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      padding-top: 10px;
+    }
+    .commit-box {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .commit-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--purple);
+      margin-bottom: 6px;
+    }
+    .commit-script {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Payment transition */
+    .payment-path {
+      background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(239,68,68,0.04));
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    /* Win/loss tracker */
+    .tracker-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .tracker-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+    .tracker-num {
+      font-size: 32px;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .tracker-label { font-size: 12px; color: var(--text-muted); margin-bottom: 10px; }
+    .tracker-btns { display: flex; gap: 6px; justify-content: center; }
+    .tracker-btn {
+      padding: 4px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    .tracker-btn:hover { background: var(--bg-card-hover); }
+    .tracker-btn.add:hover { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(--green); }
+    .tracker-btn.sub:hover { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: var(--red); }
+
+    @media (max-width: 640px) {
+      .tracker-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 8 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Closing Clients</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="close-hero animate-in">
+        <div class="page-eyebrow">🤝 Module 8</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Closing Clients</h1>
+        <p class="page-subtitle" style="max-width:560px;">Closing is not pressure — it's guidance. A prospect who loved the demo just needs a clear, confident path to say yes. This module gives you every tool: reading buying signals, presenting pricing, handling hesitation, and asking for commitment naturally.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 8 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">0 of 6 sections read</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- ─── SECTION 1: BUYING SIGNALS ─── -->
+      <div data-section="1" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">📡 Recognising Buying Signals</div>
+        <div class="section-desc" style="margin-bottom:20px;">Buying signals are moments when the prospect has already decided internally — they just haven't said yes out loud yet. Miss these and you keep presenting. Catch them and close immediately.</div>
+
+        <div class="glass-card" style="padding:20px;">
+          <div style="font-size:12px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">🟢 Strong buying signals — close immediately</div>
+
+          <div class="signal-row">
+            <div class="signal-icon">💰</div>
+            <div class="signal-content">
+              <div class="signal-phrase">"How much does it cost?"</div>
+              <div class="signal-meaning">The strongest buying signal. They're not asking to find a reason to say no — they're asking because they want it and need to know if they can afford it.</div>
+              <div class="signal-response">→ "Great question — let me walk you through that now. The build is completely done, so what we put in place is a monthly hosting and maintenance arrangement of ₦[X]. That keeps the site live, updated, and supported. Want me to get that set up for you?"</div>
+            </div>
+          </div>
+
+          <div class="signal-row">
+            <div class="signal-icon">🔧</div>
+            <div class="signal-content">
+              <div class="signal-phrase">"Can you add our logo / change this colour / add more cars?"</div>
+              <div class="signal-meaning">They're mentally customising it — which means they're imagining themselves owning it. This is ownership language.</div>
+              <div class="signal-response">→ "Absolutely — that's all part of the setup. I'll make every change you want before we go live. What else would you like adjusted?"</div>
+            </div>
+          </div>
+
+          <div class="signal-row">
+            <div class="signal-icon">📅</div>
+            <div class="signal-content">
+              <div class="signal-phrase">"When can it be live?"</div>
+              <div class="signal-meaning">They're already thinking about the future with the website. This is a green light — they just want a timeline.</div>
+              <div class="signal-response">→ "Once we confirm today, I can have it fully live with your domain within 48 hours. Shall we move forward?"</div>
+            </div>
+          </div>
+
+          <div class="signal-row">
+            <div class="signal-icon">👥</div>
+            <div class="signal-content">
+              <div class="signal-phrase">"I want to show this to my team / partner"</div>
+              <div class="signal-meaning">They like it enough to involve others — which means they've personally decided yes. They want internal validation, not a reason to say no.</div>
+              <div class="signal-response">→ "Of course — the link is on your WhatsApp, share it with them. Would it help if I joined a quick 10-minute call with you both so I can answer any questions directly?"</div>
+            </div>
+          </div>
+
+          <div class="signal-row">
+            <div class="signal-icon">😮</div>
+            <div class="signal-content">
+              <div class="signal-phrase">"Wow, this is exactly what we needed" / "This is really good"</div>
+              <div class="signal-meaning">Emotional validation. They've connected emotionally — now is the moment to ask for commitment before the emotion fades.</div>
+              <div class="signal-response">→ "I'm really glad. So shall we get this running for [Dealership Name]? I can start the setup today."</div>
+            </div>
+          </div>
+
+          <div class="signal-row" style="border-bottom:none;">
+            <div class="signal-icon">🤔</div>
+            <div class="signal-content">
+              <div class="signal-phrase">"What happens if I want to cancel?"</div>
+              <div class="signal-meaning">They're thinking about commitment and managing risk — which means they're considering saying yes. This is not resistance; it's due diligence.</div>
+              <div class="signal-response">→ "It's completely month-to-month — no contract, no lock-in. If for any reason it's not working for you, you simply let me know and that's it. Zero risk. Shall we get started?"</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:var(--radius-md);padding:14px 16px;">
+          <div style="font-size:11px;font-weight:700;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">⚡ The buying signal rule</div>
+          <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">The moment you hear a buying signal — <strong style="color:var(--text-primary);">stop presenting and start closing.</strong> Most salespeople keep pitching after the buyer is already convinced, which creates doubt where there was none. When they signal yes, move to the ask immediately.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 2: CLOSE TECHNIQUES ─── -->
+      <div data-section="2" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">🎯 Closing Techniques</div>
+        <div class="section-desc" style="margin-bottom:20px;">Six natural closes that don't feel like selling. Click each to expand the full script and when to use it.</div>
+
+        <div id="techniques-list">
+
+          <div class="technique-card" id="tc1">
+            <div class="technique-header" onclick="toggleTechnique('tc1')">
+              <div class="technique-num">1</div>
+              <div class="technique-meta">
+                <div class="technique-name">The Assumptive Close</div>
+                <div class="technique-tagline">Assume they're moving forward — let them stop you if not</div>
+              </div>
+              <span class="technique-toggle">⌄</span>
+            </div>
+            <div class="technique-body">
+              <div class="technique-body-inner">
+                <div class="script-block" style="margin-bottom:10px;">
+                  <span class="script-label">Script</span>
+                  "Great — so let me get the setup started. I'll need your preferred domain name and the WhatsApp number you want customers to reach you on. What would you like the domain to be — something like [dealershipname].com.ng?"
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+                  <strong style="color:#a5b4fc;">When to use:</strong> After a clear positive reaction or a buying signal. You're not asking if they want to proceed — you're beginning the setup process. If they're not ready, they'll say so. Most of the time, they go along.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="technique-card" id="tc2">
+            <div class="technique-header" onclick="toggleTechnique('tc2')">
+              <div class="technique-num">2</div>
+              <div class="technique-meta">
+                <div class="technique-name">The Summary Close</div>
+                <div class="technique-tagline">Recap value, then ask — one final yes to everything</div>
+              </div>
+              <span class="technique-toggle">⌄</span>
+            </div>
+            <div class="technique-body">
+              <div class="technique-body-inner">
+                <div class="script-block" style="margin-bottom:10px;">
+                  <span class="script-label">Script</span>
+                  "So just to summarise what you're getting — a fully built website with your dealership's name, a searchable inventory your customers can browse on their phones, an enquiry form that sends structured leads directly to you, and ongoing hosting and maintenance to keep everything running. All for ₦[X] per month. Shall we get it live?"
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+                  <strong style="color:#a5b4fc;">When to use:</strong> When they seem interested but slightly uncertain. The recap reminds them of everything they're getting before the ask — makes the price feel smaller relative to the value.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="technique-card" id="tc3">
+            <div class="technique-header" onclick="toggleTechnique('tc3')">
+              <div class="technique-num">3</div>
+              <div class="technique-meta">
+                <div class="technique-name">The Question Close</div>
+                <div class="technique-tagline">Ask what's stopping them — then solve it</div>
+              </div>
+              <span class="technique-toggle">⌄</span>
+            </div>
+            <div class="technique-body">
+              <div class="technique-body-inner">
+                <div class="script-block" style="margin-bottom:10px;">
+                  <span class="script-label">Script</span>
+                  "Based on what you've seen — is there anything stopping you from getting this running for your dealership today?"
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+                  <strong style="color:#a5b4fc;">When to use:</strong> When the mood is positive but they haven't said yes. If they give a reason, you now know exactly what to address. If they say "nothing" — close immediately.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="technique-card" id="tc4">
+            <div class="technique-header" onclick="toggleTechnique('tc4')">
+              <div class="technique-num">4</div>
+              <div class="technique-meta">
+                <div class="technique-name">The Urgency Close</div>
+                <div class="technique-tagline">Create honest, real urgency — not fake pressure</div>
+              </div>
+              <span class="technique-toggle">⌄</span>
+            </div>
+            <div class="technique-body">
+              <div class="technique-body-inner">
+                <div class="script-block" style="margin-bottom:10px;">
+                  <span class="script-label">Script</span>
+                  "I'm currently building websites for a few dealerships in [City] at the same time. The one that goes live first has the advantage — they'll be indexed on Google before anyone else in their area. If you want to be ahead of your competition, now is the time. Shall I get yours live first?"
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+                  <strong style="color:#a5b4fc;">When to use:</strong> For competitive dealership owners who care about being first. Never create fake urgency — only use this when it's genuinely true.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="technique-card" id="tc5">
+            <div class="technique-header" onclick="toggleTechnique('tc5')">
+              <div class="technique-num">5</div>
+              <div class="technique-meta">
+                <div class="technique-name">The ROI Close</div>
+                <div class="technique-tagline">Connect the monthly cost to one car sale</div>
+              </div>
+              <span class="technique-toggle">⌄</span>
+            </div>
+            <div class="technique-body">
+              <div class="technique-body-inner">
+                <div class="script-block" style="margin-bottom:10px;">
+                  <span class="script-label">Script</span>
+                  "Let me put the cost in context. Your hosting is ₦[X] per month. If the website brings you even one extra car sale per month that you wouldn't have gotten through Instagram or WhatsApp alone — what's your profit on a typical sale? Even a small saloon car is ₦[Y] profit. The website pays for itself 10× over from a single deal. Does that make the numbers work for you?"
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+                  <strong style="color:#a5b4fc;">When to use:</strong> When they're hesitating on the monthly price. Connecting cost to a single sale makes the ROI immediately obvious to a business owner.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="technique-card" id="tc6">
+            <div class="technique-header" onclick="toggleTechnique('tc6')">
+              <div class="technique-num">6</div>
+              <div class="technique-meta">
+                <div class="technique-name">The Take-Away Close</div>
+                <div class="technique-tagline">Genuine willingness to walk away creates urgency naturally</div>
+              </div>
+              <span class="technique-toggle">⌄</span>
+            </div>
+            <div class="technique-body">
+              <div class="technique-body-inner">
+                <div class="script-block" style="margin-bottom:10px;">
+                  <span class="script-label">Script</span>
+                  "Look — I don't want to push this if the timing isn't right for you. I genuinely think this would help your dealership, but the decision is completely yours. If it's not the right moment, no hard feelings — I'll reach out again in a few months. What would you like to do?"
+                </div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;background:rgba(99,102,241,0.06);border:1px solid rgba(99,102,241,0.1);border-radius:var(--radius-sm);padding:10px 14px;">
+                  <strong style="color:#a5b4fc;">When to use:</strong> When they've been stalling for too long and nothing else is working. Genuine willingness to leave paradoxically makes people want to commit. Use sparingly.
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 3: PRESENTING PRICING ─── -->
+      <div data-section="3" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">💰 Presenting Pricing</div>
+        <div class="section-desc" style="margin-bottom:20px;">How you introduce the price matters as much as the number itself. Follow this exact sequence.</div>
+
+        <div class="pricing-reveal">
+          <div class="pricing-step">
+            <div class="pricing-step-num">1</div>
+            <div class="pricing-step-content">
+              <div class="pricing-step-label">Anchor with the free build</div>
+              <div class="pricing-step-text">"The website itself — everything you've seen — is completely built and ready. There's no charge for the build. That's done."</div>
+            </div>
+          </div>
+          <div class="pricing-step">
+            <div class="pricing-step-num">2</div>
+            <div class="pricing-step-content">
+              <div class="pricing-step-label">Introduce what they're paying for</div>
+              <div class="pricing-step-text">"What we put in place is a simple monthly arrangement that covers hosting — keeping the website live on your domain — plus ongoing maintenance so the site stays updated as your inventory changes, and technical support whenever you need it."</div>
+            </div>
+          </div>
+          <div class="pricing-step">
+            <div class="pricing-step-num">3</div>
+            <div class="pricing-step-content">
+              <div class="pricing-step-label">State the price simply</div>
+              <div class="pricing-step-text">"That's ₦[X] per month." <em style="color:var(--text-muted);">— Then stop. Don't justify it immediately. Let the number land.</em></div>
+            </div>
+          </div>
+          <div class="pricing-step">
+            <div class="pricing-step-num">4</div>
+            <div class="pricing-step-content">
+              <div class="pricing-step-label">Add the ROI framing</div>
+              <div class="pricing-step-text">"To put that in perspective — one extra customer per month from the website pays for it many times over. And the website works for you 24 hours a day, seven days a week, even when your team isn't online."</div>
+            </div>
+          </div>
+          <div class="pricing-step" style="margin-bottom:0;">
+            <div class="pricing-step-num">5</div>
+            <div class="pricing-step-content">
+              <div class="pricing-step-label">Remove the risk</div>
+              <div class="pricing-step-text">"It's month-to-month — no contract, no lock-in. If you're ever not happy, you simply let me know. There's no risk to getting started."</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">Pricing rules</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);">
+              <span style="color:var(--red);font-weight:700;">✗</span>
+              Never mention price before the demo — value must come first
+            </div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);">
+              <span style="color:var(--red);font-weight:700;">✗</span>
+              Never apologise for the price or say "it's only ₦X" — it signals that you think it's expensive
+            </div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);">
+              <span style="color:var(--red);font-weight:700;">✗</span>
+              Never offer a discount before they've even objected — you're giving money away unnecessarily
+            </div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);">
+              <span style="color:var(--green);font-weight:700;">✓</span>
+              State the price confidently, pause, and let them respond before speaking again
+            </div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);">
+              <span style="color:var(--green);font-weight:700;">✓</span>
+              Always frame price against the cost of a single car sale — makes the number feel minimal
+            </div>
+            <div style="display:flex;gap:10px;font-size:13px;color:var(--text-secondary);">
+              <span style="color:var(--green);font-weight:700;">✓</span>
+              Month-to-month = no risk. Say this every time you present pricing
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 4: HESITATION ─── -->
+      <div data-section="4" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">🤔 Handling Hesitation at the Close</div>
+        <div class="section-desc" style="margin-bottom:16px;">Post-demo hesitation is different from cold-call objections. They've seen the value — they just need a little more confidence to commit.</div>
+
+        <div class="hesitation-card">
+          <div class="hesitation-trigger">"I need to think about it."</div>
+          <div class="hesitation-handle">"Of course — what specifically would you need to think through? I want to make sure you have everything you need to make a confident decision. Is it the cost, or something about the website itself?"</div>
+          <div class="hesitation-why">Surfaces the real objection. "Think about it" is almost always a specific unresolved concern — uncover it and address it directly.</div>
+        </div>
+
+        <div class="hesitation-card">
+          <div class="hesitation-trigger">"The price is a bit high."</div>
+          <div class="hesitation-handle">"I understand. Let me ask — what's a typical profit on one car sale for you? [They answer] So the website pays for itself entirely from one deal per month that you might not have gotten without it. Does that change how you see the number?"</div>
+          <div class="hesitation-why">Never discount before using the ROI frame first. Make them do the maths — it's more convincing when they calculate it themselves.</div>
+        </div>
+
+        <div class="hesitation-card">
+          <div class="hesitation-trigger">"Let me discuss with my wife / partner / business partner."</div>
+          <div class="hesitation-handle">"That makes complete sense — this is a business decision and it's smart to involve them. Would it be helpful if I sent a short summary of what's included on WhatsApp so you have something concrete to share? And if they have any questions, I'm happy to jump on a quick call with you both."</div>
+          <div class="hesitation-why">Send the summary immediately so the conversation happens with facts, not vague memories. Offering to join the partner call dramatically increases close rate.</div>
+        </div>
+
+        <div class="hesitation-card">
+          <div class="hesitation-trigger">"Can you reduce the price?"</div>
+          <div class="hesitation-handle">"I appreciate you asking directly. The price is set to cover the full hosting, maintenance, and support — cutting it would mean cutting the service. What I can do is make sure you get the maximum value from day one: I'll update the inventory personally for the first month, set up your domain, and be on standby for any changes. Is that fair?"</div>
+          <div class="hesitation-why">Don't discount — add value instead. Offering extra hands-on support in the first month maintains your price and increases their confidence.</div>
+        </div>
+
+        <div class="hesitation-card">
+          <div class="hesitation-trigger">"I'm not sure this will bring customers."</div>
+          <div class="hesitation-handle">"That's a fair concern. I can't guarantee a specific number — no one honestly can. What I can tell you is that right now your dealership doesn't exist to anyone searching Google for a car in [City]. A website changes that immediately. Would you be comfortable giving it one month to see what happens? The risk is minimal — it's month-to-month."</div>
+          <div class="hesitation-why">Month-to-month removes the risk of a long commitment. One month to test is a very easy yes for most business owners.</div>
+        </div>
+
+        <div class="hesitation-card">
+          <div class="hesitation-trigger">"We'll start next month."</div>
+          <div class="hesitation-handle">"Of course — I can lock in everything now and go live on the date you choose. That way the setup is done and you don't have to chase it later. Shall I prepare it now and we activate on [specific date next month]?"</div>
+          <div class="hesitation-why">Accept the timing, but secure the commitment now. Doing the setup immediately keeps momentum and prevents the deal from going cold.</div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 5: PAYMENT TRANSITION ─── -->
+      <div data-section="5" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">💳 Transitioning to Payment</div>
+        <div class="section-desc" style="margin-bottom:16px;">Once they say yes, move to payment naturally and quickly. Don't give the deal time to go cold.</div>
+
+        <div class="payment-path" style="margin-bottom:20px;">
+          <div style="font-size:13px;font-weight:700;color:#fcd34d;margin-bottom:16px;">The payment transition script</div>
+          <div class="script-block" style="margin-bottom:12px;">
+            <span class="script-label">Once they say yes</span>
+            "Perfect — let's get it sorted right now while we're on the call. I'll send you the payment details on WhatsApp. It's ₦[X] for the first month — after that it renews monthly and I'll remind you before each renewal. Does that work?"
+          </div>
+          <div class="script-block">
+            <span class="script-label">After payment confirmation</span>
+            "Got it — thank you. I'll start the domain setup now and send you a confirmation once everything is live. I'll have it ready within 48 hours. You're going to love having this running. Welcome to StoreLift! 🎉"
+          </div>
+        </div>
+
+        <div class="grid-2" style="gap:12px;">
+          <div class="glass-card" style="padding:16px;">
+            <div style="font-size:12px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">✓ Payment best practices</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-secondary);">
+              <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Send payment details on WhatsApp within 2 minutes of them saying yes</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Accept bank transfer or mobile money — whichever is easiest for them</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Confirm receipt immediately and start work the same day</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Send a simple receipt or invoice on WhatsApp for their records</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--green);">→</span> Set a reminder to follow up 48 hours later with the live website link</div>
+            </div>
+          </div>
+          <div class="glass-card" style="padding:16px;">
+            <div style="font-size:12px;font-weight:700;color:#fca5a5;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">✗ Payment mistakes to avoid</div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text-secondary);">
+              <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Don't wait until after the call to send payment details — do it live</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Don't accept "I'll pay later" without a specific date confirmed</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Don't start work before payment — even friendly clients can go silent</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Don't disappear after payment — communicate every step of the setup</div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--red);">→</span> Don't over-promise the go-live date — under-promise, over-deliver</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 6: WIN/LOSS TRACKER ─── -->
+      <div data-section="6" class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:6px;">📊 Demo Win/Loss Tracker</div>
+        <div class="section-desc" style="margin-bottom:16px;">Track your demo outcomes. Your close rate tells you exactly where to improve.</div>
+
+        <div class="tracker-grid">
+          <div class="tracker-card">
+            <div class="tracker-num" id="demos-held" style="color:#93c5fd;">0</div>
+            <div class="tracker-label">Demos Held</div>
+            <div class="tracker-btns">
+              <button class="tracker-btn sub" onclick="updateTracker('demos',-1)">−</button>
+              <button class="tracker-btn add" onclick="updateTracker('demos',1)">+</button>
+            </div>
+          </div>
+          <div class="tracker-card">
+            <div class="tracker-num" id="closes-num" style="color:#86efac;">0</div>
+            <div class="tracker-label">Clients Closed</div>
+            <div class="tracker-btns">
+              <button class="tracker-btn sub" onclick="updateTracker('closes',-1)">−</button>
+              <button class="tracker-btn add" onclick="updateTracker('closes',1)">+</button>
+            </div>
+          </div>
+          <div class="tracker-card">
+            <div class="tracker-num" id="close-rate" style="color:#fcd34d;">0%</div>
+            <div class="tracker-label">Close Rate</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:8px;">Target: 40%+</div>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:10px;">📈 What your close rate tells you</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span style="color:var(--text-secondary);">Below 20%</span>
+              <span style="color:#fca5a5;font-weight:500;">Demo quality or pricing presentation needs work</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span style="color:var(--text-secondary);">20–35%</span>
+              <span style="color:#fcd34d;font-weight:500;">Good — focus on hesitation handling</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span style="color:var(--text-secondary);">35–50%</span>
+              <span style="color:#86efac;font-weight:500;">Strong — you're reading signals well</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;">
+              <span style="color:var(--text-secondary);">Above 50%</span>
+              <span style="color:#a5b4fc;font-weight:500;">Excellent — focus on scaling demo volume</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: WhatsApp Templates →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="demo.html" class="btn btn-ghost">← Demo Presentation</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+
+  /* ── TECHNIQUE ACCORDIONS ── */
+  function toggleTechnique(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+  }
+
+  /* ── WIN/LOSS TRACKER ── */
+  const TRACKER_KEY = 'sl_winloss_' + new Date().toDateString();
+  let trackerData = { demos: 0, closes: 0 };
+
+  function loadTracker() {
+    try {
+      const saved = JSON.parse(localStorage.getItem(TRACKER_KEY));
+      if (saved) trackerData = saved;
+    } catch {}
+    renderTracker();
+  }
+
+  function saveTracker() {
+    localStorage.setItem(TRACKER_KEY, JSON.stringify(trackerData));
+  }
+
+  function updateTracker(key, delta) {
+    trackerData[key] = Math.max(0, trackerData[key] + delta);
+    if (trackerData.closes > trackerData.demos) trackerData.closes = trackerData.demos;
+    saveTracker();
+    renderTracker();
+  }
+
+  function renderTracker() {
+    document.getElementById('demos-held').textContent = trackerData.demos;
+    document.getElementById('closes-num').textContent = trackerData.closes;
+    const rate = trackerData.demos > 0 ? Math.round((trackerData.closes / trackerData.demos) * 100) : 0;
+    document.getElementById('close-rate').textContent = rate + '%';
+  }
+
+  /* ── SECTION PROGRESS ── */
+  document.addEventListener('DOMContentLoaded', () => {
+    initSidebar('closing');
+    loadTracker();
+
+    const sections = document.querySelectorAll('[data-section]');
+    const totalSections = sections.length;
+    let readSections = new Set();
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          readSections.add(entry.target.dataset.section);
+          const pct = Math.round((readSections.size / totalSections) * 100);
+          document.getElementById('module-progress-fill').style.width = pct + '%';
+          document.getElementById('section-count').textContent = `${readSections.size} of ${totalSections} sections read`;
+          setModuleProgress('closing', pct);
+        }
+      });
+    }, { threshold: 0.25 });
+
+    sections.forEach(s => observer.observe(s));
+
+    const saved = getModuleProgress('closing');
+    if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+  });
+
+  function completeAndNext() {
+    markModuleComplete('closing');
+    showToast('Module 8 complete! Moving to WhatsApp Templates...');
+    setTimeout(() => location.href = 'whatsapp.html', 1200);
+  }
+</script>
+</body>
+</html>

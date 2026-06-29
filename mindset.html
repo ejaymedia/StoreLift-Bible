@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Mindset · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+    /* ── Module 2 specific ── */
+    .mindset-hero {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.06));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .mindset-hero::after {
+      content: '🧠';
+      position: absolute;
+      right: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.15;
+    }
+    .mindset-hero h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+    .mindset-hero p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    /* Insight cards */
+    .insight-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      transition: all var(--transition);
+      height: 100%;
+    }
+    .insight-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-strong);
+      transform: translateY(-2px);
+    }
+    .insight-icon {
+      font-size: 26px;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .insight-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .insight-body {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+    .insight-body strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* Truth vs myth */
+    .truth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+    .truth-col { padding: 20px; }
+    .truth-col.myth { background: rgba(239,68,68,0.04); border-right: 1px solid var(--border); }
+    .truth-col.truth { background: rgba(34,197,94,0.04); }
+    .truth-col-header {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .myth .truth-col-header { color: #fca5a5; }
+    .truth .truth-col-header { color: #86efac; }
+    .truth-item {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .truth-item:last-child { border-bottom: none; }
+    .myth .truth-item::before { content: '✗'; color: #ef4444; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+    .truth .truth-item::before { content: '✓'; color: #22c55e; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+    /* Exercise cards */
+    .exercise-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+    .exercise-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .exercise-header:hover { background: var(--bg-card-hover); }
+    .exercise-num {
+      width: 32px;
+      height: 32px;
+      background: var(--brand-grad);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 800;
+      color: white;
+      flex-shrink: 0;
+    }
+    .exercise-meta { flex: 1; }
+    .exercise-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .exercise-duration {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    .exercise-toggle {
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+    }
+    .exercise-card.open .exercise-toggle { transform: rotate(180deg); }
+    .exercise-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .exercise-card.open .exercise-body { max-height: 600px; }
+    .exercise-body-inner {
+      padding: 4px 20px 20px;
+      border-top: 1px solid var(--border);
+    }
+    .exercise-step {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+    .exercise-step:last-child { border-bottom: none; }
+    .step-num {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--border-strong);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* Routine timeline */
+    .routine-timeline { position: relative; padding-left: 24px; }
+    .routine-timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--brand-from), var(--brand-to), transparent);
+      border-radius: 1px;
+    }
+    .routine-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .routine-item::before {
+      content: '';
+      position: absolute;
+      left: -21px;
+      top: 6px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--brand-grad);
+      border: 2px solid var(--bg-base);
+    }
+    .routine-time {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--purple);
+      margin-bottom: 4px;
+    }
+    .routine-action {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .routine-why {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* Mistake cards */
+    .mistake-card {
+      background: rgba(239,68,68,0.05);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 10px;
+    }
+    .mistake-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #fca5a5;
+      margin-bottom: 6px;
+    }
+    .mistake-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .mistake-fix {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      padding-top: 8px;
+      border-top: 1px solid rgba(239,68,68,0.1);
+      display: flex;
+      gap: 8px;
+    }
+    .mistake-fix::before { content: '→'; color: var(--green); font-weight: 700; flex-shrink: 0; }
+
+    /* Flow state */
+    .flow-states {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .flow-state-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      text-align: center;
+    }
+    .flow-state-emoji { font-size: 28px; margin-bottom: 8px; display: block; }
+    .flow-state-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .flow-state-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      .truth-grid { grid-template-columns: 1fr; }
+      .truth-col.myth { border-right: none; border-bottom: 1px solid var(--border); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="sidebar-overlay"></div>
+
+<div class="app-layout">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 2 of 13</span></div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Sales Mindset</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="markModuleComplete('mindset');showToast('Module 2 marked complete ✓');setTimeout(()=>location.href='dealerships.html',1200);">
+          Mark Complete →
+        </button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Hero -->
+      <div class="mindset-hero animate-in">
+        <div class="page-eyebrow">🧠 Module 2</div>
+        <h2>Sales Mindset</h2>
+        <p>Before you dial a single number, your mindset is either your biggest asset or your biggest liability. This module rewires how you think about sales calls so you show up with confidence every single time.</p>
+      </div>
+
+      <!-- Progress tracker for this module -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:32px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 2 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">0 of 6 sections read</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- ─── SECTION 1: WHY BUYERS BUY ─── -->
+      <div class="section animate-in-delay-1" id="sec-why-buy" data-section="1">
+        <div class="section-title">💰 Why Business Owners Buy</div>
+        <div class="section-desc">Understanding their motivation is the foundation of every successful sales call.</div>
+
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div class="insight-card">
+            <span class="insight-icon">😰</span>
+            <div class="insight-title">They buy to escape pain</div>
+            <div class="insight-body">The car dealership owner is tired of answering the same WhatsApp messages every day. "What cars do you have?" "What's the price of the Highlander?" A website removes that pain. <strong>You're selling relief, not a website.</strong></div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">📈</span>
+            <div class="insight-title">They buy to gain advantage</div>
+            <div class="insight-body">If their competitor down the road has a website and they don't, customers who Google "car dealers in Lagos" will never find them. <strong>You're offering a competitive edge.</strong> That's powerful.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">🤝</span>
+            <div class="insight-title">They buy from people they trust</div>
+            <div class="insight-body">Nigerians especially buy on relationships. If you come across as a genuine person who did their research and truly wants to help, the sale becomes natural. <strong>Trust first, pitch second.</strong></div>
+          </div>
+        </div>
+
+        <div class="script-block">
+          <span class="script-label">Key insight to internalize</span>
+          You are not selling a product. You are solving a problem. The moment you fully believe that — your calls will sound completely different. Desperation comes from needing the sale. Confidence comes from knowing you have the solution to their problem.
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 2: WHY PEOPLE REJECT ─── -->
+      <div class="section animate-in" id="sec-rejection" data-section="2">
+        <div class="section-title">🚫 Why People Reject Sales Calls</div>
+        <div class="section-desc">Rejection is almost never personal. Here's what's really happening when someone says no.</div>
+
+        <div class="grid-2" style="margin-bottom:20px;">
+          <div class="insight-card">
+            <span class="insight-icon">⚡</span>
+            <div class="insight-title">They're caught off guard</div>
+            <div class="insight-body">You interrupted their day. They were in the middle of something. The rejection is not about you — it's about timing. <strong>Your job is to quickly earn the right to 30 more seconds.</strong></div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">🛡️</span>
+            <div class="insight-title">They have their guard up</div>
+            <div class="insight-body">Every Nigerian business owner has been called by people trying to sell them things they don't need. They've built a wall. <strong>Your job is not to break the wall — it's to make them lower it voluntarily</strong> by showing genuine curiosity.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">❓</span>
+            <div class="insight-title">They don't see the value yet</div>
+            <div class="insight-body">They don't understand what a website would actually do for their business. This is not their failure — it's <strong>your opportunity to educate them in a way that clicks.</strong></div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">🕐</span>
+            <div class="insight-title">The timing is wrong</div>
+            <div class="insight-body">Sometimes they're genuinely busy. A polite follow-up call tomorrow often reaches a completely different person. <strong>Persistence beats talent in cold calling.</strong></div>
+          </div>
+        </div>
+
+        <div class="truth-grid">
+          <div class="truth-col myth">
+            <div class="truth-col-header">✗ Beginner thinking</div>
+            <div class="truth-item">They rejected me personally</div>
+            <div class="truth-item">I must have said the wrong thing</div>
+            <div class="truth-item">This doesn't work in Nigeria</div>
+            <div class="truth-item">They already have everything they need</div>
+            <div class="truth-item">I should give up after 2 nos</div>
+          </div>
+          <div class="truth-col truth">
+            <div class="truth-col-header">✓ StoreLift thinking</div>
+            <div class="truth-item">They rejected the interruption, not me</div>
+            <div class="truth-item">They just didn't see value yet — next call</div>
+            <div class="truth-item">Nigerian SMEs are wide open and underserved</div>
+            <div class="truth-item">They have a pain they haven't solved yet</div>
+            <div class="truth-item">The 10th call often converts what the 1st couldn't</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 3: REMOVE DESPERATION ─── -->
+      <div class="section animate-in" id="sec-desperation" data-section="3">
+        <div class="section-title">🧘 How to Remove Desperation</div>
+        <div class="section-desc">Desperation is the single biggest killer of sales calls. People can hear it in your voice within 3 seconds.</div>
+
+        <div class="grid-2" style="margin-bottom:20px;">
+          <div>
+            <div class="insight-card" style="margin-bottom:12px;">
+              <span class="insight-icon">📊</span>
+              <div class="insight-title">Think in batches, not individual calls</div>
+              <div class="insight-body">If you need each call to succeed, you'll sound desperate on every single one. Instead, think: <strong>"I'm working through 30 calls today. Some will say yes, most won't — and that's exactly how this works."</strong> That mindset shift is everything.</div>
+            </div>
+            <div class="insight-card">
+              <span class="insight-icon">🎯</span>
+              <div class="insight-title">Your goal is the next call, not the close</div>
+              <div class="insight-body">On a cold call, you are not trying to close a client. You are trying to <strong>book a 15-minute demo call.</strong> That's it. When your goal is small, you sound relaxed. When you sound relaxed, people trust you.</div>
+            </div>
+          </div>
+          <div>
+            <div class="script-block" style="margin-bottom:12px;">
+              <span class="script-label">The abundance mindset — say this to yourself before calling</span>
+              "There are thousands of car dealerships in Nigeria advertising on Instagram with no website. My only job is to find the ones who are ready to talk today. Every no eliminates one and brings me closer to a yes."
+            </div>
+            <div class="script-block">
+              <span class="script-label">What detachment sounds like on a call</span>
+              Instead of: "Please sir, just give me a chance, I promise it will be worth it..."<br/><br/>
+              Say: "Look, I built something for your dealership — if you like it when I show you, great. If not, no problem at all. I just wanted to put it on the table."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 4: CONFIDENCE ─── -->
+      <div class="section animate-in" id="sec-confidence" data-section="4">
+        <div class="section-title">💪 How to Sound Confident</div>
+        <div class="section-desc">Confidence is not something you feel first. It's something you perform first — until you feel it.</div>
+
+        <div class="grid-3" style="margin-bottom:20px;">
+          <div class="insight-card">
+            <span class="insight-icon">🗣️</span>
+            <div class="insight-title">Slow down your speech</div>
+            <div class="insight-body">Nervous people speak fast. Confident people speak at a deliberate pace. <strong>Force yourself to slow down by 20%</strong> on every call, especially your opener. Pausing is power.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">📢</span>
+            <div class="insight-title">Project your voice</div>
+            <div class="insight-body">Speak from your chest, not your throat. <strong>Stand up while calling</strong> — it opens your diaphragm and your voice automatically carries more authority. Nigerian business owners respond to energy.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">😁</span>
+            <div class="insight-title">Smile — literally</div>
+            <div class="insight-body">Put a slight smile on your face before the call connects. It changes the warmth of your voice in a way the other person feels even over the phone. <strong>Put a small mirror by your desk</strong> to check your expression.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">💬</span>
+            <div class="insight-title">Use their name early</div>
+            <div class="insight-body">"Good morning, is this [Name]?" — using someone's name signals you did your research and you're not randomly dialling. <strong>It immediately makes the call more personal</strong> and harder to dismiss.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">⚖️</span>
+            <div class="insight-title">Be willing to walk away</div>
+            <div class="insight-body">Nothing sounds more confident than <strong>"If it's not a good time, no problem at all — I can reach out another day."</strong> Giving them an exit makes them want to stay.</div>
+          </div>
+          <div class="insight-card">
+            <span class="insight-icon">📋</span>
+            <div class="insight-title">Know your script cold</div>
+            <div class="insight-body">Confidence comes from preparation. <strong>If you're thinking about what to say next, you can't focus on listening.</strong> Practise your opener until it's automatic.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 5: FLOW STATE + EXERCISES ─── -->
+      <div class="section animate-in" id="sec-flow" data-section="5">
+        <div class="section-title">🔥 Entering Flow State Before Calling</div>
+        <div class="section-desc">Flow state is when everything feels effortless. You can engineer it with a pre-call routine.</div>
+
+        <div class="flow-states" style="margin-bottom:24px;">
+          <div class="flow-state-card">
+            <span class="flow-state-emoji">😰</span>
+            <div class="flow-state-name">Anxious</div>
+            <div class="flow-state-desc">Heart racing, rushing your words, afraid of rejection. Almost everyone starts here.</div>
+          </div>
+          <div class="flow-state-card">
+            <span class="flow-state-emoji">😐</span>
+            <div class="flow-state-name">Mechanical</div>
+            <div class="flow-state-desc">Reading from the script, sounding robotic. Common in the first week.</div>
+          </div>
+          <div class="flow-state-card">
+            <span class="flow-state-emoji">😌</span>
+            <div class="flow-state-name">Comfortable</div>
+            <div class="flow-state-desc">You know the script, you're relaxed. This is where most people plateau.</div>
+          </div>
+          <div class="flow-state-card" style="border-color:rgba(99,102,241,0.3);background:rgba(99,102,241,0.06);">
+            <span class="flow-state-emoji">🔥</span>
+            <div class="flow-state-name">Flow State</div>
+            <div class="flow-state-desc">Fully present, listening deeply, responding naturally. This is the target.</div>
+          </div>
+        </div>
+
+        <div style="margin-bottom:8px;font-size:14px;font-weight:600;color:var(--text-primary);">Confidence Exercises</div>
+        <div style="margin-bottom:16px;font-size:13px;color:var(--text-secondary);">Click each exercise to expand the full routine.</div>
+
+        <div class="exercise-card" id="ex1">
+          <div class="exercise-header" onclick="toggleExercise('ex1')">
+            <div class="exercise-num">1</div>
+            <div class="exercise-meta">
+              <div class="exercise-name">The 2-Minute Power Warm-Up</div>
+              <div class="exercise-duration">⏱ 2 minutes · Do before your first call of the day</div>
+            </div>
+            <span class="exercise-toggle">⌄</span>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-body-inner">
+              <div class="exercise-step"><span class="step-num">1</span>Stand up straight. Shoulders back. Chin up.</div>
+              <div class="exercise-step"><span class="step-num">2</span>Take 3 slow, deep breaths — in for 4 counts, hold for 4, out for 6.</div>
+              <div class="exercise-step"><span class="step-num">3</span>Say your opener out loud — not in your head. Hear your own voice say the words confidently.</div>
+              <div class="exercise-step"><span class="step-num">4</span>Smile. Put that smile on before the call connects and keep it there.</div>
+              <div class="exercise-step"><span class="step-num">5</span>Dial.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card" id="ex2">
+          <div class="exercise-header" onclick="toggleExercise('ex2')">
+            <div class="exercise-num">2</div>
+            <div class="exercise-meta">
+              <div class="exercise-name">The Mirror Drill</div>
+              <div class="exercise-duration">⏱ 5 minutes · Do once a week</div>
+            </div>
+            <span class="exercise-toggle">⌄</span>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-body-inner">
+              <div class="exercise-step"><span class="step-num">1</span>Stand in front of a mirror.</div>
+              <div class="exercise-step"><span class="step-num">2</span>Deliver your full cold call script — opener, offer, close — out loud.</div>
+              <div class="exercise-step"><span class="step-num">3</span>Watch your facial expressions. Are you frowning? Tensing up?</div>
+              <div class="exercise-step"><span class="step-num">4</span>Practise maintaining a relaxed, confident expression even when you say the hard parts.</div>
+              <div class="exercise-step"><span class="step-num">5</span>Do this until the script feels as natural as a normal conversation.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card" id="ex3">
+          <div class="exercise-header" onclick="toggleExercise('ex3')">
+            <div class="exercise-num">3</div>
+            <div class="exercise-meta">
+              <div class="exercise-name">The Rejection Reset</div>
+              <div class="exercise-duration">⏱ 30 seconds · Do after every difficult call</div>
+            </div>
+            <span class="exercise-toggle">⌄</span>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-body-inner">
+              <div class="exercise-step"><span class="step-num">1</span>After a rude rejection or a tough call, pause. Don't immediately dial again.</div>
+              <div class="exercise-step"><span class="step-num">2</span>Say out loud: "That was one call. It doesn't define the next one."</div>
+              <div class="exercise-step"><span class="step-num">3</span>Take one deep breath.</div>
+              <div class="exercise-step"><span class="step-num">4</span>Make a note of what happened — not to dwell on it, but to learn from it.</div>
+              <div class="exercise-step"><span class="step-num">5</span>Dial the next number with a clean slate.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="exercise-card" id="ex4">
+          <div class="exercise-header" onclick="toggleExercise('ex4')">
+            <div class="exercise-num">4</div>
+            <div class="exercise-meta">
+              <div class="exercise-name">The Call Recording Review</div>
+              <div class="exercise-duration">⏱ 10 minutes · Do at end of each day</div>
+            </div>
+            <span class="exercise-toggle">⌄</span>
+          </div>
+          <div class="exercise-body">
+            <div class="exercise-body-inner">
+              <div class="exercise-step"><span class="step-num">1</span>Record your calls using your phone's built-in recorder or a call recorder app.</div>
+              <div class="exercise-step"><span class="step-num">2</span>Pick 3 calls from today — one good, one average, one where you felt you lost them.</div>
+              <div class="exercise-step"><span class="step-num">3</span>Listen back. Notice: did you rush? Did you sound apologetic? Did you get interrupted and lose your train of thought?</div>
+              <div class="exercise-step"><span class="step-num">4</span>Write down one specific thing to improve tomorrow.</div>
+              <div class="exercise-step"><span class="step-num">5</span>This single habit separates good salespeople from great ones.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ─── SECTION 6: DAILY ROUTINE + MISTAKES ─── -->
+      <div class="section animate-in" id="sec-routine" data-section="6">
+        <div class="section-title">🌅 Daily Mental Preparation Routine</div>
+        <div class="section-desc">What you do before you start calling determines the quality of every call.</div>
+
+        <div class="grid-2" style="gap:32px;margin-bottom:32px;">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">Morning Routine</div>
+            <div class="routine-timeline">
+              <div class="routine-item">
+                <div class="routine-time">6:00 – 6:30am</div>
+                <div class="routine-action">Read your why</div>
+                <div class="routine-why">Why are you building StoreLift? What does closing your first client mean? Write it down and read it every morning.</div>
+              </div>
+              <div class="routine-item">
+                <div class="routine-time">6:30 – 7:00am</div>
+                <div class="routine-action">Research 5–10 dealerships on Instagram</div>
+                <div class="routine-why">Find their page. Note one specific thing about their inventory or posts to mention on the call.</div>
+              </div>
+              <div class="routine-item">
+                <div class="routine-time">7:00 – 7:10am</div>
+                <div class="routine-action">Read your script out loud</div>
+                <div class="routine-why">Not in your head. Out loud. Every single morning until it's second nature.</div>
+              </div>
+              <div class="routine-item">
+                <div class="routine-time">7:10am</div>
+                <div class="routine-action">Start calling</div>
+                <div class="routine-why">Business owners in Nigeria are active from 7am. Early calls catch them before the day gets hectic.</div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px;">Common Beginner Mistakes</div>
+
+            <div class="mistake-card">
+              <div class="mistake-label">Mistake #1</div>
+              <div class="mistake-title">Explaining too much on the first call</div>
+              <div class="mistake-fix">Your only goal is to book the demo. Stop at "I want to show you something I built for your dealership." Don't explain hosting, pricing, or tech.</div>
+            </div>
+
+            <div class="mistake-card">
+              <div class="mistake-label">Mistake #2</div>
+              <div class="mistake-title">Asking open-ended questions at the close</div>
+              <div class="mistake-fix">Never ask "when are you free?" Ask "Is tomorrow morning or afternoon better for you?" Binary choices get answers.</div>
+            </div>
+
+            <div class="mistake-card">
+              <div class="mistake-label">Mistake #3</div>
+              <div class="mistake-title">Giving up after the first objection</div>
+              <div class="mistake-fix">The first objection is almost always automatic. Stay calm, acknowledge it, then pivot with a question. Most sales happen after 3–4 objections.</div>
+            </div>
+
+            <div class="mistake-card">
+              <div class="mistake-label">Mistake #4</div>
+              <div class="mistake-title">Not sending the WhatsApp immediately</div>
+              <div class="mistake-fix">Within 2 minutes of booking a demo, send the WhatsApp. Nigerian business owners are busy — they'll forget. Your message is the anchor.</div>
+            </div>
+
+            <div class="mistake-card">
+              <div class="mistake-label">Mistake #5</div>
+              <div class="mistake-title">Sounding like you're reading a script</div>
+              <div class="mistake-fix">The script is training wheels. Learn it cold, then put it away. The goal is natural conversation — not a monologue.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive mindset checklist -->
+        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;">
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">🧠 Mindset Check — Before You Start Calling</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;">Tick each one. Save your state and come back tomorrow.</div>
+          <div data-checklist="mindset-check">
+            <div class="check-item" data-item="m1"><div class="check-box"></div><span class="check-text">I am not selling a website. I am solving a problem for this dealership.</span></div>
+            <div class="check-item" data-item="m2"><div class="check-box"></div><span class="check-text">Rejection is not personal. It's just part of the process and I accept it.</span></div>
+            <div class="check-item" data-item="m3"><div class="check-box"></div><span class="check-text">My only goal on this call is to book a 15-minute demo. Nothing else.</span></div>
+            <div class="check-item" data-item="m4"><div class="check-box"></div><span class="check-text">I have done my research on each dealership I'm calling today.</span></div>
+            <div class="check-item" data-item="m5"><div class="check-box"></div><span class="check-text">I am willing to walk away from any call that isn't going anywhere.</span></div>
+            <div class="check-item" data-item="m6"><div class="check-box"></div><span class="check-text">I read my script out loud this morning and I know it comfortably.</span></div>
+            <div class="check-item" data-item="m7"><div class="check-box"></div><span class="check-text">I am thinking in batches — 30 calls, not 1 call. Volume is my friend.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Complete button -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;" class="animate-in">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Understanding Nigerian Car Dealerships →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="index.html" class="btn btn-ghost">← Dashboard</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div><!-- /page-content -->
+  </main>
+</div>
+
+<div class="toast"></div>
+
+<script src="js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('mindset');
+  initCheckboxes('mindset-check');
+
+  /* Section read tracking */
+  const sections = document.querySelectorAll('[data-section]');
+  const totalSections = sections.length;
+  let readSections = new Set();
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const id = entry.target.dataset.section;
+        readSections.add(id);
+        updateModuleProgress();
+      }
+    });
+  }, { threshold: 0.3 });
+
+  sections.forEach(s => observer.observe(s));
+
+  function updateModuleProgress() {
+    const pct = Math.round((readSections.size / totalSections) * 100);
+    document.getElementById('module-progress-fill').style.width = pct + '%';
+    document.getElementById('section-count').textContent = `${readSections.size} of ${totalSections} sections read`;
+    setModuleProgress('mindset', pct);
+  }
+
+  /* Restore saved progress */
+  const saved = getModuleProgress('mindset');
+  if (saved > 0) {
+    document.getElementById('module-progress-fill').style.width = saved + '%';
+  }
+});
+
+function toggleExercise(id) {
+  const card = document.getElementById(id);
+  card.classList.toggle('open');
+}
+
+function completeAndNext() {
+  markModuleComplete('mindset');
+  showToast('Module 2 complete! Moving to Module 3...');
+  setTimeout(() => location.href = 'dealerships.html', 1200);
+}
+</script>
+</body>
+</html>

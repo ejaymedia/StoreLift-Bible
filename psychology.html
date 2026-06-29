@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Psychology · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .psy-hero {
+      background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(99,102,241,0.06));
+      border: 1px solid rgba(139,92,246,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .psy-hero::after {
+      content: '🎯';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Principle cards */
+    .principle-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+      transition: all var(--transition);
+    }
+    .principle-card:hover { border-color: var(--border-strong); }
+    .principle-card.open { border-color: rgba(139,92,246,0.3); }
+
+    .principle-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+    .principle-header:hover { background: var(--bg-card-hover); }
+
+    .principle-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .principle-meta { flex: 1; }
+    .principle-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 3px;
+      letter-spacing: -0.01em;
+    }
+    .principle-hook {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    .principle-toggle {
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+    .principle-card.open .principle-toggle { transform: rotate(180deg); color: #c4b5fd; }
+
+    .principle-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+    .principle-card.open .principle-body { max-height: 1200px; }
+    .principle-body-inner {
+      border-top: 1px solid var(--border);
+      padding: 20px;
+    }
+
+    /* Principle content layout */
+    .principle-content { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .principle-content { grid-template-columns: 1fr; } }
+
+    .principle-explain {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+    .principle-explain strong { color: var(--text-primary); font-weight: 600; }
+
+    /* Example box */
+    .example-box {
+      background: rgba(0,0,0,0.2);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .example-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+    .example-scenario {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .example-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* Warning box */
+    .ethic-box {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.2);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      margin-top: 12px;
+    }
+    .ethic-box::before { content: '⚠ Ethics note: '; color: #fcd34d; font-weight: 700; }
+
+    /* Quick reference cheatsheet */
+    .cheat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px,1fr));
+      gap: 10px;
+    }
+    .cheat-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+      transition: all var(--transition);
+      cursor: default;
+    }
+    .cheat-item:hover { background: var(--bg-card-hover); border-color: var(--border-strong); }
+    .cheat-emoji { font-size: 24px; margin-bottom: 6px; display: block; }
+    .cheat-name { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .cheat-one-liner { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+    /* Progress indicator */
+    .opened-track {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 10 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Sales Psychology</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="psy-hero animate-in">
+        <div class="page-eyebrow">🎯 Module 10</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Sales Psychology</h1>
+        <p class="page-subtitle" style="max-width:560px;">Understanding why people say yes is more powerful than any script. This module teaches the 8 psychological principles behind every buying decision — each explained with real Nigerian dealership examples so you can apply them immediately.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 10 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">0 of 8 principles studied</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Quick reference cheatsheet -->
+      <div class="animate-in-delay-1" style="margin-bottom:28px;">
+        <div class="section-title" style="margin-bottom:14px;">⚡ Quick Reference — 8 Principles</div>
+        <div class="cheat-grid">
+          <div class="cheat-item"><span class="cheat-emoji">👑</span><div class="cheat-name">Authority</div><div class="cheat-one-liner">People follow credible experts</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">⏳</span><div class="cheat-name">Scarcity</div><div class="cheat-one-liner">Rare things feel more valuable</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">🎁</span><div class="cheat-name">Reciprocity</div><div class="cheat-one-liner">Give first, receive second</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">🌟</span><div class="cheat-name">Social Proof</div><div class="cheat-one-liner">Others doing it makes it safe</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">🤝</span><div class="cheat-name">Commitment</div><div class="cheat-one-liner">Small yeses lead to big yeses</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">❓</span><div class="cheat-name">Curiosity</div><div class="cheat-one-liner">Open loops demand closing</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">⚓</span><div class="cheat-name">Anchoring</div><div class="cheat-one-liner">First number sets the frame</div></div>
+          <div class="cheat-item"><span class="cheat-emoji">😨</span><div class="cheat-name">Loss Aversion</div><div class="cheat-one-liner">Fear of loss beats desire for gain</div></div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- ── 8 PRINCIPLES ── -->
+      <div class="animate-in" style="margin-bottom:8px;">
+        <div class="section-title" style="margin-bottom:6px;">🧠 Deep Dive — Click Each Principle</div>
+        <div class="section-desc" style="margin-bottom:20px;">Open each card to learn the concept, how it works in the brain, and exactly how to apply it when selling to Nigerian dealership owners.</div>
+      </div>
+
+      <!-- 1. AUTHORITY -->
+      <div class="principle-card" id="p1">
+        <div class="principle-header" onclick="togglePrinciple('p1')">
+          <div class="principle-icon-wrap" style="background:rgba(245,158,11,0.12);">👑</div>
+          <div class="principle-meta">
+            <div class="principle-name">1. Authority</div>
+            <div class="principle-hook">"People follow credible experts without questioning their judgment."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> When someone is perceived as an authority — an expert, a specialist, someone with specific knowledge — people naturally defer to their recommendations. We're wired this way. It reduces the mental effort of decision-making.
+                  <br/><br/>
+                  <strong>Why it matters for StoreLift:</strong> You are calling a dealership owner as a web design expert. The moment you speak with specific knowledge about their business — mentioning their exact Instagram engagement issues, naming a specific car they posted, explaining why their Google visibility is zero — you establish authority before you've sold anything.
+                  <br/><br/>
+                  <strong>The authority signal:</strong> Specific knowledge beats generic claims every time. "I've worked with dealerships" is weak. "I noticed your Highlander post got 200 likes but the comments were full of unanswered price questions" is authoritative.
+                </div>
+                <div class="ethic-box">Use real observations — never fabricate expertise or fake credentials. Authority built on truth sustains relationships. Authority built on lies collapses at the first question.</div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#fcd34d;">🚗 Dealership Example</div>
+                  <div class="example-scenario">Weak (no authority)</div>
+                  <div class="example-text">"I build websites for businesses."</div>
+                  <br/>
+                  <div class="example-scenario">Strong (authority established)</div>
+                  <div class="example-text">"I came across your page this morning and I noticed you posted a 2020 Highlander last Tuesday. Someone in the comments asked for the price three hours ago and it's still unanswered. That's a customer who moved on. I built a solution for exactly this problem."</div>
+                </div>
+                <div class="example-box" style="margin-top:10px;">
+                  <div class="example-label" style="color:#fcd34d;">💡 How to build it</div>
+                  <div class="example-text">• Research each dealership before calling<br/>• Reference specific cars, posts, or comments<br/>• Speak in outcomes they understand (lost customers, unanswered DMs)<br/>• Share your portfolio early in the relationship<br/>• Use dealership-specific language, not tech jargon</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SCARCITY -->
+      <div class="principle-card" id="p2">
+        <div class="principle-header" onclick="togglePrinciple('p2')">
+          <div class="principle-icon-wrap" style="background:rgba(239,68,68,0.12);">⏳</div>
+          <div class="principle-meta">
+            <div class="principle-name">2. Scarcity</div>
+            <div class="principle-hook">"People place higher value on things that are rare or limited."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> When something is limited — in time, quantity, or access — the brain automatically assigns it more value. This is why "limited offer" works, why people rush to buy when stock is low, and why exclusivity feels desirable.
+                  <br/><br/>
+                  <strong>For StoreLift:</strong> The honest scarcity in your model is competitive positioning. You're building websites for dealerships in the same city. The first one to go live on Google gets indexed first, ranks first, and gets the search traffic first. That is real, honest scarcity.
+                  <br/><br/>
+                  <strong>Important:</strong> Never manufacture fake scarcity ("only 2 slots left this month" if that's not true). Nigerian business owners are sharp — they will sense dishonesty. Real scarcity is more than enough.
+                </div>
+                <div class="ethic-box">Only use scarcity that is genuinely true. If you're actually building for multiple dealerships in the same area, that IS scarce positioning. Never invent limits you don't have.</div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#fca5a5;">🚗 Dealership Example</div>
+                  <div class="example-scenario">Real scarcity in your pitch</div>
+                  <div class="example-text">"I'm currently building websites for a few dealerships in Lagos. The one that goes live first will be indexed on Google before the others — that's a real advantage for capturing search traffic. You'd be ahead of your direct competition the moment we launch."</div>
+                  <br/>
+                  <div class="example-scenario">Scarcity in follow-up</div>
+                  <div class="example-text">"Just so you know — I spoke to another Lekki dealership last week about the same thing. I'd love for yours to be the one that gets there first."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. RECIPROCITY -->
+      <div class="principle-card" id="p3">
+        <div class="principle-header" onclick="togglePrinciple('p3')">
+          <div class="principle-icon-wrap" style="background:rgba(34,197,94,0.12);">🎁</div>
+          <div class="principle-meta">
+            <div class="principle-name">3. Reciprocity</div>
+            <div class="principle-hook">"When someone gives you something, you feel obligated to give back."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> Reciprocity is one of the most powerful forces in human social behaviour. When someone does something for us, we feel a deep psychological need to reciprocate. This is not manipulation — it is how human communities function and how trust is built.
+                  <br/><br/>
+                  <strong>For StoreLift:</strong> Your entire business model is built on reciprocity. You build a fully functional website for free — investing real time and skill — before asking for anything. This creates a powerful sense of obligation and gratitude. The prospect has received something valuable with no strings attached. Saying no after that feels socially uncomfortable.
+                  <br/><br/>
+                  <strong>The key insight:</strong> The gift must feel genuine. A rushed, low-effort website doesn't trigger reciprocity — it triggers skepticism. A beautiful, professionally built website that clearly took time? That triggers a genuine desire to give back.
+                </div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#86efac;">🚗 Dealership Example</div>
+                  <div class="example-scenario">Reciprocity in action</div>
+                  <div class="example-text">"I spent two days building this website for your dealership specifically — before you committed to anything or even knew I existed. I did that because I genuinely believe it will help your business. Take a look, and if you think it's good work, let's talk about keeping it live."</div>
+                  <br/>
+                  <div class="example-scenario">Why it works for Nigerian culture</div>
+                  <div class="example-text">Nigerian business culture values gesture and relationship. Someone who gives first — without demanding something in return immediately — is seen as trustworthy. Your free build is the single most powerful trust-building action in your entire sales process.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. SOCIAL PROOF -->
+      <div class="principle-card" id="p4">
+        <div class="principle-header" onclick="togglePrinciple('p4')">
+          <div class="principle-icon-wrap" style="background:rgba(59,130,246,0.12);">🌟</div>
+          <div class="principle-meta">
+            <div class="principle-name">4. Social Proof</div>
+            <div class="principle-hook">"When we're uncertain, we look at what others are doing."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> In situations of uncertainty, humans default to copying the behaviour of others — especially people similar to themselves. If other dealerships are getting websites, it must be a good idea. If your competitor has one, you need one too.
+                  <br/><br/>
+                  <strong>For StoreLift early stage:</strong> You may not have many clients yet — but you can still use social proof effectively. Reference general market trends ("more Nigerian dealerships are building websites as Instagram reach declines"), mention that competitors in their area may already be doing this, and as you build clients, actively collect testimonials to use in future calls.
+                  <br/><br/>
+                  <strong>The fastest social proof you can build:</strong> Screenshot a positive WhatsApp message from any client who was happy. That single screenshot on a call is more convincing than a thousand claims.
+                </div>
+                <div class="ethic-box">Never fabricate testimonials or reference clients you don't have. Start collecting real ones from your first happy client — even a one-sentence WhatsApp message is powerful.</div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#93c5fd;">🚗 Dealership Example</div>
+                  <div class="example-scenario">With no clients yet</div>
+                  <div class="example-text">"Dealerships across Nigeria are beginning to move online as Instagram organic reach keeps declining. The ones who build their web presence now will own that space — the ones who wait will be playing catch-up."</div>
+                  <br/>
+                  <div class="example-scenario">With 1–2 clients</div>
+                  <div class="example-text">"I recently built a website for a dealership in [City] — within the first month they started getting structured enquiries from Google that they'd never seen before. Customers they wouldn't have found through Instagram."</div>
+                  <br/>
+                  <div class="example-scenario">Competitive social proof</div>
+                  <div class="example-text">"I noticed [Competitor Dealership] recently got a website up. They're already showing on Google for searches in your area."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. COMMITMENT -->
+      <div class="principle-card" id="p5">
+        <div class="principle-header" onclick="togglePrinciple('p5')">
+          <div class="principle-icon-wrap" style="background:rgba(20,184,166,0.12);">🤝</div>
+          <div class="principle-meta">
+            <div class="principle-name">5. Commitment & Consistency</div>
+            <div class="principle-hook">"Once people commit to something small, they follow through on bigger commitments."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> People have a deep psychological need to be consistent with their prior commitments and self-image. Once someone takes a small step — agrees to watch a demo, admits they have a problem — they become much more likely to take the next step. Each yes makes the next yes easier.
+                  <br/><br/>
+                  <strong>For StoreLift:</strong> Your call structure is designed around micro-commitments. "Is this [Name]?" (yes) → "You're the owner?" (yes) → "You handle decisions about the dealership's online presence?" (yes) → "Can I show you something I built?" (yes) → "Are mornings or afternoons better?" (they answer). Each agreement builds momentum toward the final yes.
+                  <br/><br/>
+                  <strong>The consistency trap:</strong> If a prospect says "I'll look at it over the weekend," they've made a public commitment. Follow up directly: "Great — I'll reach out Monday morning to hear your thoughts." Now they have a social obligation to have looked at it.
+                </div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#5eead4;">🚗 Dealership Example</div>
+                  <div class="example-scenario">The micro-commitment chain</div>
+                  <div class="example-text">
+                    You: "Is this Mr Emeka?" → Yes<br/>
+                    You: "You manage the dealership?" → Yes<br/>
+                    You: "You handle decisions about online presence?" → Yes<br/>
+                    You: "Can I show you something I built for you?" → Okay<br/>
+                    You: "Mornings or afternoons better?" → Mornings<br/><br/>
+                    Each yes makes the next yes psychologically easier. By the time you ask for the demo appointment, they've already said yes five times.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. CURIOSITY -->
+      <div class="principle-card" id="p6">
+        <div class="principle-header" onclick="togglePrinciple('p6')">
+          <div class="principle-icon-wrap" style="background:rgba(245,158,11,0.12);">❓</div>
+          <div class="principle-meta">
+            <div class="principle-name">6. Curiosity & Open Loops</div>
+            <div class="principle-hook">"The brain cannot rest until an open question is answered."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> The human brain is deeply uncomfortable with unanswered questions — open loops. Once a question is raised, there is a neurological drive to close it. This is why cliffhangers work in TV, why "I have good news and bad news" makes people lean in, and why mystery outperforms explanation in sales.
+                  <br/><br/>
+                  <strong>For StoreLift:</strong> "I built something for your dealership already" is the most powerful open loop in your pitch. It raises an immediate question in their mind — "what did you build? what does it look like?" — that they cannot answer without agreeing to the demo. The curiosity drives them forward.
+                  <br/><br/>
+                  <strong>What to avoid:</strong> Closing your own loops too early. If you explain everything on the cold call — what the website looks like, all the features, how it works — you kill the curiosity and remove their reason to watch the demo.
+                </div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#fcd34d;">🚗 Dealership Example</div>
+                  <div class="example-scenario">Open loop in the opening</div>
+                  <div class="example-text">"I have some good news and some bad news about your dealership's online presence. The good news is your inventory looks great. The bad news is... [pause] most of the people who could buy from you right now can't find you."</div>
+                  <br/>
+                  <div class="example-scenario">Open loop to book demo</div>
+                  <div class="example-text">"I already built something for you — it's much better seen than described. Give me 15 minutes and you'll understand exactly what I mean."</div>
+                  <br/>
+                  <div class="example-scenario">Open loop in follow-up</div>
+                  <div class="example-text">"I made a few updates to your website since we last spoke — I think you're going to like the new inventory section."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. ANCHORING -->
+      <div class="principle-card" id="p7">
+        <div class="principle-header" onclick="togglePrinciple('p7')">
+          <div class="principle-icon-wrap" style="background:rgba(99,102,241,0.12);">⚓</div>
+          <div class="principle-meta">
+            <div class="principle-name">7. Anchoring</div>
+            <div class="principle-hook">"The first number heard becomes the reference point for all comparisons."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> When people make decisions involving numbers, the first number they encounter becomes a psychological anchor that all other numbers are compared against. If you hear ₦500,000 first, then ₦50,000 feels cheap. If you hear ₦5,000 first, then ₦50,000 feels expensive.
+                  <br/><br/>
+                  <strong>For StoreLift:</strong> Before you state your hosting price, always anchor to something larger. The cost of running Instagram ads (₦50k–₦200k/month), the profit from a single car sale (₦200k–₦500k+), or the cost of hiring a full-time social media manager. Against these anchors, your monthly retainer feels minimal.
+                  <br/><br/>
+                  <strong>The free build anchor:</strong> By stating that the website build is free (which is genuinely a ₦100,000–₦500,000 value), you anchor the entire conversation at a high value point before introducing the monthly cost. The prospect is unconsciously comparing against the build value, not against zero.
+                </div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#a5b4fc;">🚗 Dealership Example</div>
+                  <div class="example-scenario">Anchoring before pricing</div>
+                  <div class="example-text">"The website build itself — everything you've seen — would normally cost ₦200,000–₦400,000 from a design agency. That's yours, completely built, at no charge. What we put in place is a small monthly arrangement of ₦[X] for hosting and maintenance."</div>
+                  <br/>
+                  <div class="example-scenario">Ad spend anchor</div>
+                  <div class="example-text">"You mentioned you spend ₦100,000 per month on Instagram ads. The hosting for a website that makes those ads convert properly is ₦[X] per month — less than a tenth of what you're already spending."</div>
+                  <br/>
+                  <div class="example-scenario">Car sale anchor</div>
+                  <div class="example-text">"What's your margin on a typical saloon car? [They say ₦300,000+]. So the website pays for itself in the first week if it brings you just one extra enquiry."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. LOSS AVERSION -->
+      <div class="principle-card" id="p8">
+        <div class="principle-header" onclick="togglePrinciple('p8')">
+          <div class="principle-icon-wrap" style="background:rgba(239,68,68,0.12);">😨</div>
+          <div class="principle-meta">
+            <div class="principle-name">8. Loss Aversion</div>
+            <div class="principle-hook">"The pain of losing something is twice as powerful as the pleasure of gaining the same thing."</div>
+          </div>
+          <span class="principle-toggle">⌄</span>
+        </div>
+        <div class="principle-body">
+          <div class="principle-body-inner">
+            <div class="principle-content">
+              <div>
+                <div class="principle-explain">
+                  <strong>The principle:</strong> Losing ₦10,000 feels roughly twice as bad as gaining ₦10,000 feels good. This is one of the most replicated findings in behavioural psychology. People are motivated far more by the prospect of avoiding a loss than by gaining an equivalent reward.
+                  <br/><br/>
+                  <strong>For StoreLift:</strong> Instead of only talking about what they'll gain (more customers, better leads), also frame what they're currently losing without a website. Every day without a website is a day where customers searching Google at night can't find them. Every day a competitor has a website and they don't is a day of lost market share.
+                  <br/><br/>
+                  <strong>The pain point frame:</strong> Your "I noticed your Instagram post had unanswered price questions" opener is a loss aversion trigger. You're pointing at real business they're losing right now — not hypothetical future gains.
+                </div>
+                <div class="ethic-box">Frame real losses honestly — don't fabricate problems or exaggerate. Loss aversion is powerful; using it dishonestly breaks trust permanently. Their real, observable pain is more than enough.</div>
+              </div>
+              <div>
+                <div class="example-box">
+                  <div class="example-label" style="color:#fca5a5;">🚗 Dealership Example</div>
+                  <div class="example-scenario">Loss frame (stronger than gain frame)</div>
+                  <div class="example-text">
+                    <strong>Gain frame (weaker):</strong><br/>
+                    "A website could bring you more customers."<br/><br/>
+                    <strong>Loss frame (stronger):</strong><br/>
+                    "Right now, every time someone searches Google for a car dealer in [City] at 11pm, your dealership doesn't exist. Those are real customers with real money going to whoever shows up. That's happening tonight."
+                  </div>
+                  <br/>
+                  <div class="example-scenario">Loss aversion in objection handling</div>
+                  <div class="example-text">"Every week without a website is another week where customers searching Google find your competitors instead of you. The good news is — we can fix that in 48 hours."</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Application summary -->
+      <div class="animate-in" style="margin-bottom:32px;">
+        <div class="section-title" style="margin-bottom:14px;">🗺️ How All 8 Principles Work Together in One Call</div>
+        <div class="glass-card" style="padding:20px;">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">1.</span>
+              <div><strong style="color:var(--text-primary);">Authority</strong> <span style="color:var(--text-secondary);">— "I came across your page and noticed the unanswered comment on your Highlander post." You're an expert who did research.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">2.</span>
+              <div><strong style="color:var(--text-primary);">Loss Aversion</strong> <span style="color:var(--text-secondary);">— "A lot of potential customers won't bother to DM." They're losing business right now.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">3.</span>
+              <div><strong style="color:var(--text-primary);">Curiosity</strong> <span style="color:var(--text-secondary);">— "I built something for your dealership already." What is it? They must see it.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">4.</span>
+              <div><strong style="color:var(--text-primary);">Reciprocity</strong> <span style="color:var(--text-secondary);">— The free build. They receive real value before committing to anything.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">5.</span>
+              <div><strong style="color:var(--text-primary);">Commitment</strong> <span style="color:var(--text-secondary);">— Micro-yeses throughout the call build toward the demo agreement.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">6.</span>
+              <div><strong style="color:var(--text-primary);">Anchoring</strong> <span style="color:var(--text-secondary);">— Free build anchors at high value. Monthly fee feels small by comparison.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">7.</span>
+              <div><strong style="color:var(--text-primary);">Social Proof</strong> <span style="color:var(--text-secondary);">— Reference other dealerships moving online. Their competitor might already have one.</span></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:flex-start;font-size:13px;">
+              <span style="color:var(--purple);font-weight:700;flex-shrink:0;width:20px;">8.</span>
+              <div><strong style="color:var(--text-primary);">Scarcity</strong> <span style="color:var(--text-secondary);">— First dealership in the area to go live on Google gets the search advantage.</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Daily Sales System →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="whatsapp.html" class="btn btn-ghost">← WhatsApp Templates</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+  const openPrinciples = new Set();
+  const TOTAL = 8;
+
+  function togglePrinciple(id) {
+    const card = document.getElementById(id);
+    const isOpen = card.classList.contains('open');
+    card.classList.toggle('open', !isOpen);
+    if (!isOpen) { openPrinciples.add(id); } else { openPrinciples.delete(id); }
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const pct = Math.round((openPrinciples.size / TOTAL) * 100);
+    document.getElementById('module-progress-fill').style.width = pct + '%';
+    document.getElementById('section-count').textContent = `${openPrinciples.size} of ${TOTAL} principles studied`;
+    setModuleProgress('psychology', pct);
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initSidebar('psychology');
+    const saved = getModuleProgress('psychology');
+    if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+  });
+
+  function completeAndNext() {
+    markModuleComplete('psychology');
+    showToast('Module 10 complete! Moving to Daily Sales System...');
+    setTimeout(() => location.href = 'daily-system.html', 1200);
+  }
+</script>
+</body>
+</html>

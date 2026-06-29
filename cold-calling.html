@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cold Calling Masterclass · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .cc-hero {
+      background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(20,184,166,0.06));
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cc-hero::after {
+      content: '📞';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Phase stepper */
+    .phase-stepper {
+      display: flex;
+      gap: 0;
+      margin-bottom: 32px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .phase-step {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+    .phase-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all var(--transition);
+      white-space: nowrap;
+    }
+    .phase-btn:hover { background: var(--bg-card-hover); color: var(--text-secondary); }
+    .phase-btn.active {
+      background: rgba(99,102,241,0.15);
+      border-color: rgba(99,102,241,0.4);
+      color: #a5b4fc;
+    }
+    .phase-arrow {
+      font-size: 14px;
+      color: var(--text-muted);
+      padding: 0 6px;
+    }
+
+    /* Script panels */
+    .script-panel { display: none; }
+    .script-panel.active { display: block; }
+
+    .script-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .script-section-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(0,0,0,0.15);
+    }
+    .script-section-icon {
+      font-size: 20px;
+    }
+    .script-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .script-section-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .script-section-body { padding: 20px; }
+
+    /* Voice guide pills */
+    .voice-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .voice-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .pill-slow   { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.2); }
+    .pill-smile  { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+    .pill-pause  { background: rgba(139,92,246,0.12); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2); }
+    .pill-energy { background: rgba(34,197,94,0.12); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+    .pill-low    { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+
+    /* Annotated script */
+    .annotated-script {
+      background: rgba(0,0,0,0.2);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      font-size: 14px;
+      line-height: 2;
+      color: var(--text-primary);
+      position: relative;
+    }
+    .ann { position: relative; display: inline; }
+    .ann-tag {
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin: 0 2px;
+      vertical-align: middle;
+      cursor: help;
+    }
+    .ann-tag.slow   { background: rgba(59,130,246,0.2); color: #93c5fd; }
+    .ann-tag.smile  { background: rgba(245,158,11,0.2); color: #fcd34d; }
+    .ann-tag.pause  { background: rgba(139,92,246,0.2); color: #c4b5fd; }
+    .ann-tag.energy { background: rgba(34,197,94,0.2); color: #86efac; }
+
+    /* Never say table */
+    .never-say-table { width: 100%; border-collapse: collapse; }
+    .never-say-table th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .never-say-table td {
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      line-height: 1.5;
+      vertical-align: top;
+    }
+    .never-say-table tr:last-child td { border-bottom: none; }
+    .never-say-table td:first-child { color: #fca5a5; font-style: italic; }
+    .never-say-table td:nth-child(2) { color: #86efac; }
+
+    /* Practice rep counter */
+    .practice-box {
+      background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(139,92,246,0.06));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      text-align: center;
+    }
+    .rep-counter {
+      font-size: 64px;
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      background: var(--brand-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .rep-label { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
+    .rep-controls { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+    /* Tone guide */
+    .tone-bar-wrap { margin-bottom: 14px; }
+    .tone-bar-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+    .tone-bar-label span:first-child { font-weight: 600; color: var(--text-primary); }
+    .tone-bar-track {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      position: relative;
+      overflow: visible;
+    }
+    .tone-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s ease;
+    }
+    .tone-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #6366f1;
+      z-index: 1;
+    }
+
+    /* Follow-up timeline */
+    .followup-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .followup-day {
+      width: 52px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .followup-day-num {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--purple);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .followup-day-label {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+    .followup-content {
+      flex: 1;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+    .followup-action {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+    .followup-script {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 640px) {
+      .phase-stepper { gap: 4px; }
+      .phase-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 4 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Cold Calling Masterclass</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn btn-ghost btn-sm" onclick="completeAndNext()">Mark Complete →</button>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <!-- Hero -->
+      <div class="cc-hero animate-in">
+        <div class="page-eyebrow">📞 Module 4</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Cold Calling Masterclass</h1>
+        <p class="page-subtitle" style="max-width:560px;">Complete scripts for every person you'll speak to. Word-for-word openers, voice annotations, follow-up sequences, and what never to say. Study this until it's second nature.</p>
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card animate-in-delay-1" style="padding:20px;margin-bottom:28px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 4 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">Select a phase to begin</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- Phase stepper -->
+      <div class="phase-stepper animate-in-delay-1">
+        <div class="phase-step">
+          <button class="phase-btn active" onclick="showPhase('opening')" id="btn-opening">📢 Opening</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('gatekeeper')" id="btn-gatekeeper">🚪 Gatekeeper</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('salesrep')" id="btn-salesrep">👔 Sales Rep</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('owner')" id="btn-owner">👑 Owner</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('booking')" id="btn-booking">📅 Booking</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('followup')" id="btn-followup">🔁 Follow-Up</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('voicetone')" id="btn-voicetone">🎙️ Voice & Tone</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('neversay')" id="btn-neversay">🚫 Never Say</button>
+        </div>
+        <span class="phase-arrow">›</span>
+        <div class="phase-step">
+          <button class="phase-btn" onclick="showPhase('practice')" id="btn-practice">🎯 Practice</button>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: OPENING -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel active" id="panel-opening">
+
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">📢</span>
+            <div>
+              <div class="script-section-title">The Opening — First 20 Seconds</div>
+              <div class="script-section-subtitle">This is the most practised part of your call. It determines everything.</div>
+            </div>
+            <button class="copy-btn" style="margin-left:auto;" data-copy="#script-opening">⎘ Copy</button>
+          </div>
+          <div class="script-section-body">
+            <div class="voice-pills">
+              <span class="voice-pill pill-smile">😁 Smile before dialling</span>
+              <span class="voice-pill pill-slow">🐢 Speak slower than feels natural</span>
+              <span class="voice-pill pill-energy">⚡ High energy opener</span>
+              <span class="voice-pill pill-pause">⏸ Pause after their name</span>
+            </div>
+
+            <div class="annotated-script" id="script-opening">
+<span class="ann-tag smile">SMILE</span> "Hello, good day — <span class="ann-tag pause">PAUSE</span> please is this [Name]?"
+
+<em style="color:var(--text-muted);font-size:12px;">— Wait for confirmation —</em>
+
+<span class="ann-tag energy">ENERGY UP</span> "Alright! My name is Elijah — I run a web design agency called StoreLift. <span class="ann-tag slow">SLOW DOWN</span> I came across your dealership on Instagram this morning and I noticed you have some really nice units — I saw the 2020 Highlander you posted."
+
+<span class="ann-tag pause">PAUSE 1 SEC</span>
+
+"But I noticed something — I went through your page and I couldn't find a full list of your current inventory anywhere. Someone in the comments was asking about pricing and hadn't gotten a reply. <span class="ann-tag slow">SLOW</span> I think you might be losing customers right there who won't bother to DM."
+            </div>
+
+            <div style="margin-top:16px;padding:14px 16px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:var(--radius-sm);">
+              <div style="font-size:11px;font-weight:700;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">⚡ Why this opening works</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+                You lead with a specific observation about their business — not a generic pitch. You name something real you saw on their page. This proves you're not randomly dialling and immediately separates you from every other cold caller they've ever received. The "I think you're losing customers" line creates a moment of curiosity and mild concern that makes them want to hear more.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">🔀</span>
+            <div>
+              <div class="script-section-title">Opening Variations</div>
+              <div class="script-section-subtitle">Different situations, different openers. All use the same structure.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Variation A — No Instagram, found via referral or Google</div>
+              <div class="script-block">
+                "Hello, good day — is this [Name]? My name is Elijah from StoreLift. I came across [Dealership Name] while I was researching car dealerships in [City] and I noticed you don't seem to have a website where customers can browse your full inventory. I actually built something I'd love to show you."
+              </div>
+            </div>
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Variation B — They have a website but it's outdated/poor</div>
+              <div class="script-block">
+                "Hello, good day — is this [Name]? My name is Elijah from StoreLift. I visited your website this morning and I noticed it hasn't been updated in a while — your inventory isn't showing there and there's no way for customers to enquire on specific cars. I rebuilt it completely for you — I'd love to show you what I came up with."
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">Variation C — TikTok dealership with viral content</div>
+              <div class="script-block">
+                "Hello, good day — is this [Name]? My name is Elijah from StoreLift. I saw one of your TikTok videos — the walkthrough on the Camry got a lot of traction. But I noticed everyone in the comments asking 'where are you located' and 'do you ship' — and there was nowhere to send them. I built you a proper home base for all that traffic."
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: GATEKEEPER -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-gatekeeper">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">🚪</span>
+            <div>
+              <div class="script-section-title">Speaking to the Gatekeeper</div>
+              <div class="script-section-subtitle">Receptionist or front desk. Be warm, brief, and always aim to be routed through.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">When the gatekeeper picks up:</div>
+              <div class="script-block">
+                "Hello, good afternoon. Please is [Owner Name / the owner / the manager] available? My name is Elijah — I'm a web developer and I have something I'd like to show them about the dealership's online presence."
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">If they ask: "What is it about?"</div>
+              <div class="script-block">
+                "I came across the dealership on Instagram and I built a website for them — I just want to show it to the owner quickly. It won't take more than 5 minutes of their time."
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">If they say the owner isn't available:</div>
+              <div class="script-block">
+                "No problem at all. Is there a direct number or WhatsApp I can reach them on? I just don't want to keep calling the main line — I'd rather contact them directly so I'm not wasting anyone's time."
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">If they won't give a direct number:</div>
+              <div class="script-block">
+                "Understood. Could you let them know Elijah from StoreLift called about their website? I'll send a WhatsApp to this number and they can reach back when it's convenient. Thank you so much."
+              </div>
+            </div>
+
+            <div style="padding:14px 16px;background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-sm);">
+              <div style="font-size:11px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">✓ Golden rules for gatekeepers</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                1. Never over-explain to the gatekeeper — they can't say yes and over-explaining gives them reasons to say no on the owner's behalf.<br/>
+                2. Be warm and respectful — Nigerian gatekeepers respond to courtesy. "Please" and "Thank you so much" go a long way.<br/>
+                3. Always ask for a WhatsApp or direct number before you leave the call.<br/>
+                4. If they promise to pass a message — follow up with a WhatsApp to the main number within 10 minutes while they still remember you.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: SALES REP -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-salesrep">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">👔</span>
+            <div>
+              <div class="script-section-title">Speaking to a Sales Representative</div>
+              <div class="script-section-subtitle">They can't make decisions but they can route you to someone who can — or block you entirely.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">When you realise it's a sales rep, not the owner:</div>
+              <div class="script-block">
+                "Oh okay — are you part of the sales team? That's great. Who handles decisions about things like the dealership's website and online presence — is that the owner directly?"
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">If they ask what it's about before connecting you:</div>
+              <div class="script-block">
+                "I'm a web developer — I built a website for the dealership that I want to show the owner. It's something that would help the sales team too actually, because customers could browse cars and send in enquiries directly without having to message on WhatsApp first. Less back-and-forth for everyone."
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">If they say "the owner is busy, just tell me":</div>
+              <div class="script-block">
+                "I totally understand — and I don't want to waste anyone's time. It's a quick visual thing, so it really needs to go to whoever makes decisions. Could you let them know Elijah from StoreLift called? And please ask them what time is best for me to call back — I'll respect their schedule."
+              </div>
+            </div>
+
+            <div style="padding:14px 16px;background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:var(--radius-sm);">
+              <div style="font-size:11px;font-weight:700;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:6px;">💡 Make the sales rep an ally</div>
+              <div style="font-size:13px;color:var(--text-secondary);line-height:1.6;">
+                The smart move is to briefly explain how a website benefits them personally — less WhatsApp answering, more qualified leads, easier job. A sales rep who sees personal value will actively help you reach the owner instead of blocking you.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: OWNER -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-owner">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">👑</span>
+            <div>
+              <div class="script-section-title">Speaking Directly to the Owner</div>
+              <div class="script-section-subtitle">This is the conversation that matters. Respect their time, earn their curiosity.</div>
+            </div>
+            <button class="copy-btn" style="margin-left:auto;" data-copy="#full-owner-script">⎘ Copy Script</button>
+          </div>
+          <div class="script-section-body">
+            <div class="annotated-script" id="full-owner-script">
+<span class="ann-tag smile">SMILE</span> "Hello, good day — please is this [Owner Name]?"
+
+<em style="color:var(--text-muted);font-size:12px;">— Confirmed —</em>
+
+<span class="ann-tag energy">ENERGY</span> "Brilliant! My name is Elijah — I run a web design agency called StoreLift. I came across [Dealership Name] on Instagram this morning."
+
+<span class="ann-tag pause">PAUSE</span>
+
+<span class="ann-tag slow">SLOW DOWN</span> "I was looking through your page and I have good news and some bad news. The good news is — your inventory looks great, you have some really nice units. The bad news is — I went through your whole page and I couldn't find a way to actually browse everything you have in one place. I had to scroll through weeks of posts just to find the Highlander, and I still couldn't get a price without messaging you directly."
+
+<span class="ann-tag pause">PAUSE — let that land</span>
+
+"A lot of your potential customers won't do all that. They'll just go somewhere else."
+
+<span class="ann-tag pause">PAUSE</span>
+
+"So here's why I'm calling — <span class="ann-tag energy">ENERGY</span> I actually built a website for your dealership already. All your cars listed, searchable by make and model, with prices and photos. Anyone interested clicks a button and their details come straight to you — no back and forth on WhatsApp."
+
+<span class="ann-tag slow">SLOW</span> "I'm not asking you to commit to anything. I just want 15 minutes to show you what I put together. If you like it, great — we talk. If not, no problem at all, you go your way."
+
+<span class="ann-tag pause">PAUSE</span>
+
+"Is your mornings or afternoons generally better for a quick call?"
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: BOOKING -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-booking">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">📅</span>
+            <div>
+              <div class="script-section-title">Booking the Demo Call</div>
+              <div class="script-section-subtitle">Close for the appointment — not the sale. This is your only goal.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">The appointment close:</div>
+              <div class="script-block">
+                "Give me 3 days to put the finishing touches on it and I'll reach out to schedule. Are mornings or afternoons generally better for you?"
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">Once they pick a time — lock it immediately:</div>
+              <div class="script-block">
+                "Perfect — so I'll send you a WhatsApp on [day] and we'll confirm a time. What's the best number to reach you on WhatsApp?"
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:8px;">Send the WhatsApp within 2 minutes of hanging up:</div>
+              <div class="script-block" style="border-left-color:var(--green);">
+                "Hi [Name] 👋 This is Elijah from StoreLift — we just spoke about your dealership website. I'm putting the final touches on it now and will reach out on [day] to show you. Looking forward to it!"
+              </div>
+            </div>
+
+            <div style="padding:14px 16px;background:rgba(99,102,241,0.08);border:1px solid rgba(99,102,241,0.2);border-radius:var(--radius-sm);">
+              <div style="font-size:11px;font-weight:700;color:#a5b4fc;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">📌 Booking rules — never break these</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;gap:8px;"><span style="color:#a5b4fc;font-weight:700;">1.</span> Always give binary choice: "mornings or afternoons?" — never "when are you free?"</div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;gap:8px;"><span style="color:#a5b4fc;font-weight:700;">2.</span> Always get their WhatsApp number before ending the call — even if they already called you on it.</div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;gap:8px;"><span style="color:#a5b4fc;font-weight:700;">3.</span> Send the WhatsApp within 2 minutes — while they still remember you.</div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;gap:8px;"><span style="color:#a5b4fc;font-weight:700;">4.</span> Never book for the same day — give yourself at least 1 day so the website is ready and the demo looks polished.</div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;gap:8px;"><span style="color:#a5b4fc;font-weight:700;">5.</span> Set a reminder to follow up the morning of the demo to confirm they're still available.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: FOLLOW UP -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-followup">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">🔁</span>
+            <div>
+              <div class="script-section-title">Follow-Up Sequence</div>
+              <div class="script-section-subtitle">Most deals are closed on follow-up, not the first call. Here's the exact sequence.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+
+            <div class="followup-step">
+              <div class="followup-day">
+                <span class="followup-day-num">Day</span>
+                <span class="followup-day-label">0</span>
+              </div>
+              <div class="followup-content">
+                <div class="followup-action">📞 First call — book the demo</div>
+                <div class="followup-script">Send WhatsApp immediately after hanging up. "Hi [Name], this is Elijah from StoreLift — we just spoke. I'll reach out on [day] to show you the website. Looking forward to it! 👋"</div>
+              </div>
+            </div>
+
+            <div class="followup-step">
+              <div class="followup-day">
+                <span class="followup-day-num">Day</span>
+                <span class="followup-day-label">3</span>
+              </div>
+              <div class="followup-content">
+                <div class="followup-action">💬 Demo day WhatsApp — morning confirmation</div>
+                <div class="followup-script">"Good morning [Name] 👋 This is Elijah. The website for [Dealership] is ready — are you still good for a quick 15-minute call today? Just let me know what time works and I'll send you the link."</div>
+              </div>
+            </div>
+
+            <div class="followup-step">
+              <div class="followup-day">
+                <span class="followup-day-num">Day</span>
+                <span class="followup-day-label">5</span>
+              </div>
+              <div class="followup-content">
+                <div class="followup-action">📞 No response — second call</div>
+                <div class="followup-script">"Hello [Name], this is Elijah from StoreLift — I reached out on WhatsApp a couple of days ago about the website I built for your dealership. I just wanted to make sure you got the message. I'm still happy to show you — just 15 minutes. When would work for you?"</div>
+              </div>
+            </div>
+
+            <div class="followup-step">
+              <div class="followup-day">
+                <span class="followup-day-num">Day</span>
+                <span class="followup-day-label">8</span>
+              </div>
+              <div class="followup-content">
+                <div class="followup-action">💬 Final WhatsApp — soft close</div>
+                <div class="followup-script">"Hi [Name], Elijah here from StoreLift. I've followed up a couple of times — I don't want to keep disturbing you. The website for [Dealership] is ready whenever you are. If it's not a priority right now, completely fine — I'll check back in a few weeks. Just say the word. 🙏"</div>
+              </div>
+            </div>
+
+            <div class="followup-step" style="margin-bottom:0;">
+              <div class="followup-day">
+                <span class="followup-day-num">Day</span>
+                <span class="followup-day-label">21</span>
+              </div>
+              <div class="followup-content">
+                <div class="followup-action">📞 Re-engagement — new angle</div>
+                <div class="followup-script">"Hello [Name], Elijah from StoreLift. I know it's been a few weeks — I just wanted to check in. I noticed [specific new thing about their page — new posts, a sale, something real]. How's business going? I still have your website ready any time you want to see it."</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: VOICE & TONE -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-voicetone">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">🎙️</span>
+            <div>
+              <div class="script-section-title">Voice & Tone Guide</div>
+              <div class="script-section-subtitle">Where to slow down, where to pause, where to smile, and where to bring energy.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+
+            <div style="margin-bottom:24px;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Vocal control by call phase</div>
+
+              <div class="tone-bar-wrap">
+                <div class="tone-bar-label">
+                  <span>Speed</span>
+                  <span style="color:var(--text-muted);">Opener: SLOW · Pain point: VERY SLOW · Offer: MEDIUM · Close: DELIBERATE</span>
+                </div>
+                <div class="tone-bar-track">
+                  <div class="tone-bar-fill" style="width:35%;background:linear-gradient(90deg,#6366f1,#3b82f6);"></div>
+                </div>
+              </div>
+
+              <div class="tone-bar-wrap">
+                <div class="tone-bar-label">
+                  <span>Energy</span>
+                  <span style="color:var(--text-muted);">Opener: HIGH · Pain: CALM · Offer: EXCITED (controlled) · Close: CONFIDENT</span>
+                </div>
+                <div class="tone-bar-track">
+                  <div class="tone-bar-fill" style="width:70%;background:linear-gradient(90deg,#22c55e,#16a34a);"></div>
+                </div>
+              </div>
+
+              <div class="tone-bar-wrap">
+                <div class="tone-bar-label">
+                  <span>Warmth</span>
+                  <span style="color:var(--text-muted);">Throughout: HIGH — this is relationship-first selling</span>
+                </div>
+                <div class="tone-bar-track">
+                  <div class="tone-bar-fill" style="width:85%;background:linear-gradient(90deg,#f59e0b,#d97706);"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2" style="gap:12px;">
+              <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.15);border-radius:var(--radius-md);padding:16px;">
+                <div style="font-size:12px;font-weight:700;color:#93c5fd;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">🐢 Where to slow down</div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                  • When you say your name and company<br/>
+                  • When you name the specific pain point<br/>
+                  • When you say "I built something for your dealership"<br/>
+                  • When you ask for the appointment<br/>
+                  • Any time you feel yourself rushing
+                </div>
+              </div>
+              <div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.15);border-radius:var(--radius-md);padding:16px;">
+                <div style="font-size:12px;font-weight:700;color:#c4b5fd;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⏸ Where to pause</div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                  • After asking "Is this [Name]?" — wait for them<br/>
+                  • After naming the pain — let it land<br/>
+                  • After saying "I built something for you" — build suspense<br/>
+                  • After presenting the offer — don't fill the silence<br/>
+                  • After asking for the appointment — wait for their answer
+                </div>
+              </div>
+              <div style="background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);border-radius:var(--radius-md);padding:16px;">
+                <div style="font-size:12px;font-weight:700;color:#fcd34d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">😁 Where to smile</div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                  • Before the call connects — already smiling<br/>
+                  • When they confirm they are the owner<br/>
+                  • When you say "I built something for you"<br/>
+                  • When they ask "how much?" — that's a buying signal<br/>
+                  • When you close for the appointment
+                </div>
+              </div>
+              <div style="background:rgba(34,197,94,0.06);border:1px solid rgba(34,197,94,0.15);border-radius:var(--radius-md);padding:16px;">
+                <div style="font-size:12px;font-weight:700;color:#86efac;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">⚡ Where to bring energy</div>
+                <div style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+                  • The very first sentence — grab their attention<br/>
+                  • When you describe what the website does for them<br/>
+                  • When you say "completely free to build"<br/>
+                  • When you book the appointment — sound excited<br/>
+                  • Your sign-off — leave them feeling positive
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: NEVER SAY -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-neversay">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">🚫</span>
+            <div>
+              <div class="script-section-title">What Never to Say</div>
+              <div class="script-section-subtitle">These phrases kill calls instantly. Memorise them so you never say them by accident.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+            <table class="never-say-table">
+              <thead>
+                <tr>
+                  <th>❌ Never say this</th>
+                  <th>✓ Say this instead</th>
+                  <th>Why it matters</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>"I just wanted to quickly..."</td>
+                  <td>"My name is Elijah — I came across your dealership..."</td>
+                  <td style="color:var(--text-muted);">"Just" and "quickly" signal you don't believe your own call is worth their time. Start with confidence.</td>
+                </tr>
+                <tr>
+                  <td>"Sorry to bother you..."</td>
+                  <td>"Good afternoon, is this [Name]?"</td>
+                  <td style="color:var(--text-muted);">Apologising before you've said anything positions you as an inconvenience. You're offering something valuable.</td>
+                </tr>
+                <tr>
+                  <td>"When are you free?"</td>
+                  <td>"Are mornings or afternoons better for you?"</td>
+                  <td style="color:var(--text-muted);">Open questions about availability put the burden on them and often result in "I'll let you know" — which means never.</td>
+                </tr>
+                <tr>
+                  <td>"I promise it will be worth it..."</td>
+                  <td>"If you like it, great. If not, no problem at all."</td>
+                  <td style="color:var(--text-muted);">Promising value sounds desperate. Detachment sounds confident. Confident people get meetings.</td>
+                </tr>
+                <tr>
+                  <td>"We are the best in the market..."</td>
+                  <td>"I built something specifically for your dealership — let me show you."</td>
+                  <td style="color:var(--text-muted);">Generic claims about being "the best" are meaningless. Specificity to their business is what gets attention.</td>
+                </tr>
+                <tr>
+                  <td>"Do you have a website?"</td>
+                  <td>"I noticed you don't have a website where customers can browse your full inventory..."</td>
+                  <td style="color:var(--text-muted);">Asking a question they answer with yes or no hands them control. Make an observation instead — it's more compelling.</td>
+                </tr>
+                <tr>
+                  <td>"It's completely free, no catch..."</td>
+                  <td>"The website itself is free — the build is on me."</td>
+                  <td style="color:var(--text-muted);">"No catch" makes people think there IS a catch. State what's free simply and move on.</td>
+                </tr>
+                <tr>
+                  <td>"Please sir/ma, just give me a chance..."</td>
+                  <td>"I understand — no problem at all. Can I reach out in a few weeks?"</td>
+                  <td style="color:var(--text-muted);">Begging destroys all credibility instantly. Walk away gracefully — it's more likely to bring them back than begging is.</td>
+                </tr>
+                <tr>
+                  <td>"I can also do social media and..."</td>
+                  <td>Stay focused on the website only</td>
+                  <td style="color:var(--text-muted);">Adding services mid-call confuses the offer. One thing, one demo, one decision. Extra services come after they're a client.</td>
+                </tr>
+                <tr>
+                  <td>"The hosting is ₦X per month..."</td>
+                  <td>Defer all pricing to the demo call</td>
+                  <td style="color:var(--text-muted);">Bringing up money on the first call before they've seen the website gives them something to object to before they're invested.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════════════ -->
+      <!-- PHASE: PRACTICE -->
+      <!-- ═══════════════════════════════════════ -->
+      <div class="script-panel" id="panel-practice">
+        <div class="script-section">
+          <div class="script-section-header">
+            <span class="script-section-icon">🎯</span>
+            <div>
+              <div class="script-section-title">Practice Reps</div>
+              <div class="script-section-subtitle">Read the script out loud. Track your reps. Mastery comes from repetition.</div>
+            </div>
+          </div>
+          <div class="script-section-body">
+
+            <div class="practice-box" style="margin-bottom:24px;">
+              <div class="rep-counter" id="rep-count">0</div>
+              <div class="rep-label">practice reps completed today</div>
+              <div class="rep-controls">
+                <button class="btn btn-primary btn-lg" onclick="addRep()">+ Log a Rep</button>
+                <button class="btn btn-ghost" onclick="resetReps()">Reset</button>
+              </div>
+            </div>
+
+            <div style="margin-bottom:16px;">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">📋 Practice checklist — complete each one</div>
+              <div data-checklist="practice-checklist">
+                <div class="check-item" data-item="p1"><div class="check-box"></div><span class="check-text">Said the full opener out loud 5 times without looking at notes</span></div>
+                <div class="check-item" data-item="p2"><div class="check-box"></div><span class="check-text">Practised the gatekeeper scenario with a friend or out loud solo</span></div>
+                <div class="check-item" data-item="p3"><div class="check-box"></div><span class="check-text">Practised the pain point section — slowing down at the right moments</span></div>
+                <div class="check-item" data-item="p4"><div class="check-box"></div><span class="check-text">Practised the offer + appointment close back to back</span></div>
+                <div class="check-item" data-item="p5"><div class="check-box"></div><span class="check-text">Read the "never say" list — crossed off any phrases I've been using</span></div>
+                <div class="check-item" data-item="p6"><div class="check-box"></div><span class="check-text">Recorded myself doing a full cold call run-through and listened back</span></div>
+              </div>
+            </div>
+
+            <div style="padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-md);">
+              <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:8px;">🏆 Rep targets</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;"><span>Day 1 — Beginner</span><span style="color:var(--text-muted);">5 reps</span></div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;"><span>Day 3 — Getting comfortable</span><span style="color:var(--text-muted);">15 reps total</span></div>
+                <div style="font-size:13px;color:var(--text-secondary);display:flex;justify-content:space-between;"><span>Day 7 — Sounds natural</span><span style="color:var(--text-muted);">40 reps total</span></div>
+                <div style="font-size:13px;color:#86efac;display:flex;justify-content:space-between;font-weight:600;"><span>Day 14 — Script is second nature</span><span>100 reps total</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- Bottom nav -->
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Ready to continue?</div>
+          <div style="font-size:13px;color:var(--text-secondary);">Next: Conversation Flow →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="dealerships.html" class="btn btn-ghost">← Dealerships</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+  const PHASES = ['opening','gatekeeper','salesrep','owner','booking','followup','voicetone','neversay','practice'];
+  let visitedPhases = new Set();
+
+  function showPhase(phase) {
+    PHASES.forEach(p => {
+      document.getElementById('panel-' + p).classList.remove('active');
+      document.getElementById('btn-' + p).classList.remove('active');
+    });
+    document.getElementById('panel-' + phase).classList.add('active');
+    document.getElementById('btn-' + phase).classList.add('active');
+    visitedPhases.add(phase);
+    updateProgress();
+    window.scrollTo({ top: document.querySelector('.phase-stepper').offsetTop - 80, behavior: 'smooth' });
+  }
+
+  function updateProgress() {
+    const pct = Math.round((visitedPhases.size / PHASES.length) * 100);
+    document.getElementById('module-progress-fill').style.width = pct + '%';
+    document.getElementById('section-count').textContent = `${visitedPhases.size} of ${PHASES.length} sections visited`;
+    setModuleProgress('cold-calling', pct);
+  }
+
+  /* Practice reps */
+  const REP_KEY = 'sl_practice_reps_' + new Date().toDateString();
+  function getReps() { return parseInt(localStorage.getItem(REP_KEY) || '0'); }
+  function addRep() {
+    const n = getReps() + 1;
+    localStorage.setItem(REP_KEY, n);
+    document.getElementById('rep-count').textContent = n;
+    showToast('Rep logged! Keep going 💪');
+    if (n === 5)  showToast('5 reps — great start! 🔥', '🔥');
+    if (n === 10) showToast('10 reps — you\'re building a habit! ⚡', '⚡');
+  }
+  function resetReps() {
+    localStorage.setItem(REP_KEY, 0);
+    document.getElementById('rep-count').textContent = 0;
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initSidebar('cold-calling');
+    initCopyButtons();
+    initCheckboxes('practice-checklist');
+    visitedPhases.add('opening'); // opening is shown by default
+    updateProgress();
+    document.getElementById('rep-count').textContent = getReps();
+    const saved = getModuleProgress('cold-calling');
+    if (saved > 0) document.getElementById('module-progress-fill').style.width = saved + '%';
+  });
+
+  function completeAndNext() {
+    markModuleComplete('cold-calling');
+    showToast('Module 4 complete! Moving to Conversation Flow...');
+    setTimeout(() => location.href = 'conversation.html', 1200);
+  }
+</script>
+</body>
+</html>

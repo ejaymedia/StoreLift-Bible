@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Call Simulator · StoreLift Sales Bible</title>
+  <link rel="stylesheet" href="css/global.css" />
+  <style>
+
+    .sim-hero {
+      background: linear-gradient(135deg, rgba(99,102,241,0.12), rgba(139,92,246,0.08));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-radius: var(--radius-xl);
+      padding: 32px;
+      margin-bottom: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+    .sim-hero::after {
+      content: '🤖';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 80px;
+      opacity: 0.12;
+    }
+
+    /* Simulator UI */
+    .sim-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    /* Persona bar */
+    .persona-bar {
+      background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .persona-avatar {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+      border: 2px solid var(--border-strong);
+    }
+    .persona-info { flex: 1; }
+    .persona-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+    .persona-title { font-size: 12px; color: var(--text-muted); }
+    .persona-mood {
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .mood-friendly  { background: rgba(34,197,94,0.12); color: #86efac; border: 1px solid rgba(34,197,94,0.2); }
+    .mood-busy      { background: rgba(245,158,11,0.12); color: #fcd34d; border: 1px solid rgba(245,158,11,0.2); }
+    .mood-rude      { background: rgba(239,68,68,0.12); color: #fca5a5; border: 1px solid rgba(239,68,68,0.2); }
+    .mood-curious   { background: rgba(59,130,246,0.12); color: #93c5fd; border: 1px solid rgba(59,130,246,0.2); }
+    .mood-skeptical { background: rgba(139,92,246,0.12); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.2); }
+    .mood-price     { background: rgba(20,184,166,0.12); color: #5eead4; border: 1px solid rgba(20,184,166,0.2); }
+
+    /* Call screen */
+    .call-screen {
+      min-height: 320px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    /* Idle state */
+    .idle-state { }
+    .idle-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.7; }
+    .idle-title { font-size: 20px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+    .idle-desc { font-size: 14px; color: var(--text-secondary); max-width: 380px; line-height: 1.6; margin-bottom: 24px; }
+
+    /* Active call state */
+    .active-call { width: 100%; max-width: 600px; }
+
+    /* Scenario info */
+    .scenario-card {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .scenario-eyebrow {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+    .scenario-context {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .scenario-context strong { color: var(--text-primary); }
+
+    /* What they say */
+    .they-say-wrap {
+      margin-bottom: 20px;
+    }
+    .they-say-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      text-align: left;
+    }
+    .they-say-bubble {
+      background: rgba(239,68,68,0.08);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--radius-md);
+      border-top-left-radius: 4px;
+      padding: 14px 16px;
+      font-size: 15px;
+      color: var(--text-primary);
+      font-style: italic;
+      line-height: 1.6;
+      text-align: left;
+      position: relative;
+    }
+    .they-say-bubble::before {
+      content: '"';
+      font-size: 32px;
+      color: rgba(239,68,68,0.3);
+      position: absolute;
+      top: 4px; left: 10px;
+      line-height: 1;
+      font-style: normal;
+    }
+    .they-say-text { padding-left: 12px; }
+
+    /* Your turn */
+    .your-turn {
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+    .your-turn-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #a5b4fc;
+      margin-bottom: 8px;
+    }
+    .your-turn-instruction {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+    }
+
+    /* Reveal answer */
+    .reveal-section {
+      width: 100%;
+      max-width: 600px;
+      text-align: left;
+      display: none;
+    }
+    .reveal-section.visible { display: block; }
+    .reveal-best {
+      background: rgba(34,197,94,0.06);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .reveal-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #86efac;
+      margin-bottom: 8px;
+    }
+    .reveal-text {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-style: italic;
+      line-height: 1.65;
+    }
+    .reveal-why {
+      background: rgba(139,92,246,0.06);
+      border: 1px solid rgba(139,92,246,0.15);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+    .reveal-why-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #c4b5fd;
+      margin-bottom: 4px;
+    }
+
+    /* Controls */
+    .sim-controls {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      background: rgba(0,0,0,0.15);
+    }
+
+    /* Stats bar */
+    .sim-stats {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .sim-stat {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .sim-stat-num {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: var(--brand-grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+    }
+    .sim-stat-info {}
+    .sim-stat-label { font-size: 11px; color: var(--text-muted); }
+    .sim-stat-sub   { font-size: 12px; color: var(--text-secondary); font-weight: 500; }
+
+    /* Personality selector */
+    .personality-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .personality-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-align: center;
+    }
+    .personality-btn:hover { background: var(--bg-card-hover); border-color: var(--border-strong); transform: translateY(-1px); }
+    .personality-btn.selected { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.1); }
+    .personality-emoji { font-size: 22px; margin-bottom: 6px; display: block; }
+    .personality-name { font-size: 12px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+    .personality-desc { font-size: 11px; color: var(--text-muted); line-height: 1.4; }
+
+    /* Progress ring in sim */
+    .scenario-counter {
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    @keyframes ring-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.3); }
+      50%      { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
+    }
+    .calling-ring { animation: ring-pulse 1.5s infinite; }
+
+  </style>
+</head>
+<body>
+<div class="sidebar-overlay"></div>
+<div class="app-layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-mark">
+        <div class="logo-icon">SL</div>
+        <div class="logo-text">
+          <div class="logo-name">StoreLift</div>
+          <div class="logo-sub">Sales Bible</div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="sidebar-search" placeholder="Search modules..." />
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-info">StoreLift Sales Bible · <span>Module 12 of 13</span></div>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="hamburger"><span></span><span></span><span></span></button>
+        <div class="topbar-breadcrumb">
+          <a href="index.html" style="color:var(--text-muted);text-decoration:none;">Dashboard</a>
+          <span>›</span>
+          <span class="current">Call Simulator</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="scenario-counter" id="scenario-counter">0 scenarios completed</span>
+      </div>
+    </header>
+
+    <div class="page-content">
+
+      <div class="sim-hero animate-in">
+        <div class="page-eyebrow">🤖 Module 12</div>
+        <h1 class="page-title" style="font-size:24px;margin-bottom:10px;">Call Simulator</h1>
+        <p class="page-subtitle" style="max-width:560px;">Practice makes permanent. Each session gives you a random Nigerian dealership owner with a distinct personality and a real objection. Say your response out loud, then reveal the best answer and the psychology behind it. Repeat until it's automatic.</p>
+      </div>
+
+      <!-- Sim Stats -->
+      <div class="sim-stats animate-in-delay-1">
+        <div class="sim-stat">
+          <div class="sim-stat-num" id="stat-total">0</div>
+          <div class="sim-stat-info">
+            <div class="sim-stat-label">Total Reps</div>
+            <div class="sim-stat-sub" id="stat-total-sub">Start practising</div>
+          </div>
+        </div>
+        <div class="sim-stat">
+          <div class="sim-stat-num" id="stat-today">0</div>
+          <div class="sim-stat-info">
+            <div class="sim-stat-label">Today's Reps</div>
+            <div class="sim-stat-sub">Target: 10/day</div>
+          </div>
+        </div>
+        <div class="sim-stat">
+          <div class="sim-stat-num" id="stat-streak">0</div>
+          <div class="sim-stat-info">
+            <div class="sim-stat-label">Day Streak</div>
+            <div class="sim-stat-sub" id="stat-streak-sub">Keep it going</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Personality filter -->
+      <div class="animate-in-delay-1" style="margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:600;color:var(--text-primary);margin-bottom:12px;">🎭 Choose Personality Mode</div>
+        <div class="personality-grid">
+          <div class="personality-btn selected" id="mode-random" onclick="setMode('random')">
+            <span class="personality-emoji">🎲</span>
+            <div class="personality-name">Random</div>
+            <div class="personality-desc">Different personality every session</div>
+          </div>
+          <div class="personality-btn" id="mode-friendly" onclick="setMode('friendly')">
+            <span class="personality-emoji">😊</span>
+            <div class="personality-name">Friendly</div>
+            <div class="personality-desc">Open and receptive owner</div>
+          </div>
+          <div class="personality-btn" id="mode-busy" onclick="setMode('busy')">
+            <span class="personality-emoji">⏰</span>
+            <div class="personality-name">Busy</div>
+            <div class="personality-desc">Impatient, short on time</div>
+          </div>
+          <div class="personality-btn" id="mode-rude" onclick="setMode('rude')">
+            <span class="personality-emoji">😤</span>
+            <div class="personality-name">Rude</div>
+            <div class="personality-desc">Hostile, dismissive</div>
+          </div>
+          <div class="personality-btn" id="mode-curious" onclick="setMode('curious')">
+            <span class="personality-emoji">🤔</span>
+            <div class="personality-name">Curious</div>
+            <div class="personality-desc">Interested but asks a lot</div>
+          </div>
+          <div class="personality-btn" id="mode-skeptical" onclick="setMode('skeptical')">
+            <span class="personality-emoji">🧐</span>
+            <div class="personality-name">Skeptical</div>
+            <div class="personality-desc">Doubts everything</div>
+          </div>
+          <div class="personality-btn" id="mode-price" onclick="setMode('price')">
+            <span class="personality-emoji">💰</span>
+            <div class="personality-name">Price Shopper</div>
+            <div class="personality-desc">Only cares about cost</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIMULATOR -->
+      <div class="sim-wrap animate-in">
+
+        <!-- Persona bar (hidden until started) -->
+        <div class="persona-bar" id="persona-bar" style="display:none;">
+          <div class="persona-avatar" id="persona-avatar">🚗</div>
+          <div class="persona-info">
+            <div class="persona-name" id="persona-name">—</div>
+            <div class="persona-title" id="persona-title">—</div>
+          </div>
+          <span class="persona-mood" id="persona-mood">—</span>
+        </div>
+
+        <!-- Call screen -->
+        <div class="call-screen" id="call-screen">
+
+          <!-- IDLE -->
+          <div class="idle-state" id="state-idle">
+            <div class="idle-icon calling-ring">📞</div>
+            <div class="idle-title">Ready to practise?</div>
+            <div class="idle-desc">Each session gives you a random dealership owner with a real personality and a real objection. Say your response out loud — then reveal the best answer.</div>
+            <button class="btn btn-primary btn-lg" onclick="startSession()">▶ Start Practice Call</button>
+          </div>
+
+          <!-- ACTIVE SCENARIO -->
+          <div class="active-call" id="state-active" style="display:none;">
+
+            <div class="scenario-card">
+              <div class="scenario-eyebrow">📋 Scenario Context</div>
+              <div class="scenario-context" id="scenario-context">—</div>
+            </div>
+
+            <div class="they-say-wrap">
+              <div class="they-say-label">They say:</div>
+              <div class="they-say-bubble">
+                <div class="they-say-text" id="they-say-text">—</div>
+              </div>
+            </div>
+
+            <div class="your-turn">
+              <div class="your-turn-label">🎤 Your turn — respond out loud</div>
+              <div class="your-turn-instruction">Take a breath. Say your response out loud as if this is a real call. When you're ready, click "Reveal Best Response" to see how you did.</div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- Reveal section (inside call screen, below active) -->
+        <div class="reveal-section" id="reveal-section" style="padding:0 24px 24px;display:none;">
+          <div class="reveal-best">
+            <div class="reveal-label">✓ Best Response</div>
+            <div class="reveal-text" id="reveal-text">—</div>
+          </div>
+          <div class="reveal-why">
+            <div class="reveal-why-label">🧠 Why it works</div>
+            <div id="reveal-why-text">—</div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="sim-controls" id="sim-controls">
+          <button class="btn btn-primary" id="btn-start" onclick="startSession()">▶ Start Practice Call</button>
+          <button class="btn btn-ghost" id="btn-reveal" onclick="revealAnswer()" style="display:none;">👁 Reveal Best Response</button>
+          <button class="btn btn-ghost" id="btn-next" onclick="nextScenario()" style="display:none;">→ Next Scenario</button>
+          <button class="btn btn-ghost btn-sm" id="btn-skip" onclick="nextScenario()" style="display:none;">Skip</button>
+        </div>
+
+      </div>
+
+      <!-- Progress -->
+      <div class="glass-card" style="padding:20px;margin-bottom:24px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:13px;font-weight:600;color:var(--text-primary);">Module 12 Progress</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="section-count">Complete 20 reps to finish this module</div>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="module-progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <!-- How to use -->
+      <div class="glass-card" style="padding:20px;margin-bottom:24px;">
+        <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:12px;">📖 How to Use the Simulator</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;gap:12px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-weight:700;width:20px;flex-shrink:0;">1.</span>
+            <span>Click <strong style="color:var(--text-primary);">Start Practice Call</strong> — a random dealership owner appears with a personality and context.</span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-weight:700;width:20px;flex-shrink:0;">2.</span>
+            <span>Read the scenario and what they said. <strong style="color:var(--text-primary);">Say your response out loud</strong> — not in your head. This builds muscle memory.</span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-weight:700;width:20px;flex-shrink:0;">3.</span>
+            <span>Click <strong style="color:var(--text-primary);">Reveal Best Response</strong> to see the ideal answer and the psychology behind it.</span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-weight:700;width:20px;flex-shrink:0;">4.</span>
+            <span>Compare your answer to the best response. Note any differences. Click <strong style="color:var(--text-primary);">Next Scenario</strong> to continue.</span>
+          </div>
+          <div style="display:flex;gap:12px;font-size:13px;color:var(--text-secondary);">
+            <span style="color:var(--purple);font-weight:700;width:20px;flex-shrink:0;">5.</span>
+            <span>Aim for <strong style="color:var(--text-primary);">10 reps every day</strong>. After 100 total reps, objection handling becomes automatic — you stop thinking and start responding.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+        <div>
+          <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:4px;">Almost done!</div>
+          <div style="font-size:13px;color:var(--text-secondary);">One last module: Resources & Cheat Sheets →</div>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="daily-system.html" class="btn btn-ghost">← Daily System</a>
+          <button class="btn btn-primary" onclick="completeAndNext()">Complete & Continue →</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast"></div>
+<script src="js/app.js"></script>
+<script>
+
+/* ════════════════════════════════════════════
+   SCENARIO DATABASE — 120 scenarios
+   ════════════════════════════════════════════ */
+const PERSONAS = {
+  friendly:  { emoji:'😊', mood:'Friendly',    moodClass:'mood-friendly',  label:'Open to conversation' },
+  busy:      { emoji:'⏰', mood:'Busy',         moodClass:'mood-busy',      label:'Short on time' },
+  rude:      { emoji:'😤', mood:'Rude',         moodClass:'mood-rude',      label:'Hostile & dismissive' },
+  curious:   { emoji:'🤔', mood:'Curious',      moodClass:'mood-curious',   label:'Interested but cautious' },
+  skeptical: { emoji:'🧐', mood:'Skeptical',    moodClass:'mood-skeptical', label:'Doubts everything' },
+  price:     { emoji:'💰', mood:'Price Shopper',moodClass:'mood-price',     label:'Only cares about cost' },
+};
+
+const DEALER_NAMES = [
+  'Mr Emeka','Mr Chukwudi','Oga Ibrahim','Mr Tunde','Mr Adebayo',
+  'Alhaji Musa','Mr Seun','Chief Okafor','Mr Nonso','Mr Biodun',
+  'Mr Femi','Oga Yusuf','Mr Chidi','Mr Rotimi','Mr Damilola'
+];
+
+const DEALERSHIPS = [
+  'Kings Motors','CK Auto','City Cars Lagos','TopGear Autos','Prestige Motors',
+  'FastLane Cars','Pioneer Autos','Prime Motors','Eagle Cars','Sunrise Autos',
+  'Lagos Car Hub','Apex Motors','Crown Autos','Diamond Cars','Victory Motors'
+];
+
+const CITIES = ['Lagos','Abuja','Port Harcourt','Ibadan','Kano','Enugu','Benin City'];
+
+const SCENARIOS = [
+  /* FRIENDLY */
+  { personality:'friendly', context:'You just opened the call. The owner picked up and confirmed who they are.',
+    objection:'"Okay, so what exactly are you offering? Tell me more."',
+    best:'"Great question — I came across your dealership on Instagram this morning and I noticed you have some really nice units but no website where customers can browse your full inventory. I built one for you already — just 15 minutes to show you what it looks like. Are mornings or afternoons better for you?"',
+    why:'Friendly owners want information. Give a concise, benefit-focused summary and immediately pivot to booking the demo rather than pitching at length.' },
+
+  { personality:'friendly', context:'They\'ve agreed to see the website. You\'ve shared the link.',
+    objection:'"This looks good! But can you add our actual phone number and more photos of the cars?"',
+    best:'"Absolutely — that\'s all part of the setup. I\'ll update the phone number right now and you can send me the car photos on WhatsApp and I\'ll add them before we go live. What else would you like adjusted?"',
+    why:'An owner customising the website is showing ownership. Accept everything enthusiastically and immediately move toward next steps — this is a buying signal.' },
+
+  { personality:'friendly', context:'The demo went well. You\'re transitioning to close.',
+    objection:'"I like it! When can it be live?"',
+    best:'"As soon as we confirm today — I can have everything set up and live within 48 hours. I\'ll send you the payment details on WhatsApp right now and start the domain setup the moment it comes through. Shall we do that?"',
+    why:'This is the strongest buying signal possible. Close immediately — don\'t keep talking. "Shall we do that?" is a clean, confident ask.' },
+
+  { personality:'friendly', context:'Post-demo. Owner is happy but hasn\'t committed.',
+    objection:'"I\'ll definitely consider it. Can I take a few days?"',
+    best:'"Of course — take your time. Can I ask, is there anything specific you need to think through? I want to make sure you have all the information before we talk again. I\'ll check back in with you on [day]."',
+    why:'Ask what needs thinking — surfaces any hidden concern. Setting a specific follow-up day keeps you in control of the timeline.' },
+
+  { personality:'friendly', context:'They\'ve seen the demo and are genuinely impressed.',
+    objection:'"Honestly this is exactly what we\'ve been needing. My wife handles our finances though — can I discuss with her first?"',
+    best:'"That makes complete sense — this is a business decision. Could I send you a quick summary of what\'s included on WhatsApp so you have something concrete to share with her? And if she has any questions, I\'m happy to do a quick call with you both."',
+    why:'Offer the summary immediately so the conversation happens with facts. Offering to join a call with the spouse dramatically increases close rate.' },
+
+  { personality:'friendly', context:'After demo. They mention a competitor.',
+    objection:'"A friend of mine also builds websites. Maybe I should use him."',
+    best:'"That\'s great to have a connection. I\'d say — look at what I\'ve already built for your dealership and compare it honestly. If his work is better, you have your answer. But why not let the quality speak first?"',
+    why:'Don\'t attack. Let the demo compete on quality. Confidence in your own work beats criticism of competitors.' },
+
+  { personality:'friendly', context:'First call — owner is relaxed and chatty.',
+    objection:'"Nice! So how long have you been doing web design?"',
+    best:'"I\'ve been building websites for Nigerian businesses for a while now — and I specialise in car dealerships specifically. The best way to judge is to see what I\'ve built for yours. I can show you in 15 minutes — are mornings or afternoons better?"',
+    why:'Don\'t get drawn into a long conversation about your background. Redirect to the demo every time — that\'s the only metric that matters.' },
+
+  { personality:'friendly', context:'Owner has seen demo and loves it.',
+    objection:'"Can I keep this link and show my boys at the showroom?"',
+    best:'"Absolutely — the link is yours to share with anyone. In fact, that\'s exactly what your customers will be doing. Have your team take a look and give me their feedback too. And once you\'re ready to go live, just say the word."',
+    why:'Letting the team see it expands your advocates inside the business. More people who\'ve seen and liked it = easier close.' },
+
+  { personality:'friendly', context:'Demo done. They ask about expansion.',
+    objection:'"Can this website also show our branch in Abuja?"',
+    best:'"Yes, absolutely — we can add multiple locations, each with their own inventory section. That\'s something we\'d set up as part of the configuration. Shall I include that in the setup?"',
+    why:'Feature requests are buying signals. Say yes and include it in the setup — never say "that costs extra" before they\'ve signed.' },
+
+  { personality:'friendly', context:'Owner is interested but relaxed about timing.',
+    objection:'"Let\'s do it next month — I\'m just very busy this period."',
+    best:'"Of course — I can lock in everything now and activate it on any date you choose next month. That way the setup is done and you don\'t have to chase it. What date next month works best?"',
+    why:'Secure the commitment now even if activation is later. Doing the setup immediately keeps momentum and prevents the deal from cooling.' },
+
+  /* BUSY */
+  { personality:'busy', context:'They picked up but sound distracted and rushed.',
+    objection:'"I\'m in the middle of something. Make it quick."',
+    best:'"I will — 30 seconds. I built a website for your dealership, completely free. I just want 15 minutes to show you. Can I call you back in an hour, or is tomorrow morning better?"',
+    why:'Respect the signal. Compress your pitch to the minimum and immediately offer an easy exit with a specific callback time.' },
+
+  { personality:'busy', context:'They answer and immediately push back on time.',
+    objection:'"We\'re very busy here. Call me tomorrow."',
+    best:'"No problem at all. Is morning or afternoon better tomorrow? I want to catch you at a good time."',
+    why:'Accept it, lock in a specific time. "Tomorrow" without a time is a soft no. A specific slot converts.' },
+
+  { personality:'busy', context:'Mid call. They get interrupted.',
+    objection:'"Sorry, a customer just walked in. I have to go."',
+    best:'"Go attend to your customer — that\'s priority. I\'ll send you a WhatsApp right now so you have my contact. When\'s a better time for me to call back — same time tomorrow?"',
+    why:'Show that you respect their business. Sending the WhatsApp immediately means you\'re still in their mind when the customer leaves.' },
+
+  { personality:'busy', context:'Short on time from the start.',
+    objection:'"How long will this take? I have a meeting in 10 minutes."',
+    best:'"Just 2 minutes now. I built a website for your dealership — I\'d love to show you in a 15-minute call later. Are you free this afternoon or tomorrow morning?"',
+    why:'You don\'t need 10 minutes on this call. You just need to book the demo call. Work within their constraint.' },
+
+  { personality:'busy', context:'Keeping it brief — they want to end the call.',
+    objection:'"Okay okay, just send me a message."',
+    best:'"I\'ll send it right now — and I\'ll follow up on WhatsApp on [day] to make sure you got it and had a chance to look. Does that work?"',
+    why:'Don\'t just send and wait. Lock in the follow-up time immediately so you stay in control of next contact.' },
+
+  { personality:'busy', context:'Post-demo. They liked it but are rushing.',
+    objection:'"Looks good but I\'m about to travel. Talk to me when I\'m back."',
+    best:'"Safe travels. When do you get back? I\'ll put a reminder to reach out the week after so you\'re settled in. I\'ll also drop you a WhatsApp message before then."',
+    why:'Set the specific return-date follow-up. The WhatsApp reminder is the anchor that keeps you relevant while they\'re away.' },
+
+  { personality:'busy', context:'Owner ends the call abruptly.',
+    objection:'"I have to go. I\'ll call you."',
+    best:'"No problem. I\'m sending you a WhatsApp right now so you have my number. The website link is in it — take a look when you get a moment. I look forward to hearing from you."',
+    why:'Accept it gracefully but get the WhatsApp out immediately. A gracious response sometimes brings them back before you expected.' },
+
+  { personality:'busy', context:'Owner is dismissive about the call.',
+    objection:'"This is not a good time. Try me next week."',
+    best:'"Of course. Is Monday or Wednesday better next week? And mornings or afternoons?"',
+    why:'Turn the vague "next week" into a specific booking. Two binary choices get answers.' },
+
+  { personality:'busy', context:'Owner is clearly distracted throughout.',
+    objection:'"I didn\'t quite catch what you said. Can you repeat?"',
+    best:'"Of course — briefly: I\'m Elijah from StoreLift. I built a website specifically for your dealership — all your cars listed and searchable. I want 15 minutes to show you. Is tomorrow morning or afternoon better for a quick call?"',
+    why:'Don\'t repeat everything — compress to the one hook and the booking ask. Repetition should be tighter, not longer.' },
+
+  { personality:'busy', context:'Short opening. They want to know the point immediately.',
+    objection:'"What do you want? I have customers."',
+    best:'"I\'ll be very brief. I built a website for your dealership — it\'s free and ready. I just want 15 minutes to show you. Can I call you after 4pm today?"',
+    why:'Match their energy. Short, direct, specific. If they\'re with customers, ask for after business peak hours.' },
+
+  /* RUDE */
+  { personality:'rude', context:'They pick up and are immediately hostile.',
+    objection:'"Who is this? How did you get my number? Don\'t call this line again."',
+    best:'"I completely understand — I\'m sorry for catching you at a bad moment. I found your dealership on Instagram and I built something for you. If you\'d prefer I reach out another way, I\'m happy to send a WhatsApp instead. I won\'t call again without permission."',
+    why:'Don\'t argue or get defensive. Acknowledge their frustration, offer an alternative channel, and leave the door open with dignity.' },
+
+  { personality:'rude', context:'They\'re aggressive from the first word.',
+    objection:'"I don\'t have time for people selling rubbish on the phone. Bye."',
+    best:'"Fair enough. I\'ll send you a WhatsApp with the website I built for your dealership — just take a look when you have a moment. You have nothing to lose." [If they hang up, send the WhatsApp immediately]',
+    why:'You can\'t win against a hung-up phone. Get the WhatsApp out immediately. Seeing the website sometimes converts what the call couldn\'t.' },
+
+  { personality:'rude', context:'They\'re rude but still on the line.',
+    objection:'"Stop wasting my time. What are you selling?"',
+    best:'"Nothing you pay for right now. I built a website for your dealership — completely free. I just want to show it to you for 15 minutes. If you hate it, that\'s the end of it."',
+    why:'Counter aggression with calm confidence. The "if you hate it, that\'s the end of it" line shows zero desperation and often disarms hostility.' },
+
+  { personality:'rude', context:'They\'ve been rude throughout but suddenly ask a question.',
+    objection:'"Fine. How much does this cost? I bet it\'s expensive."',
+    best:'"The build is completely free. The hosting after that is very reasonable — I\'ll walk you through it when I show you the site. Can we do 15 minutes this week?"',
+    why:'A question — even a hostile one — is engagement. Defer pricing to the demo and book immediately before the mood shifts again.' },
+
+  { personality:'rude', context:'They\'re dismissive of the whole concept.',
+    objection:'"We\'ve been in this business 15 years without a website. We don\'t need one."',
+    best:'"15 years — that\'s impressive. You\'ve clearly built something solid. I\'m just curious: are you still getting as many walk-in customers as you used to, or has more business shifted online in the last few years?"',
+    why:'Respect the experience first. The question is non-threatening and opens a conversation about a real market shift without directly challenging them.' },
+
+  { personality:'rude', context:'Extremely hostile after just 10 seconds.',
+    objection:'"Remove my number from your list. I\'m reporting this call."',
+    best:'"I sincerely apologise for disturbing you. I\'ll remove your number right away. Have a good day."',
+    why:'Some calls you walk away from. Do it gracefully. Never argue. A rude interaction doesn\'t affect the next 29 calls.' },
+
+  { personality:'rude', context:'Dismissive mid-call.',
+    objection:'"Just send me an email and I\'ll look at it when I have time." [Clearly doesn\'t mean it]',
+    best:'"No problem. What\'s the email address? And while I have it — is WhatsApp more practical? I find things get seen faster there."',
+    why:'Pivot to WhatsApp. Emails get buried. Getting a WhatsApp number gives you a real channel even from a hostile prospect.' },
+
+  { personality:'rude', context:'Rude but the call is still going.',
+    objection:'"You people are always calling with useless things. What makes you different?"',
+    best:'"Good question — the difference is I built something real before calling. Not a pitch. An actual website for your dealership. That\'s in your WhatsApp the moment we hang up. You can judge it yourself."',
+    why:'Don\'t get defensive about "you people." Redirect to the concrete differentiator: it already exists. The website in their hands changes everything.' },
+
+  { personality:'rude', context:'Owner is aggressive about digital generally.',
+    objection:'"Online business is all fraud. I don\'t trust any of this."',
+    best:'"I completely understand that concern — there\'s a lot of dishonesty online. That\'s exactly why I build the website first before asking for anything. You see it, you judge it, you decide. No money, no contract, nothing until you\'re satisfied."',
+    why:'Trust concerns need proof, not argument. Zero upfront risk is the most powerful response to someone who doesn\'t trust online.' },
+
+  { personality:'rude', context:'They\'re testing whether you\'ll give up.',
+    objection:'"How many times are you people going to call me?"',
+    best:'"Just this once from me — and I won\'t call again without permission. I just wanted you to know I built a website for your dealership. If you ever want to see it, the link is in your WhatsApp. If not, I won\'t disturb you again."',
+    why:'Promise clear boundaries. Respecting their autonomy is more likely to bring them back than persistence at this point.' },
+
+  { personality:'rude', context:'Aggressive about not being interested.',
+    objection:'"No. No. And no. Is that clear enough?"',
+    best:'"Crystal clear. I respect that. I\'ll send a WhatsApp with the site link — if you ever change your mind, it\'s there. Take care."',
+    why:'Accept the triple no with grace. Never beg or push after this. Send the link quietly and move on to the next call.' },
+
+  /* CURIOUS */
+  { personality:'curious', context:'They seem interested but want to understand more.',
+    objection:'"How exactly does this website help me get more customers?"',
+    best:'"Great question. Right now, if someone searches Google for a car dealer in [City] at 11pm, your dealership doesn\'t appear. A website changes that immediately — you\'re searchable, your inventory is visible, and customers can send enquiries directly. Let me show you — 15 minutes?"',
+    why:'Specific, visual answer. The 11pm Google scenario is concrete and relatable. Always close with a demo request.' },
+
+  { personality:'curious', context:'They want to understand the full process.',
+    objection:'"Okay but how does this actually work? Step by step."',
+    best:'"Happy to explain. Step one: I show you the website I built for your dealership — that\'s the 15-minute call. Step two: if you like it, we set up your domain and go live within 48 hours. Step three: you keep it running for a small monthly fee. Simple as that. Shall we start with step one?"',
+    why:'Curious owners want process clarity. Give it to them simply and sequentially — then immediately redirect to step one which is the demo.' },
+
+  { personality:'curious', context:'They\'re asking questions and staying engaged.',
+    objection:'"What kind of websites have you built before? Can I see examples?"',
+    best:'"Absolutely — I\'ll send my portfolio on WhatsApp right now. And your dealership\'s website is also ready to view. You\'ll have both in the next 2 minutes. Take a look and let me know what you think."',
+    why:'Curious prospects want evidence. Send immediately, don\'t say "I\'ll send later." Speed signals confidence.' },
+
+  { personality:'curious', context:'They want to understand the business case.',
+    objection:'"But how do I know customers will actually use the website?"',
+    best:'"Fair question. Think about it this way — when you search for a restaurant or a hotel, what do you do first? You Google it. Car buyers do the same. Your website means you exist for that search. Without one, those customers simply don\'t know you\'re there."',
+    why:'Use their own behaviour as the proof. "What do YOU do first?" is a mirror that makes the argument self-evident.' },
+
+  { personality:'curious', context:'They want technical details.',
+    objection:'"Is this like a Wix website or something more professional?"',
+    best:'"Completely custom-built for your dealership specifically — not a template. It\'s designed for how Nigerian car buyers browse: filtering by make, model, year, budget. It\'s mobile-optimised and built to rank on Google. Completely different from a Wix page."',
+    why:'Differentiate clearly. "Custom-built for your dealership" and "Google-optimised" are the two most important distinctions.' },
+
+  { personality:'curious', context:'Curious about the business model.',
+    objection:'"Why are you building websites for free? What\'s the catch?"',
+    best:'"No catch — honest answer: I\'m building a portfolio of dealership websites in Nigeria, which is why the build is free. What comes after — keeping it hosted and maintained — is a small monthly arrangement. But that conversation only happens after you\'ve seen it and decided you want it. Simple as that."',
+    why:'Transparency is the best response to this question. It\'s also genuinely true, and honest answers in Nigeria build serious trust.' },
+
+  { personality:'curious', context:'Interested but checking competitors.',
+    objection:'"Do other dealerships in Lagos have websites already?"',
+    best:'"A growing number do — and the ones that got there early are already showing up on Google for searches in their area. That\'s the advantage you get by moving now rather than waiting until it\'s standard. The first ones to go live own that Google real estate."',
+    why:'Use competitive social proof and first-mover advantage. Don\'t bluff about specific competitors — speak to the trend generally.' },
+
+  { personality:'curious', context:'Asking about control and updates.',
+    objection:'"Who controls the website? Can I update it myself when I get new cars?"',
+    best:'"You can send me new car details on WhatsApp anytime and I\'ll update it, usually within 24 hours. The website is yours — I just maintain and host it. You\'re always in control of what goes on it."',
+    why:'Control is a real concern. Reassure them about ownership while explaining how the maintenance works in practice.' },
+
+  { personality:'curious', context:'Asking about Google specifically.',
+    objection:'"Will my website actually show on Google?"',
+    best:'"Yes — I build every site with Google indexing in mind. After it goes live, Google typically picks it up within a few weeks. Combined with your Instagram and local searches, you start capturing customers you\'re currently invisible to."',
+    why:'Confirm it directly and give a realistic timeline. Never overpromise "ranking #1" — just explain visibility and indexing honestly.' },
+
+  { personality:'curious', context:'Curious owner who\'s nearly sold.',
+    objection:'"Okay. What happens after I pay?"',
+    best:'"As soon as payment comes through, I start the domain setup immediately. Within 48 hours, I send you the live link on WhatsApp. You review it, I make any adjustments you want, and then we push it live on your domain. You\'ll also be added as a contact for any ongoing changes."',
+    why:'Detailed, confident answer. They\'re asking about next steps because they\'ve already decided. Walk them through it clearly.' },
+
+  /* SKEPTICAL */
+  { personality:'skeptical', context:'Doubtful from the beginning.',
+    objection:'"These kinds of calls always lead to something. What\'s the real cost?"',
+    best:'"The website build is genuinely free — I build it first, you see it, and we only discuss any arrangement after you\'ve decided you want it. The ongoing hosting is a monthly fee I\'ll explain after the demo. No surprises."',
+    why:'Skeptics need specificity and honesty. Walk through the exact sequence — build first, see first, decide after. This disarms the "hidden cost" fear.' },
+
+  { personality:'skeptical', context:'Doubts the value of websites generally.',
+    objection:'"My neighbour got a website and got zero customers from it."',
+    best:'"I hear that — and it\'s more common than you\'d think. Usually it\'s because the website wasn\'t connected to any traffic. Did he link it from his Instagram? Was it optimised for Google search? Those things make or break it. What I build is designed specifically to be found — not just to exist."',
+    why:'Diagnose the failure. Most bad website experiences are a traffic problem, not a website problem. Show you understand why it fails and how yours is different.' },
+
+  { personality:'skeptical', context:'Doubts your capability.',
+    objection:'"How do I know you\'re qualified to do this?"',
+    best:'"Fair question — let the work speak for itself. I\'ll send my portfolio on WhatsApp right now and your dealership\'s website is already built and ready to view. Judge my capability from what you see. That\'s the most honest answer I can give."',
+    why:'Redirect from credentials to evidence. The website is the credential. Send it immediately.' },
+
+  { personality:'skeptical', context:'Doubts Nigerian websites work.',
+    objection:'"Nigerian customers don\'t use websites. They prefer WhatsApp and Instagram."',
+    best:'"Some do — and some search Google directly. You\'re missing the ones who search. But here\'s the real point: when your Instagram ad runs and people click through, a website gives them somewhere organised to browse instead of your DMs. It makes your Instagram more effective, not redundant."',
+    why:'Don\'t argue the whole premise. Acknowledge what\'s true (many use WhatsApp) and focus on the gap: the people who DO search, and how the website amplifies Instagram.' },
+
+  { personality:'skeptical', context:'Doubting everything about the model.',
+    objection:'"Nothing is ever truly free. There\'s always something."',
+    best:'"Completely understood — and you\'re right to think critically. Here\'s what\'s true: the build is free. My business model is the monthly hosting fee after you\'ve seen it and want to keep it. I\'m not hiding that — it\'s how I run StoreLift. But you don\'t commit to anything until you\'ve seen the website and decided it\'s worth it."',
+    why:'Full transparency. Lay out the business model honestly. Skeptics respect this — and it\'s genuinely true.' },
+
+  { personality:'skeptical', context:'Doubtful about website traffic.',
+    objection:'"Even if I have a website, how will people find it?"',
+    best:'"Three ways: Google search — I build it to be indexed. Direct traffic — you link it from your Instagram bio, WhatsApp Business profile, and Facebook page. And your existing customers — you share the link directly. The website doesn\'t sit alone — it connects to everything you\'re already doing."',
+    why:'Give three concrete, practical answers. Skeptics need specifics, not generalities.' },
+
+  { personality:'skeptical', context:'Doubts the timeline.',
+    objection:'"48 hours to build a website? That sounds like it\'ll be very basic."',
+    best:'"The 48-hour timeline is for going live — the website is already built. I built it before calling you. That\'s why I can have it live so quickly. Let me show you — you\'ll see it\'s not basic at all."',
+    why:'Clarify the confusion. The website already exists. 48 hours is deployment, not construction. Push to the demo immediately.' },
+
+  { personality:'skeptical', context:'Skeptical about ongoing costs.',
+    objection:'"Monthly payments forever? That sounds like a trap."',
+    best:'"I understand the concern. It\'s month-to-month — there\'s no contract and no lock-in. If you\'re ever not happy with the service, you simply stop paying and that\'s it. There\'s nothing that locks you in longer than you want."',
+    why:'Month-to-month removes the "trap" completely. State it simply and directly. No contract = no trap.' },
+
+  { personality:'skeptical', context:'Doubting your motives.',
+    objection:'"Why would you put in all this work for free? That doesn\'t make business sense."',
+    best:'"It makes complete sense for where I am right now — I\'m building a portfolio and reputation in the dealership space. I invest my time in the build; you invest your hosting fee if you like what you see. It\'s a fair trade. The first few clients I win properly become references that pay for everything else."',
+    why:'Honest business logic. Skeptics respond to rational explanations — and this one is genuinely true.' },
+
+  { personality:'skeptical', context:'Skeptical after previously bad experience.',
+    objection:'"I paid someone ₦80,000 for a website last year. It never launched."',
+    best:'"That\'s really frustrating — and unfortunately it\'s common. Here\'s the key difference: I don\'t ask for money until after you\'ve seen the finished website. It\'s already built. There\'s no risk of paying and getting nothing — you see it first."',
+    why:'Their specific past pain maps perfectly to your model\'s advantage. "See it first, pay after" directly addresses their fear.' },
+
+  /* PRICE SHOPPER */
+  { personality:'price', context:'Immediately asks about cost.',
+    objection:'"Before anything — how much does this cost?"',
+    best:'"The build is completely free — I built the website already. The only ongoing cost is a small monthly hosting fee I\'ll walk you through after I show you the site. Let me show you what you\'re deciding on first — 15 minutes. Are mornings or afternoons better?"',
+    why:'Never answer the price question fully before the demo. Anchor to "free build" and redirect to the demo. Value before price.' },
+
+  { personality:'price', context:'Pushback on monthly fee.',
+    objection:'"Monthly payments don\'t work for me. I want to just pay once."',
+    best:'"I understand. Let me show you the website first and we can discuss what works for your situation — the model is designed to be flexible. What I don\'t want is for us to get into numbers before you\'ve seen what you\'re getting. Shall we do the 15 minutes first?"',
+    why:'Defer. You can have the pricing conversation after the demo when value is established. \"Flexible\" keeps options open without committing to a one-time structure you may not want.' },
+
+  { personality:'price', context:'Post-demo. Immediately asks price again.',
+    objection:'"Okay it looks nice. Now tell me exactly how much."',
+    best:'"Glad you like it. The monthly hosting and maintenance is ₦[X]. To put that in context — one extra car sale per month from the website covers it many times over. And it\'s month-to-month, so you\'re never locked in. Does that work for you?"',
+    why:'Now you\'ve earned the right to give the price. State it confidently, add ROI framing immediately, and remove risk with month-to-month.' },
+
+  { personality:'price', context:'Negotiating hard.',
+    objection:'"Can you do ₦[X] instead? That\'s all I can afford."',
+    best:'"I appreciate you being direct with me. The price covers the full hosting and maintenance so cutting it would mean cutting the service. What I can do is make sure you get maximum value from day one — I\'ll update your inventory personally for the first month and be on call for any changes. Is that fair?"',
+    why:'Don\'t discount — add value. Hands-on first-month support maintains your price and increases their confidence in the service.' },
+
+  { personality:'price', context:'Comparing to alternatives.',
+    objection:'"I saw on Google that websites cost ₦50,000 to build once. Why should I pay monthly?"',
+    best:'"A ₦50,000 one-time website gives you the file — but who hosts it? Who updates it when you get new cars? Who fixes it when something breaks? The monthly fee covers all of that. And the build itself from me is free — so you\'re paying less than those ₦50,000 sites over any 12-month period."',
+    why:'Break down what "₦50,000 one-time" doesn\'t include. Hosting, maintenance, updates — these have real costs that add up beyond the build fee.' },
+
+  { personality:'price', context:'Asking for discount upfront.',
+    objection:'"I\'ll pay for 3 months upfront if you give me a discount."',
+    best:'"I appreciate that offer — let me think about what I can do for a 3-month commitment. Let\'s confirm you want to proceed first, then I\'ll put together a proposal. Shall we move forward?"',
+    why:'Don\'t reject the offer — use it to confirm commitment first. Someone offering to pay 3 months has already decided. Secure that decision before negotiating.' },
+
+  { personality:'price', context:'Comparing to doing nothing.',
+    objection:'"Right now I spend nothing on online presence and I\'m fine."',
+    best:'"You\'re spending nothing — but your Instagram ads cost money, right? And the WhatsApp messages your team answers cost time. The website doesn\'t add a cost — it makes what you\'re already spending work harder. One extra car sale from the website and it\'s paid for many months over."',
+    why:'Reframe from cost to ROI. They\'re not actually spending "nothing" — they\'re spending time and ad money. The website makes those investments more effective.' },
+
+  { personality:'price', context:'Worried about return on investment.',
+    objection:'"What if the website doesn\'t bring me any customers? I\'m paying for nothing."',
+    best:'"That\'s a fair concern. Here\'s my honest answer: I can\'t guarantee a specific number of customers. What I can guarantee is that right now, customers searching Google for a car dealer in [City] can\'t find you. The website fixes that. And it\'s month-to-month — so if after 60 days you feel it\'s not delivering, you simply stop. The risk is one month\'s fee."',
+    why:'Honest and specific. Remove the downside risk (month-to-month) and reframe around what the website actually guarantees: Google visibility. Not customers — visibility. That\'s honest.' },
+
+  { personality:'price', context:'Asking for more for the price.',
+    objection:'"Can you include SEO and social media management in that price?"',
+    best:'"Those are separate services — the hosting covers the website itself, which is the foundation. Once the site is live and you\'re seeing results, we can talk about SEO and social as add-ons. Let\'s get the website running first and see what it does. Shall we move forward?"',
+    why:'Don\'t add services to win the deal — this devalues your work. Offer them as future upsells once the relationship is established.' },
+
+  { personality:'price', context:'Trying to get everything for free.',
+    objection:'"So the website is free and the hosting should also be free since you need clients."',
+    best:'"Ha — I appreciate the logic! The build is my investment in showing you what I can do. The hosting covers the actual server cost and my ongoing maintenance time. If I didn\'t charge for hosting, I couldn\'t maintain the quality of service — and your website would eventually go down. The fee is how I keep it running properly."',
+    why:'Light humour disarms the pushback. Then explain practically why hosting needs to be paid — it\'s not optional for the service to work.' },
+
+  /* GATEKEEPER / SITUATIONAL */
+  { personality:'busy', context:'The gatekeeper picked up instead of the owner.',
+    objection:'"He\'s not here right now. Can I take a message?"',
+    best:'"Please do — let him know Elijah from StoreLift called about a website I built for the dealership. Could you also ask him the best time to call back? And is there a direct WhatsApp I can use so I\'m not always calling the main line?"',
+    why:'Leave a specific message with the hook ("website I built for the dealership") and always ask for a direct contact before hanging up.' },
+
+  { personality:'rude', context:'The gatekeeper is blocking access.',
+    objection:'"The owner doesn\'t take calls like this. We\'re busy."',
+    best:'"Completely understood. Could you do me a small favour — let him know Elijah from StoreLift built a website for the dealership and wants to show it to him. If he\'s interested, my WhatsApp is [number]. That\'s all I\'m asking."',
+    why:'Don\'t fight the gatekeeper. Give them a specific, intriguing message to pass and your WhatsApp. The owner decides — not the gatekeeper.' },
+
+  { personality:'curious', context:'The sales rep picked up and is curious.',
+    objection:'"A website? What kind of website? Tell me more."',
+    best:'"It\'s a full dealership website — inventory, car details, enquiry forms. It means customers browse on their own before they call or DM. Less back-and-forth for your team. Is the owner or manager around? I\'d love to show it to whoever handles those kinds of decisions."',
+    why:'Briefly explain the value to the sales rep — but always redirect to the decision-maker. The rep who sees personal benefit (less work) will route you faster.' },
+
+  { personality:'skeptical', context:'A sales rep is sceptical about routing you through.',
+    objection:'"Why do you need to speak to the owner specifically?"',
+    best:'"Because it\'s a decision about the dealership\'s online presence — and I want to make sure I\'m talking to whoever can actually see the value and say yes or no. I don\'t want to waste anyone\'s time by going through the wrong channel."',
+    why:'Respectful and logical. Makes it clear you\'re not trying to bypass them rudely — you\'re trying to be efficient and direct.' },
+
+  /* FOLLOW-UP SCENARIOS */
+  { personality:'friendly', context:'You\'re calling back someone who asked you to call tomorrow.',
+    objection:'"Oh, Elijah right? Yes, I remember you mentioned a website."',
+    best:'"Exactly! Good to speak with you again. I wanted to confirm — are you still available for that quick 15-minute call today? The website is ready and looking great. I can share the link right now."',
+    why:'They remember you — that\'s already a win. Confirm immediately and push for the demo without re-pitching from scratch.' },
+
+  { personality:'busy', context:'Following up after no WhatsApp reply for 3 days.',
+    objection:'"Sorry, I\'ve been very busy. What was this about again?"',
+    best:'"No worries at all — I built a website for your dealership, [Name]. I sent you the link a few days ago. Let me resend it right now. When you have 10 minutes today or tomorrow, take a look and I\'ll call you right after."',
+    why:'Don\'t be offended — re-anchor to the concrete thing (the website) and lower the barrier ("10 minutes"). Resend the link immediately.' },
+
+  { personality:'skeptical', context:'Following up after a prospect went cold for 2 weeks.',
+    objection:'"I looked at the website briefly. It seemed okay but I\'m not sure."',
+    best:'"I\'m glad you had a look! What specifically made you unsure? I want to address whatever\'s holding you back — and if it\'s something I can change about the website, I\'ll do it right now."',
+    why:'Get specific about the doubt. "Not sure" is almost always a specific concern — uncover it and address it directly.' },
+
+  { personality:'friendly', context:'A referral prospect — someone a client sent you to.',
+    objection:'"Yes, Biodun told me about you. So you really built his website for free?"',
+    best:'"I did — you can see it at [URL]. I\'d love to do the same for your dealership. I can show you what it looks like in 15 minutes and build yours the same way. When works for you?"',
+    why:'Referral calls are the easiest — trust is already transferred. Close for the demo quickly and reference the live example they can already see.' },
+
+  { personality:'curious', context:'Post-demo, interested prospect checking on progress.',
+    objection:'"So when exactly can you have it live?"',
+    best:'"The moment you confirm — I can have it live within 48 hours. Domain, hosting, everything. All I need is your go-ahead. Shall I send the payment details?"',
+    why:'This is the soft close. They\'re asking about timeline because they\'re ready. "Shall I send the payment details?" is the natural next step.' },
+
+];
+
+/* ════════════════════════════════════════════
+   SIMULATOR STATE
+   ════════════════════════════════════════════ */
+let currentMode = 'random';
+let currentScenario = null;
+let isRevealed = false;
+let usedIndices = [];
+
+const SIM_STATS_KEY = 'sl_sim_stats';
+const SIM_TODAY_KEY = 'sl_sim_today_' + new Date().toDateString();
+const SIM_STREAK_KEY = 'sl_sim_streak';
+
+function loadStats() {
+  const total = parseInt(localStorage.getItem(SIM_STATS_KEY) || '0');
+  const today = parseInt(localStorage.getItem(SIM_TODAY_KEY) || '0');
+  const streak = parseInt(localStorage.getItem(SIM_STREAK_KEY) || '0');
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-today').textContent = today;
+  document.getElementById('stat-streak').textContent = streak;
+  document.getElementById('stat-total-sub').textContent = total >= 100 ? 'Master level 🔥' : total >= 50 ? 'Getting sharp ⚡' : total >= 20 ? 'Building habit ✓' : 'Start practising';
+  document.getElementById('stat-streak-sub').textContent = streak >= 7 ? 'On fire! 🔥' : streak >= 3 ? 'Keep it going!' : 'Build your streak';
+  document.getElementById('scenario-counter').textContent = `${total} scenarios completed`;
+  updateModuleProgress(total);
+}
+
+function incrementStats() {
+  const total = parseInt(localStorage.getItem(SIM_STATS_KEY) || '0') + 1;
+  const today = parseInt(localStorage.getItem(SIM_TODAY_KEY) || '0') + 1;
+  localStorage.setItem(SIM_STATS_KEY, total);
+  localStorage.setItem(SIM_TODAY_KEY, today);
+  updateStreak();
+  loadStats();
+}
+
+function updateStreak() {
+  const STREAK_DATE_KEY = 'sl_sim_last_date';
+  const lastDate = localStorage.getItem(STREAK_DATE_KEY);
+  const todayStr = new Date().toDateString();
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  let streak = parseInt(localStorage.getItem(SIM_STREAK_KEY) || '0');
+  if (lastDate === todayStr) return;
+  if (lastDate === yesterday) streak++;
+  else streak = 1;
+  localStorage.setItem(SIM_STREAK_KEY, streak);
+  localStorage.setItem(STREAK_DATE_KEY, todayStr);
+}
+
+function updateModuleProgress(total) {
+  const pct = Math.min(100, Math.round((total / 20) * 100));
+  document.getElementById('module-progress-fill').style.width = pct + '%';
+  document.getElementById('section-count').textContent = total >= 20
+    ? `Module complete — ${total} total reps! Keep going 🔥`
+    : `${total} of 20 reps to complete this module`;
+  setModuleProgress('simulator', pct);
+  if (pct === 100) markModuleComplete('simulator');
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.personality-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('mode-' + mode).classList.add('selected');
+}
+
+function getPersonality() {
+  if (currentMode !== 'random') return currentMode;
+  const types = Object.keys(PERSONAS);
+  return types[Math.floor(Math.random() * types.length)];
+}
+
+function getScenario(personality) {
+  const pool = SCENARIOS.filter(s => s.personality === personality);
+  if (pool.length === 0) return SCENARIOS[Math.floor(Math.random() * SCENARIOS.length)];
+  // avoid repeats
+  const available = pool.filter((s, i) => !usedIndices.includes(SCENARIOS.indexOf(s)));
+  if (available.length === 0) { usedIndices = []; return pool[Math.floor(Math.random() * pool.length)]; }
+  const chosen = available[Math.floor(Math.random() * available.length)];
+  usedIndices.push(SCENARIOS.indexOf(chosen));
+  return chosen;
+}
+
+function getRandName() { return DEALER_NAMES[Math.floor(Math.random() * DEALER_NAMES.length)]; }
+function getRandDealer() { return DEALERSHIPS[Math.floor(Math.random() * DEALERSHIPS.length)]; }
+function getRandCity() { return CITIES[Math.floor(Math.random() * CITIES.length)]; }
+
+function startSession() {
+  const personality = getPersonality();
+  const scenario = getScenario(personality);
+  const persona = PERSONAS[personality];
+  const name = getRandName();
+  const dealer = getRandDealer();
+  const city = getRandCity();
+
+  currentScenario = scenario;
+  isRevealed = false;
+
+  // Persona bar
+  document.getElementById('persona-bar').style.display = 'flex';
+  document.getElementById('persona-avatar').textContent = persona.emoji;
+  document.getElementById('persona-name').textContent = `${name} — ${dealer}`;
+  document.getElementById('persona-title').textContent = `Car Dealership Owner · ${city}`;
+  const moodEl = document.getElementById('persona-mood');
+  moodEl.textContent = persona.mood;
+  moodEl.className = 'persona-mood ' + persona.moodClass;
+
+  // Content
+  document.getElementById('scenario-context').innerHTML = scenario.context
+    .replace(/\[City\]/g, `<strong>${city}</strong>`)
+    .replace(/\[Name\]/g, `<strong>${name}</strong>`)
+    .replace(/\[Dealership\]/g, `<strong>${dealer}</strong>`);
+
+  document.getElementById('they-say-text').textContent = scenario.objection;
+
+  // Show active state
+  document.getElementById('state-idle').style.display = 'none';
+  document.getElementById('state-active').style.display = 'block';
+  document.getElementById('reveal-section').style.display = 'none';
+
+  // Controls
+  document.getElementById('btn-start').style.display = 'none';
+  document.getElementById('btn-reveal').style.display = 'inline-flex';
+  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('btn-skip').style.display = 'inline-flex';
+}
+
+function revealAnswer() {
+  if (!currentScenario || isRevealed) return;
+  isRevealed = true;
+
+  document.getElementById('reveal-text').textContent = currentScenario.best;
+  document.getElementById('reveal-why-text').textContent = currentScenario.why;
+  document.getElementById('reveal-section').style.display = 'block';
+
+  document.getElementById('btn-reveal').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'inline-flex';
+  document.getElementById('btn-skip').style.display = 'none';
+
+  incrementStats();
+  showToast('Revealed! Compare your answer and keep going 💪');
+}
+
+function nextScenario() {
+  startSession();
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  initSidebar('simulator');
+  loadStats();
+});
+
+function completeAndNext() {
+  markModuleComplete('simulator');
+  showToast('Module 12 complete! Moving to Resources...');
+  setTimeout(() => location.href = 'resources.html', 1200);
+}
+</script>
+</body>
+</html>
